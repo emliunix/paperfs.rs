@@ -7,6 +7,7 @@ use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
+#[allow(dead_code)]
 pub fn into_service<B, D, E>(handler: DavHandler) -> impl Service<http::Request<B>> + Clone + Send + Sync + 'static where
     D: Buf + Send + 'static,
     E: StdError + Send + Sync + 'static,
