@@ -14,6 +14,7 @@ futures = "0.3.30"
 http = "1.1.0"
 http-body = "1.0.0"
 log = { version = "0.4.22", features = ["std"] }
+msal-rs = "0.1.1"
 opendal = { version = "0.47.2", features = ["services-onedrive", "layers-tracing"] }
 reqwest = "0.12.5"
 tokio = { version = "1.38.0", features = ["full"] }
