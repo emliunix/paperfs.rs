@@ -2,10 +2,10 @@ use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 
-use http::Request;
+use http::{Request, Response, StatusCode};
 use tokio::sync::Mutex;
 use tower_service::Service;
-use axum::body::Body;
+use axum::{body::Body, response::IntoResponse};
 
 #[derive(Clone)]
 pub struct UninitSvc<S> {
@@ -34,8 +34,9 @@ impl<S> Service<Request<Body>> for UninitSvc<S>
 where
     S: Service<Request<Body>> + Send + 'static,
     S::Future: Send,
+    S::Response: IntoResponse,
 {
-    type Response = S::Response;
+    type Response = axum::response::Response;
     type Error = S::Error;
     type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send>>;
 
@@ -46,10 +47,13 @@ where
     fn call(&mut self, req: Request<Body>) -> Self::Future {
         let inner = self.inner.clone();
         Box::pin(async move {
-            match &mut *inner.lock().await {
-                UninitSvcInner::Uninit => panic!("UninitSvc not inited"),
-                UninitSvcInner::Inited(svc) => svc.call(req).await,
-            }
+            let res = match &mut *inner.lock().await {
+                UninitSvcInner::Uninit => Ok((StatusCode::SERVICE_UNAVAILABLE, "Service not inited").into_response()),
+                UninitSvcInner::Inited(svc) => svc.call(req).await.map(|resp| {
+                    resp.into_response()
+                }),
+            };
+            res
         })
     }
 }
