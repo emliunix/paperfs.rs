@@ -14,9 +14,12 @@ futures = "0.3.30"
 http = "1.1.0"
 http-body = "1.0.0"
 log = { version = "0.4.22", features = ["std"] }
-msal-rs = "0.1.1"
+oauth2 = "4.4.2"
 opendal = { version = "0.47.2", features = ["services-onedrive", "layers-tracing"] }
-reqwest = "0.12.5"
+reqwest = { version = "0.12.5", features = ["json"] }
+serde = "1.0.203"
+serde_json = "1.0.120"
+thiserror = "1.0.61"
 tokio = { version = "1.38.0", features = ["full"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.2", features = ["trace"] }

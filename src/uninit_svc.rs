@@ -1,11 +1,9 @@
-use std::convert::Infallible;
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 
-use futures::FutureExt;
 use http::Request;
-use tokio::sync::{Mutex, MutexGuard};
+use tokio::sync::Mutex;
 use tower_service::Service;
 use axum::body::Body;
 
