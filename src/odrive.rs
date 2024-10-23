@@ -119,7 +119,7 @@ impl ODriveSession {
             .request_async(async_http_client)
             .await?;
 
-        update_guard_tokens(&mut guard, &token_result)?;
+        update_tokens(&mut guard, &token_result)?;
         Ok(())
     }
 
@@ -134,7 +134,7 @@ impl ODriveSession {
             .request_async(async_http_client)
             .await?;
 
-        update_guard_tokens(&mut guard, &token_result)?;
+        update_tokens(&mut guard, &token_result)?;
         Ok(())
     }
 
@@ -164,7 +164,7 @@ impl ODriveSession {
     }
 }
 
-fn update_guard_tokens<TR, TT>(guard: &mut Inner, token_result: &TR) -> Result<(), std::time::SystemTimeError>
+fn update_tokens<TR, TT>(guard: &mut Inner, token_result: &TR) -> Result<(), std::time::SystemTimeError>
 where
     TR: TokenResponse<TT>,
     TT: TokenType,
