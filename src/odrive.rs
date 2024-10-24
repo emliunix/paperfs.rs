@@ -119,7 +119,7 @@ impl ODriveSession {
             .request_async(async_http_client)
             .await?;
 
-        update_tokens(&mut guard, &token_result)?;
+        guard.update_tokens(&token_result)?;
         Ok(())
     }
 
@@ -134,7 +134,7 @@ impl ODriveSession {
             .request_async(async_http_client)
             .await?;
 
-        update_tokens(&mut guard, &token_result)?;
+        guard.update_tokens(&token_result)?;
         Ok(())
     }
 
@@ -164,14 +164,16 @@ impl ODriveSession {
     }
 }
 
-fn update_tokens<TR, TT>(guard: &mut Inner, token_result: &TR) -> Result<(), std::time::SystemTimeError>
-where
-    TR: TokenResponse<TT>,
-    TT: TokenType,
-{
-    guard.token = Some(token_result.access_token().secret().clone());
-    guard.refresh_token = token_result.refresh_token().map(|t| t.secret().clone());
-    let now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as u64;
-    guard.expires_at = token_result.expires_in().map(|d| d.as_secs() + now);
-    Ok(())
+impl Inner {
+    fn update_tokens<TR, TT>(self: &mut Self, token_result: &TR) -> Result<(), std::time::SystemTimeError>
+    where
+        TR: TokenResponse<TT>,
+        TT: TokenType,
+    {
+        self.token = Some(token_result.access_token().secret().clone());
+        self.refresh_token = token_result.refresh_token().map(|t| t.secret().clone());
+        let now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as u64;
+        self.expires_at = token_result.expires_in().map(|d| d.as_secs() + now);
+        Ok(())
+    }
 }
