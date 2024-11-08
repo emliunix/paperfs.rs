@@ -1,0 +1,11 @@
+[Unit]
+Description=paperfs.rs container
+
+[Container]
+Image=localhost/paperfs:latest
+EnvironmentFile=%h/paperfs/.env
+WorkingDir=/paperfs
+Volume=paperfs:/paperfs
+
+[Install]
+WantedBy=default.target
