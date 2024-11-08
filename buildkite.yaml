@@ -1,10 +1,12 @@
 steps:
 - label: "Build"
-  command: "nix build --verbose .#image"
+  command: |
+    nix build --verbose .#image
 - label: "Deploy"
   command: |
     nix run nixpkgs#curl -- -X POST \\\n
       'http://host.containers.internal:31000/api/v1/deploy?service=paperfs' \\\n
-      -F 'image=@result;type=application/vnd.docker.distribution.manifest.list.v2+json'"
+      -F 'image=@result;type=application/vnd.docker.distribution.manifest.list.v2+json'
 - label: "Save cache"
-  command: "nix copy --no-check-sigs --to http://host.containers.internal:9000?compression=none ."
+  command: |
+    nix copy --no-check-sigs --to http://host.containers.internal:9000?compression=none .
