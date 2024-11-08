@@ -4,8 +4,8 @@ steps:
     nix build --verbose .#image
 - label: "Deploy"
   command: |
-    nix run nixpkgs#curl -- -X POST \\
-      'http://host.containers.internal:31000/api/v1/deploy?service=paperfs' \\
+    nix run nixpkgs#curl -- -X POST \
+      'http://host.containers.internal:31000/api/v1/deploy?service=paperfs' \
       -F 'image=@result;type=application/vnd.docker.distribution.manifest.list.v2+json'
 - label: "Save cache"
   command: |
