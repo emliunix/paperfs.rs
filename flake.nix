@@ -40,7 +40,7 @@
             image = pkgs.dockerTools.buildLayeredImage {
                 name = "paperfs";
                 tag = "latest";
-                contents = [ paperfs_rs ];
+                contents = [ paperfs_rs pkgs.cacert ];
                 config.Cmd = [ "paperfs_rs" ];
             };
         };
