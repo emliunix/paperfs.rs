@@ -6,6 +6,7 @@ use std::io::Write;
 use std::time::Duration;
 
 use anyhow::{Context, Result};
+use axum::extract::DefaultBodyLimit;
 use axum::routing::get;
 use dav::DavHandlerWrapper;
 use buf_layer::BufLayer;
@@ -201,7 +202,8 @@ async fn main() {
                 }
             }
         }))
-        .layer(TraceLayer::new_for_http());
+        .layer(TraceLayer::new_for_http())
+        .layer(DefaultBodyLimit::max(64 * 1024 * 1024));
 
     // start server
     log::info!("Server started at {}", bind_addr);
