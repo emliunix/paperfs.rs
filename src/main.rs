@@ -7,6 +7,7 @@ use std::time::Duration;
 
 use anyhow::{Context, Result};
 use axum::extract::DefaultBodyLimit;
+use axum::response::Html;
 use axum::routing::get;
 use dav::DavHandlerWrapper;
 use buf_layer::BufLayer;
@@ -79,20 +80,19 @@ struct App {
     svc: UninitSvc<DavHandlerWrapper>,
 }
 
-impl AppEvents for App {
-    fn on_refresh(&self) {
-        let self_ = self.clone();
-        tokio::spawn(async move {
-            if let None = self_.od_sess.access_token().await {
-                log::warn!("Not login, abort refresh");
-                return anyhow::Ok(());
-            }
-            self_.od_sess.refresh().await?;
-            self_.on_token_change();
-            anyhow::Ok(())
-        }.map(|res| {res.log_err("failed to refresh"); Ok::<(), Infallible>(()) }));
-    }
+fn do_refresh<C: FnOnce() + Send + 'static>(od_sess: ODriveSession, cb: C) {
+    tokio::spawn(async move {
+        if let None = od_sess.access_token().await {
+            log::warn!("Not login, abort refresh");
+            return anyhow::Ok(());
+        }
+        od_sess.refresh().await?;
+        cb();
+        anyhow::Ok(())
+    }.map(|res| {res.log_err("failed to refresh"); Ok::<(), Infallible>(()) }));
+}
 
+impl AppEvents for App {
     fn on_token_change(&self) {
         let self_ = self.clone();
         tokio::spawn(async move {
@@ -108,15 +108,6 @@ impl AppEvents for App {
             drop(file);
             anyhow::Ok(())
         }.map(|res| {res.log_err("failed to process token change"); Ok::<(), Infallible>(()) }));
-    }
-
-    fn on_auth(&self, code: String) {
-        let self_ = self.clone();
-        tokio::spawn(async move {
-            self_.od_sess.auth(code.as_str()).await?;
-            self_.on_token_change();
-            anyhow::Ok(())
-        }.map(|res| {res.log_err("failed to auth"); Ok::<(), Infallible>(()) }));
     }
 }
 
@@ -160,13 +151,15 @@ async fn main() {
 
     if persisted_data.is_some() {
         log::info!("Trigger refresh due to recovering persisted data");
-        app.on_refresh();
+        let app = app.clone();
+        do_refresh(od_sess.clone(), move || app.on_token_change());
     }
     // refresh onedrive token and dav svc
     let refresh_thread = async {
         loop {
             tokio::time::sleep(Duration::from_secs(3600)).await;
-            app.on_refresh();
+            let app = app.clone();
+            do_refresh(od_sess.clone(), move || app.on_token_change());
         }
     };
 
@@ -190,6 +183,7 @@ async fn main() {
             log::info!("after: {}", parts.uri);
             Request::from_parts(parts, body)
         }))
+        .route("/", get(Html(include_str!("../static/index.html"))))
         .route_service("/zotero/", svc.clone())
         .route_service("/zotero/*ignore", svc.clone())
         .nest("/api/v1/onedrive", onedrive_api_router(od_sess.clone(), app.clone()))

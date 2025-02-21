@@ -14,7 +14,5 @@ pub(crate) fn plain_error<S: ToString>(msg: S) -> impl FnOnce() -> AppError {
 }
 
 pub trait AppEvents {
-    fn on_auth(&self, code: String);
     fn on_token_change(&self);
-    fn on_refresh(&self);
 }
