@@ -1,5 +1,5 @@
 FROM rust:1.84.1-bookworm AS builder
-COPY <<EOF /root/.cargo/config
+COPY <<EOF /usr/local/cargo/config.toml
 [source.crates-io]
 replace-with = 'mirror'
 [source.mirror]
@@ -7,8 +7,8 @@ registry = "sparse+https://mirrors.tuna.tsinghua.edu.cn/crates.io-index/"
 EOF
 COPY . /app
 WORKDIR /app
-RUN --mount=type=cache,target=/root/.cargo/registry \
-    --mount=type=cache,target=/root/.cargo/git \
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/app/target \
     cargo build --release --bin paperfs_rs && \
     cp /app/target/release/paperfs_rs /paperfs_rs
