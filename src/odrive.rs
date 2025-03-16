@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 use anyhow::{Context, Error as AnyError};
-use oauth2::TokenType;
+use oauth2::{EndpointNotSet, EndpointSet};
 use oauth2::{
     AuthUrl,
     AuthorizationCode,
@@ -15,15 +15,15 @@ use oauth2::{
     TokenResponse,
     TokenUrl,
 };
-use oauth2::basic::BasicClient;
-use oauth2::reqwest::async_http_client;
+use oauth2::basic::{BasicClient, BasicTokenResponse};
 use tokio::sync::Mutex;
 use oauth2::url::Url;
 
-const AUTH_URL: &str = "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize";
-const TOKEN_URL: &str = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token";
+const AUTH_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
+const TOKEN_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 const SCOPES: &[&str] = &[
-    "Files.ReadWrite.All",
+    "Files.Read",
+    "Files.ReadWrite",
     "offline_access", // this scope is required for refresh token
 ];
 
@@ -41,7 +41,7 @@ pub struct ODriveSession {
 }
 
 struct Inner {
-    client: BasicClient,
+    client: BasicClient<EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>,
     token: Option<String>,
     refresh_token: Option<String>,
     expires_at: Option<u64>,
@@ -49,10 +49,9 @@ struct Inner {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-pub struct ODrivePersist {
-    token: Option<String>,
-    refresh_token: Option<String>,
-    expires_at: Option<u64>,
+pub struct ODriveState {
+    pub refresh_token: Option<String>,
+    pub expires_at: Option<u64>,
 }
 
 impl ODriveSession {
@@ -60,37 +59,32 @@ impl ODriveSession {
         http_client: reqwest::Client,
         client_id: &str,
         redirect_url: &str,
-        refresh_token: Option<String>,
-        persist: Option<ODrivePersist>,
-    ) -> Self {
-        let client = BasicClient::new(
-            ClientId::new(client_id.to_string()),
-            None,
-            AuthUrl::new(AUTH_URL.to_string()).unwrap(),
-            Some(TokenUrl::new(TOKEN_URL.to_string()).unwrap())
-        )
-        .set_redirect_uri(RedirectUrl::new(redirect_url.to_string()).unwrap());
+        state: Option<ODriveState>,
+    ) -> Result<Self, anyhow::Error> {
+        let client = BasicClient::new(ClientId::new(client_id.to_string()))
+            .set_auth_uri(AuthUrl::new(AUTH_URL.to_string())?)
+            .set_token_uri(TokenUrl::new(TOKEN_URL.to_string())?)
+            .set_redirect_uri(RedirectUrl::new(redirect_url.to_string())?);
 
         log::info!("OAuth2 client initialized");
 
         let mut inner = Inner {
             client,
             token: None,
-            refresh_token,
+            refresh_token: None,
             expires_at: None,
             pkce_verifier: None,
         };
 
-        if let Some(persist) = persist {
-            inner.token = persist.token;
-            inner.refresh_token = persist.refresh_token;
-            inner.expires_at = persist.expires_at;
+        if let Some(state) = state {
+            inner.refresh_token = state.refresh_token;
+            inner.expires_at = state.expires_at;
         }
         
-        ODriveSession {
+        Ok(ODriveSession {
             inner: Arc::new(Mutex::new(inner)),
             http_client,
-        }
+        })
     }
 
     pub async fn initiate_auth(&self) -> Url {
@@ -116,7 +110,7 @@ impl ODriveSession {
         let token_result = guard.client
             .exchange_code(AuthorizationCode::new(authorization_code.to_string()))
             .set_pkce_verifier(pkce_verifier)
-            .request_async(async_http_client)
+            .request_async(&self.http_client)
             .await?;
 
         guard.update_tokens(&token_result)?;
@@ -131,7 +125,7 @@ impl ODriveSession {
             .context("Refresh token not found")?;
         let token_result = guard.client
             .exchange_refresh_token(&refresh_token)
-            .request_async(async_http_client)
+            .request_async(&self.http_client)
             .await?;
 
         guard.update_tokens(&token_result)?;
@@ -154,22 +148,17 @@ impl ODriveSession {
         self.inner.lock().await.token.clone()
     }
 
-    pub async fn to_persist(&self) -> Result<ODrivePersist, AnyError> {
+    pub async fn state(&self) -> ODriveState {
         let guard = self.inner.lock().await;
-        Ok(ODrivePersist {
-            token: guard.token.clone(),
+        ODriveState {
             refresh_token: guard.refresh_token.clone(),
-            expires_at: guard.expires_at,
-        })
+            expires_at: guard.expires_at.clone(),
+        }
     }
 }
 
 impl Inner {
-    fn update_tokens<TR, TT>(self: &mut Self, token_result: &TR) -> Result<(), std::time::SystemTimeError>
-    where
-        TR: TokenResponse<TT>,
-        TT: TokenType,
-    {
+    fn update_tokens(self: &mut Self, token_result: &BasicTokenResponse) -> Result<(), std::time::SystemTimeError> {
         self.token = Some(token_result.access_token().secret().clone());
         self.refresh_token = token_result.refresh_token().map(|t| t.secret().clone());
         let now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as u64;

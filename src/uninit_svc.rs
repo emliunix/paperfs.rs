@@ -2,7 +2,7 @@ use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 
-use http::{Request, Response, StatusCode};
+use http::{Request, StatusCode};
 use tokio::sync::Mutex;
 use tower_service::Service;
 use axum::{body::Body, response::IntoResponse};
@@ -48,7 +48,7 @@ where
         let inner = self.inner.clone();
         Box::pin(async move {
             let res = match &mut *inner.lock().await {
-                UninitSvcInner::Uninit => Ok((StatusCode::SERVICE_UNAVAILABLE, "Service not inited").into_response()),
+                UninitSvcInner::Uninit => Ok((StatusCode::SERVICE_UNAVAILABLE, "Service not initialized").into_response()),
                 UninitSvcInner::Inited(svc) => svc.call(req).await.map(|resp| {
                     resp.into_response()
                 }),

@@ -3,27 +3,39 @@ name = "paperfs_rs"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "fail_case"
+path = "src/fail_case.rs"
+
 [dependencies]
 anyhow = "1.0.86"
-axum = "0.7.5"
+axum = { version = "0.8.1", features = ["macros"] }
 bytes = "1.6.0"
-dav-server = "0.6.0"
-dav-server-opendalfs = "0.0.4"
+# console-subscriber = "0.4.1"
+dav-server = "0.7.0"
+dav-server-opendalfs = "0.4.0"
 env_logger = "0.11.3"
 futures = "0.3.30"
 http = "1.1.0"
 http-body = "1.0.0"
 log = { version = "0.4.22", features = ["std"] }
-oauth2 = "4.4.2"
-opendal = { version = "0.47.2", features = ["services-onedrive", "layers-tracing"] }
+oauth2 = "5.0.0"
+opendal = { version = "0.52.0", features = ["services-onedrive", "layers-tracing"] }
 reqwest = { version = "0.12.5", features = ["json"] }
 serde = "1.0.203"
 serde_json = "1.0.120"
-thiserror = "1.0.61"
-tokio = { version = "1.38.0", features = ["full"] }
-tower = "0.4.13"
-tower-http = { version = "0.5.2", features = ["trace"] }
+thiserror = "2.0.12"
+tokio = { version = "1.38.0", features = ["full", "tracing"] }
+tower = "0.5.2"
+tower-http = { version = "0.6.2", features = ["trace"] }
 tower-layer = "0.3.2"
 tower-service = "0.3.2"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
+
+[patch.crates-io]
+opendal = { path = "./opendal/core/" }
+dav-server-opendalfs = { path = "./opendal/integrations/dav-server" }
+
+[patch.'sparse+https://mirrors.tuna.tsinghua.edu.cn/crates.io-index/']
+opendal = { path = "./opendal/core/" }

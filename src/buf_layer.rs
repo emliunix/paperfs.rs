@@ -2,7 +2,7 @@ use std::mem;
 
 use opendal::raw::{oio as oio, LayeredAccess, OpRead, RpRead};
 use opendal::raw::{Access, Layer, OpWrite, RpWrite};
-use opendal::Result;
+use opendal::{Metadata, Result};
 
 use bytes::BufMut;
 
@@ -33,9 +33,11 @@ impl<A:Access> LayeredAccess for BufAccessor<A> {
     type Reader = A::Reader;
     type Writer = BufferedWriter<A::Writer>;
     type Lister = A::Lister;
+    type Deleter = A::Deleter;
     type BlockingReader = A::BlockingReader;
     type BlockingWriter = A::BlockingWriter;
     type BlockingLister = A::BlockingLister;
+    type BlockingDeleter = A::BlockingDeleter;
 
     fn inner(&self) -> &Self::Inner {
         &self.access
@@ -66,6 +68,10 @@ impl<A:Access> LayeredAccess for BufAccessor<A> {
         self.access.list(path, args).await
     }
 
+    async fn delete(&self) -> Result<(opendal::raw::RpDelete, Self::Deleter)> {
+        self.access.delete().await
+    }
+    
     fn blocking_read(
         &self,
         path: &str,
@@ -89,6 +95,10 @@ impl<A:Access> LayeredAccess for BufAccessor<A> {
     ) -> Result<(opendal::raw::RpList, Self::BlockingLister)> {
         self.access.blocking_list(path, args)
     }
+    
+    fn blocking_delete(&self) -> Result<(opendal::raw::RpDelete, Self::BlockingDeleter)> {
+        self.access.blocking_delete()
+    }
 }
 
 pub struct BufferedWriter<W> {
@@ -97,40 +107,20 @@ pub struct BufferedWriter<W> {
 }
 
 impl<W: oio::Write> oio::Write for BufferedWriter<W> {
-    async fn write(&mut self, bs: opendal::Buffer) -> Result<usize> {
-        let len = bs.len();
-        log::debug!("buffer {} bytes", len);
+    async fn write(&mut self, bs: opendal::Buffer) -> Result<()> {
+        log::debug!("buffer {} bytes", bs.len());
         self.buffer.put(bs);
-        Ok(len)
+        Ok(())
     }
 
-    async fn close(&mut self) -> Result<()> {
+    async fn close(&mut self) -> Result<Metadata> {
         log::debug!("write {} bytes", self.buffer.len());
         self.inner.write(mem::replace(&mut self.buffer, Vec::new()).into()).await?;
         self.inner.close().await
     }
 
     async fn abort(&mut self) -> Result<()> {
+        log::debug!("abort");
         self.inner.abort().await
-    }
-}
-
-pub struct BlockingBufferedWriter<W> {
-    inner: W,
-    buffer: Vec<u8>,
-}
-
-impl<W: oio::BlockingWrite> oio::BlockingWrite for BlockingBufferedWriter<W> {
-    fn write(&mut self, bs: opendal::Buffer) -> Result<usize> {
-        let len = bs.len();
-        log::debug!("blocking buffer {} bytes", len);
-        self.buffer.put(bs);
-        Ok(len)
-    }
-
-    fn close(&mut self) -> Result<()> {
-        log::debug!("blocking write {} bytes", self.buffer.len());
-        self.inner.write(mem::replace(&mut self.buffer, Vec::new()).into())?;
-        self.inner.close()
     }
 }
