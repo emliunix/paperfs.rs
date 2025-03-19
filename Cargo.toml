@@ -3,10 +3,6 @@ name = "paperfs_rs"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "fail_case"
-path = "src/fail_case.rs"
-
 [dependencies]
 anyhow = "1.0.86"
 axum = { version = "0.8.1", features = ["macros"] }
