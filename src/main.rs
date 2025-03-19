@@ -22,6 +22,7 @@ use tokio::fs::{read_to_string, File};
 use tokio::io::AsyncWriteExt;
 // use reqwest::{Certificate, Proxy};
 use tower_http::trace::TraceLayer;
+use types::OneDriveArgs;
 use uninit_svc::UninitSvc;
 use utils::LogError;
 
@@ -38,7 +39,7 @@ mod utils;
 /// and rust internally has a search depth limit prevents from resolving
 fn is_fn<F: (Fn(&str) -> bool) + 'static + Send + Sync + Unpin + Clone>(f: F) -> F { f }
 
-fn dav_svc<B, D, E>(root: &str, client_id: &str, refresh_token: &str) -> Result<DavHandlerWrapper> where
+fn dav_svc<B, D, E>(args: &OneDriveArgs) -> Result<DavHandlerWrapper> where
     D: Buf + Send + 'static,
     E: StdError + Send + Sync + 'static,
     B: http_body::Body<Data=D, Error=E> + Send + 'static,
@@ -50,10 +51,13 @@ fn dav_svc<B, D, E>(root: &str, client_id: &str, refresh_token: &str) -> Result<
     //     // .proxy(Proxy::https("http://localhost:8080")?)
     //     // .add_root_certificate(cert)
     //     .build()?);
-    let builder = Onedrive::default()
-        .root(root)
-        .client_id(client_id)
-        .refresh_token(refresh_token);
+    let mut builder = Onedrive::default()
+        .root(&args.onedrive_root)
+        .client_id(&args.client_id)
+        .refresh_token(args.refresh_token.as_ref().unwrap());
+    if let Some(client_secret) = args.client_secret.as_ref() {
+        builder = builder.client_secret(client_secret);
+    }
     let mux_layer = MuxLayer::new(|| Memory::default().build().unwrap(), is_fn(|path| {
         // split into dir and file
         let mut parts = path.rsplitn(2, '/');
@@ -82,10 +86,8 @@ fn dav_svc<B, D, E>(root: &str, client_id: &str, refresh_token: &str) -> Result<
     Ok(svc)
 }
 
-async fn set_token(svc: UninitSvc<DavHandlerWrapper>, client_id: &str, od_root: &str, refresh_token: String) -> Result<(), anyhow::Error> {
-        svc.init(dav_svc::<axum::body::Body, Bytes, axum::Error>(
-            od_root, client_id, &refresh_token, 
-        )?).await;
+async fn set_token(svc: UninitSvc<DavHandlerWrapper>, args: &OneDriveArgs) -> Result<(), anyhow::Error> {
+        svc.init(dav_svc::<axum::body::Body, Bytes, axum::Error>(args)?).await;
         anyhow::Ok(())
 }
 
@@ -106,15 +108,14 @@ async fn load_token() -> Result<Option<ODriveState>, anyhow::Error> {
     Ok(None)
 }
 
-fn token_cb(svc: UninitSvc<DavHandlerWrapper>, client_id: String, od_root: String) -> impl Fn(ODriveState) + Clone + Send + 'static {
+fn token_cb(svc: UninitSvc<DavHandlerWrapper>, args: OneDriveArgs) -> impl Fn(ODriveState) + Clone + Send + 'static {
     move |state| {
         let svc = svc.clone();
-        let client_id = client_id.clone();
-        let od_root = od_root.clone();
+        let args = args.clone();
         tokio::spawn(async move {
             save_token(state.clone()).await.log_err("failed to save refresh token");
             let refresh_token = state.refresh_token.expect("refresh token not found");
-            set_token(svc.clone(), &client_id, &od_root, refresh_token).await.log_err("failed to set refresh token");
+            set_token(svc.clone(), &OneDriveArgs { refresh_token: Some(refresh_token), ..args}).await.log_err("failed to set refresh token");
         });
     }
 }
@@ -126,10 +127,17 @@ async fn main() {
     // get paraemters from env
     let onedrive_root = std::env::var("ONEDRIVE_ROOT").log_err("ONEDRIVE_ROOT not provided");
     let onedrive_client_id = std::env::var("ONEDRIVE_CLIENT_ID").log_err("ONEDRIVE_CLIENT_ID not provided");
-    let onedrive_client_secret = std::env::var("ONEDRIVE_CLIENT_SECRET").log_err("ONEDRIVE_CLIENT_SECRET not provided");
+    let onedrive_client_secret = std::env::var("ONEDRIVE_CLIENT_SECRET").ok(); // optional
     // let onedrive_access_token = std::env::var("ONEDRIVE_ACCESS_TOKEN").unwrap();
     let bind_addr = std::env::var("PAPERFS_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".to_string());
     let exposed_url = std::env::var("PAPERFS_EXPOSED_URL").unwrap_or_else(|_| "http://localhost:3000".to_string());
+
+    let onedrive_args = OneDriveArgs {
+        onedrive_root: onedrive_root,
+        client_id: onedrive_client_id,
+        client_secret: onedrive_client_secret,
+        ..Default::default()
+    };
 
     // dav service
     let svc = UninitSvc::new();
@@ -137,7 +145,7 @@ async fn main() {
     if let Some(state) = load_token().await.log_err("error loading saved refresh token") {
         log::info!("Loaded persisted refresh data");
         let refresh_token = state.refresh_token.expect("state not found");
-        set_token(svc.clone(), &onedrive_client_id, &onedrive_root, refresh_token).await.log_err("failed to set refresh token");
+        set_token(svc.clone(), &OneDriveArgs { refresh_token: Some(refresh_token), ..onedrive_args.clone()}).await.log_err("failed to set refresh token");
     }
 
     // axum router
@@ -147,10 +155,10 @@ async fn main() {
         .route_service("/zotero/", svc.clone())
         .route_service("/zotero/{*ignore}", svc.clone())
         .nest("/api/v1/onedrive", onedrive_api_router(
-            &onedrive_client_id,
+            &onedrive_args,
             &exposed_url,
             None,  // let's pass None for now, effectively making refresh_token one-way passing only to dav_svc and saved file
-            token_cb(svc.clone(), onedrive_client_id.clone(), onedrive_root.clone())
+            token_cb(svc.clone(), onedrive_args.clone())
         ))
         .layer(TraceLayer::new_for_http())
         .layer(DefaultBodyLimit::max(64 * 1024 * 1024));

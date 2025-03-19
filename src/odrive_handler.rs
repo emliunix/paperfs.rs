@@ -2,7 +2,7 @@ use axum::{extract::Query, response::Redirect, routing::{get, post}, Router};
 use http::StatusCode;
 use serde::Deserialize;
 
-use crate::{odrive::{ODriveSession, ODriveState}, utils::LogError};
+use crate::{odrive::{ODriveSession, ODriveState}, types::OneDriveArgs, utils::LogError};
 
 // Struct to receive the query parameters
 #[derive(Deserialize)]
@@ -31,10 +31,11 @@ async fn callback<CB: Fn(ODriveState)>(session: ODriveSession, cb: CB, query: Ca
     }
 }
 
-pub fn onedrive_api_router<CB: Fn(ODriveState) + Clone + Send + Sync + 'static>(onedrive_client_id: &String, exposed_url: &String, state: Option<ODriveState>, cb: CB) -> Router {
+pub fn onedrive_api_router<CB: Fn(ODriveState) + Clone + Send + Sync + 'static>(args: &OneDriveArgs, exposed_url: &String, state: Option<ODriveState>, cb: CB) -> Router {
     let session = ODriveSession::new(
         reqwest::Client::new(),
-        onedrive_client_id,
+        &args.client_id,
+        args.client_secret.as_ref().map(|s| s.as_str()).unwrap_or(""),
         format!("{}/api/v1/onedrive/callback", exposed_url).as_str(),
         state,
     ).log_err("failed to construct onedrive session");

@@ -1,21 +1,10 @@
+use std::marker::PhantomData;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 use anyhow::{Context, Error as AnyError};
-use oauth2::{EndpointNotSet, EndpointSet};
-use oauth2::{
-    AuthUrl,
-    AuthorizationCode,
-    ClientId,
-    CsrfToken,
-    PkceCodeChallenge,
-    PkceCodeVerifier,
-    RedirectUrl,
-    RefreshToken,
-    Scope,
-    TokenResponse,
-    TokenUrl,
-};
-use oauth2::basic::{BasicClient, BasicTokenResponse};
+use oauth2::*;
+use oauth2::basic::{BasicClient, BasicErrorResponse, BasicRevocationErrorResponse, BasicTokenIntrospectionResponse, BasicTokenResponse, BasicTokenType};
+use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 use oauth2::url::Url;
 
@@ -25,6 +14,7 @@ const SCOPES: &[&str] = &[
     "Files.Read",
     "Files.ReadWrite",
     "offline_access", // this scope is required for refresh token
+    "openid", // for id_token
 ];
 
 #[derive(serde::Deserialize, Debug, Clone)]
@@ -41,7 +31,8 @@ pub struct ODriveSession {
 }
 
 struct Inner {
-    client: BasicClient<EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>,
+    client: OpenIDClient,
+    // BasicClient<EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>,
     token: Option<String>,
     refresh_token: Option<String>,
     expires_at: Option<u64>,
@@ -54,14 +45,34 @@ pub struct ODriveState {
     pub expires_at: Option<u64>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OpenIDFields {
+    pub id_token: Option<String>,
+}
+
+impl ExtraTokenFields for OpenIDFields {}
+
+type OpenIDTokenResponse = StandardTokenResponse<OpenIDFields, BasicTokenType>;
+
+type OpenIDClient = Client<
+    BasicErrorResponse,
+    OpenIDTokenResponse,
+    BasicTokenIntrospectionResponse,
+    StandardRevocableToken,
+    BasicRevocationErrorResponse,
+    EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>;
+
 impl ODriveSession {
     pub fn new(
         http_client: reqwest::Client,
         client_id: &str,
+        client_secret: &str,
         redirect_url: &str,
         state: Option<ODriveState>,
     ) -> Result<Self, anyhow::Error> {
-        let client = BasicClient::new(ClientId::new(client_id.to_string()))
+        // BasicClient::new(client_id)
+        let client = Client::new(ClientId::new(client_id.to_string()))
+            .set_client_secret(ClientSecret::new(client_secret.to_string()))
             .set_auth_uri(AuthUrl::new(AUTH_URL.to_string())?)
             .set_token_uri(TokenUrl::new(TOKEN_URL.to_string())?)
             .set_redirect_uri(RedirectUrl::new(redirect_url.to_string())?);
@@ -113,6 +124,9 @@ impl ODriveSession {
             .request_async(&self.http_client)
             .await?;
 
+        let id_token = token_result.extra_fields().id_token.as_ref().expect("id_token not present");
+        log::debug!("id_token: {}", id_token);
+
         guard.update_tokens(&token_result)?;
         Ok(())
     }
@@ -158,7 +172,7 @@ impl ODriveSession {
 }
 
 impl Inner {
-    fn update_tokens(self: &mut Self, token_result: &BasicTokenResponse) -> Result<(), std::time::SystemTimeError> {
+    fn update_tokens(self: &mut Self, token_result: &OpenIDTokenResponse) -> Result<(), std::time::SystemTimeError> {
         self.token = Some(token_result.access_token().secret().clone());
         self.refresh_token = token_result.refresh_token().map(|t| t.secret().clone());
         let now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as u64;
