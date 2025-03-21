@@ -1,0 +1,3 @@
+[submodule "opendal"]
+	path = opendal
+	url = git@github.com:emliunix/opendal
