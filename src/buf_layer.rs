@@ -34,10 +34,6 @@ impl<A:Access> LayeredAccess for BufAccessor<A> {
     type Writer = BufferedWriter<A::Writer>;
     type Lister = A::Lister;
     type Deleter = A::Deleter;
-    type BlockingReader = A::BlockingReader;
-    type BlockingWriter = A::BlockingWriter;
-    type BlockingLister = A::BlockingLister;
-    type BlockingDeleter = A::BlockingDeleter;
 
     fn inner(&self) -> &Self::Inner {
         &self.access
@@ -70,34 +66,6 @@ impl<A:Access> LayeredAccess for BufAccessor<A> {
 
     async fn delete(&self) -> Result<(opendal::raw::RpDelete, Self::Deleter)> {
         self.access.delete().await
-    }
-    
-    fn blocking_read(
-        &self,
-        path: &str,
-        args: OpRead
-    ) -> Result<(RpRead, Self::BlockingReader)> {
-        self.access.blocking_read(path, args)
-    }
-
-    fn blocking_write(
-        &self,
-        path: &str,
-        args: OpWrite
-    ) -> Result<(RpWrite, Self::BlockingWriter)> {
-        self.access.blocking_write(path, args)
-    }
-
-    fn blocking_list(
-        &self,
-        path: &str,
-        args: opendal::raw::OpList
-    ) -> Result<(opendal::raw::RpList, Self::BlockingLister)> {
-        self.access.blocking_list(path, args)
-    }
-    
-    fn blocking_delete(&self) -> Result<(opendal::raw::RpDelete, Self::BlockingDeleter)> {
-        self.access.blocking_delete()
     }
 }
 

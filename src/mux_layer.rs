@@ -4,7 +4,6 @@ use std::ops::DerefMut;
 use std::sync::Arc;
 
 use futures::lock::Mutex;
-use opendal::raw::oio::BlockingList;
 use opendal::raw::oio::List;
 use opendal::raw::*;
 use opendal::ErrorKind;
@@ -69,10 +68,6 @@ where
     type Writer = oio::Writer;
     type Lister = oio::Lister;
     type Deleter = oio::Deleter;
-    type BlockingReader = ();
-    type BlockingWriter = ();
-    type BlockingLister = ();
-    type BlockingDeleter = ();
 
     fn info(&self) -> Arc<AccessorInfo> {
         self.b.info()
@@ -131,22 +126,6 @@ where
         ) -> Result<RpCreateDir> {
         log::debug!("create_dir B {}", path);
         self.b.create_dir(path, args).await
-    }
-
-    fn blocking_read(&self, path: &str, args: OpRead) -> Result<(RpRead, Self::BlockingReader)> {
-        Err(opendal::Error::new(ErrorKind::Unsupported, "unsupported"))
-    }
-
-    fn blocking_write(&self, path: &str, args: OpWrite) -> Result<(RpWrite, Self::BlockingWriter)> {
-        Err(opendal::Error::new(ErrorKind::Unsupported, "unsupported"))
-    }
-
-    fn blocking_list(&self, path: &str, args: OpList) -> Result<(RpList, Self::BlockingLister)> {
-        Err(opendal::Error::new(ErrorKind::Unsupported, "unsupported"))
-    }
-
-    fn blocking_delete(&self) -> Result<(RpDelete, Self::BlockingDeleter)> {
-        Err(opendal::Error::new(ErrorKind::Unsupported, "unsupported"))
     }
 }
 
