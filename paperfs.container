@@ -6,7 +6,7 @@ Image=localhost/paperfs:latest
 EnvironmentFile=%h/paperfs/.env
 WorkingDir=/paperfs
 Volume=paperfs:/paperfs
-PublishPort=3200:3000
+PublishPort=3000:3000
 
 [Install]
 WantedBy=default.target
