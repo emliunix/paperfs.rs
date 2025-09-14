@@ -119,9 +119,14 @@ fn token_cb(svc: UninitSvc<DavHandlerWrapper>, args: OneDriveArgs) -> impl Fn(OD
     }
 }
 
+static GIT_REVISION: &str = env!("GIT_REVISION");
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
+
+    log::info!("paperfs version: {}", GIT_REVISION);
+    
     // console_subscriber::init();
     // get paraemters from env
     let onedrive_root = std::env::var("ONEDRIVE_ROOT").log_err("ONEDRIVE_ROOT not provided");
