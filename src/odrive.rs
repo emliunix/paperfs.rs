@@ -1,7 +1,11 @@
 use std::marker::PhantomData;
+use thiserror::{Error as ThisError};
+use std::pin::Pin;
+use std::future::Future;
+use std::error::Error;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
-use anyhow::{Context, Error as AnyError};
+use anyhow::{anyhow, Context, Error as AnyError};
 use oauth2::*;
 use oauth2::basic::{BasicClient, BasicErrorResponse, BasicRevocationErrorResponse, BasicTokenIntrospectionResponse, BasicTokenResponse, BasicTokenType};
 use serde::{Deserialize, Serialize};
@@ -62,6 +66,14 @@ type OpenIDClient = Client<
     BasicRevocationErrorResponse,
     EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>;
 
+#[derive(ThisError, Debug)]
+enum RequestorError {
+    #[error("HTTP Error: {0}")]
+    HTTPError(reqwest::Error),
+    #[error("Build response Error: {0}")]
+    BuildResponseError(http::Error),
+}
+
 impl ODriveSession {
     pub fn new(
         http_client: reqwest::Client,
@@ -121,10 +133,11 @@ impl ODriveSession {
         let mut guard = self.inner.lock().await;
         let pkce_verifier = guard.pkce_verifier.take().context("PKCE verifier not found")?;
 
+        let requestor = self.requestor();
         let token_result = guard.client
             .exchange_code(AuthorizationCode::new(authorization_code.to_string()))
             .set_pkce_verifier(pkce_verifier)
-            .request_async(&self.http_client)
+            .request_async(&requestor)
             .await?;
 
         let id_token = token_result.extra_fields().id_token.as_ref().expect("id_token not present");
@@ -140,9 +153,10 @@ impl ODriveSession {
         let refresh_token = guard.refresh_token.clone()
             .map(|s| RefreshToken::new(s))
             .context("Refresh token not found")?;
+        let requestor = self.requestor();
         let token_result = guard.client
             .exchange_refresh_token(&refresh_token)
-            .request_async(&self.http_client)
+            .request_async(&requestor)
             .await?;
 
         guard.update_tokens(&token_result)?;
@@ -170,6 +184,26 @@ impl ODriveSession {
         ODriveState {
             refresh_token: guard.refresh_token.clone(),
             expires_at: guard.expires_at.clone(),
+        }
+    }
+
+    fn requestor(&self) -> impl Fn(HttpRequest) -> Pin<Box<dyn Future<Output = Result<HttpResponse, RequestorError>> + Send>> + use<'_> {
+        move |request| {
+            let http_client = self.http_client.clone();
+            Box::pin(async move {
+                log::debug!("Making HTTP request: {:?}", request);
+                let res = http_client.execute(request.try_into().map_err(RequestorError::HTTPError)?)
+                    .await
+                    .map_err(RequestorError::HTTPError)?;
+                log::debug!("Received HTTP response: {:?}", res);
+                let mut builder = http::Response::builder().status(res.status());
+                for (name, value) in res.headers().iter() {
+                    builder = builder.header(name, value);
+                }
+                builder
+                    .body(res.bytes().await.map_err(RequestorError::HTTPError)?.to_vec())
+                    .map_err(RequestorError::BuildResponseError)
+            })
         }
     }
 }

@@ -10,8 +10,9 @@ WORKDIR /app
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/app/target \
+    cd /app && \
     cargo build --release --bin paperfs_rs && \
-    cp /app/target/release/paperfs_rs /paperfs_rs
+    cp target/release/paperfs_rs /paperfs_rs # this is necessary because target is in cache
 
 FROM debian:bookworm
 RUN apt -y update && apt -y install apt-transport-https ca-certificates && apt -y clean all
