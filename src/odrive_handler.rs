@@ -33,9 +33,11 @@ async fn callback<CB: Fn(ODriveState)>(session: ODriveSession, cb: CB, query: Ca
 
 pub fn onedrive_api_router<CB: Fn(ODriveState) + Clone + Send + Sync + 'static>(args: &OneDriveArgs, exposed_url: &String, state: Option<ODriveState>, cb: CB) -> Router {
     let session = ODriveSession::new(
-        reqwest::Client::new(),
+        reqwest::ClientBuilder::new()
+            .build()
+            .unwrap(),
         &args.client_id,
-        args.client_secret.as_ref().map(|s| s.as_str()).unwrap_or(""),
+        args.client_secret.as_ref().map(|s| s.as_str()),
         format!("{}/api/v1/onedrive/callback", exposed_url).as_str(),
         state,
     ).log_err("failed to construct onedrive session");

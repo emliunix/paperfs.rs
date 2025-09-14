@@ -66,16 +66,18 @@ impl ODriveSession {
     pub fn new(
         http_client: reqwest::Client,
         client_id: &str,
-        client_secret: &str,
+        client_secret: Option<&str>,
         redirect_url: &str,
         state: Option<ODriveState>,
     ) -> Result<Self, anyhow::Error> {
         // BasicClient::new(client_id)
-        let client = Client::new(ClientId::new(client_id.to_string()))
-            .set_client_secret(ClientSecret::new(client_secret.to_string()))
+        let mut client = Client::new(ClientId::new(client_id.to_string()))
             .set_auth_uri(AuthUrl::new(AUTH_URL.to_string())?)
             .set_token_uri(TokenUrl::new(TOKEN_URL.to_string())?)
             .set_redirect_uri(RedirectUrl::new(redirect_url.to_string())?);
+        if let Some(secret) = client_secret {
+            client = client.set_client_secret(ClientSecret::new(secret.to_string()));
+        }
 
         log::info!("OAuth2 client initialized");
 
@@ -102,6 +104,7 @@ impl ODriveSession {
         log::info!("Initiating authentication");
         let mut guard = self.inner.lock().await;
         let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
+        log::debug!("PKCE Verifier: {}", pkce_verifier.secret());
         guard.pkce_verifier = Some(pkce_verifier);
 
         let (auth_url, _csrf_token) = guard.client
