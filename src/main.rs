@@ -1,6 +1,5 @@
 use std::error::Error as StdError;
 use std::future::IntoFuture;
-// std::future::IntoFuture; not used after switching to explicit server handling
 
 use anyhow::{Context, Result};
 use axum::extract::DefaultBodyLimit;
@@ -21,31 +20,6 @@ use opendal::{Builder, Operator};
 use tokio::fs::{read_to_string, File};
 use tokio::io::AsyncWriteExt;
 
-// shutdown helper: listen for Ctrl+C and SIGTERM on unix
-async fn shutdown_signal() {
-    // Wait for Ctrl+C
-    let ctrl_c = async {
-        tokio::signal::ctrl_c().await.expect("failed to listen for ctrl_c");
-    };
-
-    // On Unix also listen for SIGTERM
-    #[cfg(unix)]
-    let term = async {
-        let mut sigterm = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
-            .expect("failed to listen for SIGTERM");
-        sigterm.recv().await;
-    };
-
-    #[cfg(not(unix))]
-    let term = std::future::pending::<()>();
-
-    tokio::select! {
-        _ = ctrl_c => {},
-        _ = term => {},
-    }
-
-    log::info!("shutdown signal received");
-}
 // use reqwest::{Certificate, Proxy};
 use tower_http::trace::TraceLayer;
 use types::OneDriveArgs;
@@ -144,6 +118,32 @@ fn token_cb(svc: UninitSvc<DavHandlerWrapper>, args: OneDriveArgs) -> impl Fn(OD
             set_token(svc.clone(), &OneDriveArgs { refresh_token: Some(refresh_token), ..args}).await.log_err("failed to set refresh token");
         });
     }
+}
+
+// shutdown helper: listen for Ctrl+C and SIGTERM on unix
+async fn shutdown_signal() {
+    // Wait for Ctrl+C
+    let ctrl_c = async {
+        tokio::signal::ctrl_c().await.expect("failed to listen for ctrl_c");
+    };
+
+    // On Unix also listen for SIGTERM
+    #[cfg(unix)]
+    let term = async {
+        let mut sigterm = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .expect("failed to listen for SIGTERM");
+        sigterm.recv().await;
+    };
+
+    #[cfg(not(unix))]
+    let term = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = term => {},
+    }
+
+    log::info!("shutdown signal received");
 }
 
 static GIT_REVISION: &str = env!("GIT_REVISION");
