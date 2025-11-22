@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, future::Future, pin::Pin};
 
 pub trait LogError {
     type Output;
@@ -12,5 +12,25 @@ impl<T, E> LogError for Result<T, E> where E: Debug {
             log::error!("{}: {:?}", ctx, e);
         }
         self.unwrap()
+    }
+}
+
+pub trait AsyncHook<Arg>: Send + Sync {
+    fn call<'a>(
+        &'a self,
+        arg: Arg,
+    ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>;
+}
+
+impl<Arg, F, Fut> AsyncHook<Arg> for F
+where
+    F: Fn(Arg) -> Fut + Send + Sync,
+    Fut: Future<Output = ()> + Send + 'static,
+{
+    fn call<'a>(
+        &'a self,
+        arg: Arg,
+    ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>> {
+        Box::pin((self)(arg))
     }
 }

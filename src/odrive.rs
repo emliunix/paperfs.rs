@@ -1,17 +1,21 @@
-use std::marker::PhantomData;
+use std::collections::BTreeMap;
+use std::collections::btree_map::Entry;
 use thiserror::{Error as ThisError};
+use tokio::fs::read_to_string;
 use std::pin::Pin;
 use std::future::Future;
-use std::error::Error;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
-use anyhow::{anyhow, Context, Error as AnyError};
+use anyhow::{Context, Error as AnyError};
 use oauth2::*;
-use oauth2::basic::{BasicClient, BasicErrorResponse, BasicRevocationErrorResponse, BasicTokenIntrospectionResponse, BasicTokenResponse, BasicTokenType};
+use oauth2::basic::{BasicErrorResponse, BasicRevocationErrorResponse, BasicTokenIntrospectionResponse, BasicTokenType};
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 use oauth2::url::Url;
 
+use crate::utils::AsyncHook;
+
+const APP_DATA_PATH: &str = "app_data.json";
 const AUTH_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
 const TOKEN_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 const SCOPES: &[&str] = &[
@@ -40,7 +44,8 @@ struct Inner {
     token: Option<String>,
     refresh_token: Option<String>,
     expires_at: Option<u64>,
-    pkce_verifier: Option<PkceCodeVerifier>,
+    states: BTreeMap<String, PkceCodeVerifier>,
+    callbacks: Vec<Box<dyn AsyncHook<ODriveState>>>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
@@ -77,37 +82,28 @@ enum RequestorError {
 impl ODriveSession {
     pub fn new(
         http_client: reqwest::Client,
-        client_id: &str,
-        client_secret: Option<&str>,
-        redirect_url: &str,
-        state: Option<ODriveState>,
+        client_id: String,
+        client_secret: Option<String>,
+        redirect_url: String,
     ) -> Result<Self, anyhow::Error> {
         // BasicClient::new(client_id)
-        let mut client = Client::new(ClientId::new(client_id.to_string()))
+        let mut client = Client::new(ClientId::new(client_id))
             .set_auth_uri(AuthUrl::new(AUTH_URL.to_string())?)
             .set_token_uri(TokenUrl::new(TOKEN_URL.to_string())?)
-            .set_redirect_uri(RedirectUrl::new(redirect_url.to_string())?);
+            .set_redirect_uri(RedirectUrl::new(redirect_url)?);
         if let Some(secret) = client_secret {
-            client = client.set_client_secret(ClientSecret::new(secret.to_string()));
+            client = client.set_client_secret(ClientSecret::new(secret));
         }
 
-        log::info!("OAuth2 client initialized");
-
-        let mut inner = Inner {
-            client,
-            token: None,
-            refresh_token: None,
-            expires_at: None,
-            pkce_verifier: None,
-        };
-
-        if let Some(state) = state {
-            inner.refresh_token = state.refresh_token;
-            inner.expires_at = state.expires_at;
-        }
-        
         Ok(ODriveSession {
-            inner: Arc::new(Mutex::new(inner)),
+            inner: Arc::new(Mutex::new(Inner {
+                client,
+                token: None,
+                refresh_token: None,
+                expires_at: None,
+                states: BTreeMap::new(),
+                callbacks: Vec::new(),
+            })),
             http_client,
         })
     }
@@ -116,11 +112,12 @@ impl ODriveSession {
         log::info!("Initiating authentication");
         let mut guard = self.inner.lock().await;
         let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
+        let csrftoken = CsrfToken::new_random();
         log::debug!("PKCE Verifier: {}", pkce_verifier.secret());
-        guard.pkce_verifier = Some(pkce_verifier);
+        guard.states.insert(csrftoken.secret().clone(), pkce_verifier);
 
         let (auth_url, _csrf_token) = guard.client
-            .authorize_url(CsrfToken::new_random)
+            .authorize_url(move || csrftoken)
             .add_scopes(SCOPES.iter().map(|s| Scope::new(s.to_string())))
             .set_pkce_challenge(pkce_challenge)
             .url();
@@ -128,15 +125,19 @@ impl ODriveSession {
         auth_url
     }
 
-    pub async fn auth(&self, authorization_code: &str) -> Result<(), AnyError> {
+    pub async fn auth(&self, state: String, authorization_code: String) -> Result<(), AnyError> {
         log::info!("Authenticating with authorization code");
         let mut guard = self.inner.lock().await;
-        let pkce_verifier = guard.pkce_verifier.take().context("PKCE verifier not found")?;
+        let verifier = if let Entry::Occupied(entry) = guard.states.entry(state) {
+            entry.remove()
+        } else {
+            return Err(anyhow::anyhow!("auth state not found"));
+        };
 
         let requestor = self.requestor();
         let token_result = guard.client
-            .exchange_code(AuthorizationCode::new(authorization_code.to_string()))
-            .set_pkce_verifier(pkce_verifier)
+            .exchange_code(AuthorizationCode::new(authorization_code))
+            .set_pkce_verifier(verifier)
             .request_async(&requestor)
             .await?;
 
@@ -179,14 +180,6 @@ impl ODriveSession {
         self.inner.lock().await.token.clone()
     }
 
-    pub async fn state(&self) -> ODriveState {
-        let guard = self.inner.lock().await;
-        ODriveState {
-            refresh_token: guard.refresh_token.clone(),
-            expires_at: guard.expires_at.clone(),
-        }
-    }
-
     fn requestor(&self) -> impl Fn(HttpRequest) -> Pin<Box<dyn Future<Output = Result<HttpResponse, RequestorError>> + Send>> + use<'_> {
         move |request| {
             let http_client = self.http_client.clone();
@@ -205,6 +198,31 @@ impl ODriveSession {
                     .map_err(RequestorError::BuildResponseError)
             })
         }
+    }
+
+    pub async fn load_token(&self) -> Result<(), anyhow::Error> {
+        // test exists
+        if std::path::Path::new(APP_DATA_PATH).exists() {
+            let data = read_to_string(APP_DATA_PATH).await?;
+            let data: ODriveState = serde_json::from_str(&data).context("failed to deserialize state")?;
+            let mut guard = self.inner.lock().await;
+            guard.refresh_token = data.refresh_token;
+            guard.expires_at = data.expires_at;
+        }
+        Ok(())
+    }
+
+    async fn call_on_auth(&self, state: ODriveState) {
+        let mut guard = self.inner.lock().await;
+        let state = ODriveState { refresh_token: guard.refresh_token.clone(), expires_at: guard.expires_at };
+        for cb in guard.callbacks.iter() {
+            cb.call(state.clone()).await;
+        }
+    }
+
+    pub async fn on_auth(&self, cb: Box<dyn AsyncHook<ODriveState>>) {
+        let mut guard = self.inner.lock().await;
+        guard.callbacks.push(cb);
     }
 }
 

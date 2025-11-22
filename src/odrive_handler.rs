@@ -1,8 +1,8 @@
-use axum::{extract::Query, response::Redirect, routing::{get, post}, Router};
+use axum::{Router, extract::{Query, State}, response::Redirect, routing::{get, post}};
 use http::StatusCode;
 use serde::Deserialize;
 
-use crate::{odrive::{ODriveSession, ODriveState}, types::OneDriveArgs, utils::LogError};
+use crate::odrive::ODriveSession;
 
 // Struct to receive the query parameters
 #[derive(Deserialize)]
@@ -11,16 +11,15 @@ struct CallbackQuery {
     state: String,
 }
 
-async fn login(session: ODriveSession) -> Redirect {
+async fn login(State(session): State<ODriveSession>) -> Redirect {
     let url = session.initiate_auth().await;
     // use 303
     Redirect::to(url.as_str())
 }
 
-async fn callback<CB: Fn(ODriveState)>(session: ODriveSession, cb: CB, query: CallbackQuery) -> (StatusCode, String) {
-    match session.auth(&query.code).await {
+async fn callback(State(session): State<ODriveSession>, Query(query): Query<CallbackQuery>) -> (StatusCode, String) {
+    match session.auth(query.state, query.code).await {
         Ok(_) => {
-            (cb)(session.state().await);
             log::info!("Authentication successful");
             (StatusCode::OK, "success".to_string())
         },
@@ -31,25 +30,9 @@ async fn callback<CB: Fn(ODriveState)>(session: ODriveSession, cb: CB, query: Ca
     }
 }
 
-pub fn onedrive_api_router<CB: Fn(ODriveState) + Clone + Send + Sync + 'static>(args: &OneDriveArgs, exposed_url: &String, state: Option<ODriveState>, cb: CB) -> Router {
-    let session = ODriveSession::new(
-        reqwest::ClientBuilder::new()
-            .build()
-            .unwrap(),
-        &args.client_id,
-        args.client_secret.as_ref().map(|s| s.as_str()),
-        format!("{}/api/v1/onedrive/callback", exposed_url).as_str(),
-        state,
-    ).log_err("failed to construct onedrive session");
+pub fn onedrive_api_router(session: ODriveSession) -> Router {
     Router::new()
-        .route("/login", post({
-            let session = session.clone();
-            || async move { login(session).await } 
-        }))
-        .route("/callback", get({
-            let session = session.clone();
-            |Query::<CallbackQuery>(query)| async move {
-                callback(session, cb, query).await
-            }
-        }))
+        .route("/login", post(login))
+        .route("/callback", get(callback))
+        .with_state(session)
 }

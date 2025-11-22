@@ -17,7 +17,7 @@ use odrive_handler::onedrive_api_router;
 use opendal::layers::LoggingLayer;
 use opendal::services::{Memory, Onedrive};
 use opendal::{Builder, Operator};
-use tokio::fs::{read_to_string, File};
+use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
 // use reqwest::{Certificate, Proxy};
@@ -25,6 +25,8 @@ use tower_http::trace::TraceLayer;
 use types::OneDriveArgs;
 use uninit_svc::UninitSvc;
 use utils::LogError;
+
+use crate::odrive::ODriveSession;
 
 mod dav;
 mod buf_layer;
@@ -98,16 +100,6 @@ async fn save_token(state: ODriveState) -> Result<(), anyhow::Error> {
     Ok(())
 }
 
-async fn load_token() -> Result<Option<ODriveState>, anyhow::Error> {
-    // test exists
-    if std::path::Path::new("app_data.json").exists() {
-        let data = read_to_string("app_data.json").await?;
-        let data: ODriveState = serde_json::from_str(&data).context("failed to deserialize state")?;
-        return Ok(Some(data));
-    }
-    Ok(None)
-}
-
 fn token_cb(svc: UninitSvc<DavHandlerWrapper>, args: OneDriveArgs) -> impl Fn(ODriveState) + Clone + Send + 'static {
     move |state| {
         let svc = svc.clone();
@@ -156,41 +148,56 @@ async fn main() {
     
     // console_subscriber::init();
     // get paraemters from env
-    let onedrive_root = std::env::var("ONEDRIVE_ROOT").log_err("ONEDRIVE_ROOT not provided");
-    let onedrive_client_id = std::env::var("ONEDRIVE_CLIENT_ID").log_err("ONEDRIVE_CLIENT_ID not provided");
+    let onedrive_root = std::env::var("ONEDRIVE_ROOT").expect("ONEDRIVE_ROOT not provided");
+    let onedrive_client_id = std::env::var("ONEDRIVE_CLIENT_ID").expect("ONEDRIVE_CLIENT_ID not provided");
     let onedrive_client_secret = std::env::var("ONEDRIVE_CLIENT_SECRET").ok(); // optional
     // let onedrive_access_token = std::env::var("ONEDRIVE_ACCESS_TOKEN").unwrap();
-    let bind_addr = std::env::var("PAPERFS_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".to_string());
-    let exposed_url = std::env::var("PAPERFS_EXPOSED_URL").unwrap_or_else(|_| "http://localhost:3000".to_string());
-
-    let onedrive_args = OneDriveArgs {
-        onedrive_root: onedrive_root,
-        client_id: onedrive_client_id,
-        client_secret: onedrive_client_secret,
-        ..Default::default()
-    };
+    let bind_addr = std::env::var("PAPERFS_BIND_ADDR").ok().unwrap_or_else(|| "0.0.0.0:3000".to_string());
+    let exposed_url = std::env::var("PAPERFS_EXPOSED_URL").ok().unwrap_or_else(|| "http://localhost:3000".to_string());
 
     // dav service
     let svc = UninitSvc::new();
 
-    if let Some(state) = load_token().await.log_err("error loading saved refresh token") {
-        log::info!("Loaded persisted refresh data");
-        let refresh_token = state.refresh_token.expect("state not found");
-        set_token(svc.clone(), &OneDriveArgs { refresh_token: Some(refresh_token), ..onedrive_args.clone()}).await.log_err("failed to set refresh token");
-    }
+    // onedrive session
+    let session = ODriveSession::new(
+        reqwest::ClientBuilder::new()
+            .build()
+            .unwrap(),
+        onedrive_client_id.clone(),
+        onedrive_client_secret.clone(),
+        format!("{}/api/v1/onedrive/callback", exposed_url),
+    ).expect("failed to construct onedrive session");
+
+    // connects auth to dav svc init
+    let onedrive_args = OneDriveArgs {
+        onedrive_root: onedrive_root,
+        client_id: onedrive_client_id.clone(),
+        client_secret: onedrive_client_secret.clone(),
+        ..Default::default()
+    };
+    let svc_ = svc.clone();
+    session.on_auth(Box::new(move |state: ODriveState| {
+        let svc = svc_.clone();
+        let onedrive_args = onedrive_args.clone();
+        async move {
+            svc.init(dav_svc::<axum::body::Body, Bytes, axum::Error>(&OneDriveArgs {
+                refresh_token: state.refresh_token.clone(),
+                expires_in: state.expires_at,
+                ..onedrive_args.clone()
+            }).expect("failed to create dav svc")).await
+        } 
+    })).await;
+
+    session.load_token().await.expect("failed to load persisted token");
 
     // axum router
     let router = axum::Router::new()
         .route("/", get(Html(include_str!("../static/index.html"))))
+        // hacky, but mandatory due to axum's limitation
         .route_service("/zotero", svc.clone())
         .route_service("/zotero/", svc.clone())
         .route_service("/zotero/{*ignore}", svc.clone())
-        .nest("/api/v1/onedrive", onedrive_api_router(
-            &onedrive_args,
-            &exposed_url,
-            None,  // let's pass None for now, effectively making refresh_token one-way passing only to dav_svc and saved file
-            token_cb(svc.clone(), onedrive_args.clone())
-        ))
+        .nest("/api/v1/onedrive", onedrive_api_router(session.clone()))
         .layer(TraceLayer::new_for_http())
         .layer(DefaultBodyLimit::max(64 * 1024 * 1024));
 
