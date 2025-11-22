@@ -210,9 +210,11 @@ impl ODriveSession {
         if std::path::Path::new(APP_DATA_PATH).exists() {
             let data = read_to_string(APP_DATA_PATH).await?;
             let data: ODriveState = serde_json::from_str(&data).context("failed to deserialize state")?;
-            let mut guard = self.inner.lock().await;
-            guard.refresh_token = data.refresh_token;
-            guard.expires_at = data.expires_at;
+            {
+                let mut guard = self.inner.lock().await;
+                guard.refresh_token = data.refresh_token;
+                guard.expires_at = data.expires_at;
+            }
             log::info!("Loaded token from {}", APP_DATA_PATH);
             self.refresh().await?;
         }
