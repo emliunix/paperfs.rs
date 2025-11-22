@@ -1,11 +1,13 @@
 use std::collections::BTreeMap;
 use std::collections::btree_map::Entry;
 use thiserror::{Error as ThisError};
-use tokio::fs::read_to_string;
+use tokio::fs::{File, read_to_string};
+use tokio::io::AsyncWriteExt;
+use tokio::time::sleep;
 use std::pin::Pin;
 use std::future::Future;
 use std::sync::Arc;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use anyhow::{Context, Error as AnyError};
 use oauth2::*;
 use oauth2::basic::{BasicErrorResponse, BasicRevocationErrorResponse, BasicTokenIntrospectionResponse, BasicTokenType};
@@ -13,7 +15,7 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 use oauth2::url::Url;
 
-use crate::utils::AsyncHook;
+use crate::utils::{AsyncHook, LogError, log_and_go};
 
 const APP_DATA_PATH: &str = "app_data.json";
 const AUTH_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
@@ -25,7 +27,7 @@ const SCOPES: &[&str] = &[
     "openid", // for id_token
 ];
 
-#[derive(serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 pub struct Me {
     id: String,
     display_name: String,
@@ -145,6 +147,7 @@ impl ODriveSession {
         log::debug!("id_token: {}", id_token);
 
         guard.update_tokens(&token_result)?;
+        self.call_on_auth().await;
         Ok(())
     }
 
@@ -160,7 +163,9 @@ impl ODriveSession {
             .request_async(&requestor)
             .await?;
 
+        log::info!("Token refreshed successfully");
         guard.update_tokens(&token_result)?;
+        self.call_on_auth().await;
         Ok(())
     }
 
@@ -208,12 +213,51 @@ impl ODriveSession {
             let mut guard = self.inner.lock().await;
             guard.refresh_token = data.refresh_token;
             guard.expires_at = data.expires_at;
+            log::info!("Loaded token from {}", APP_DATA_PATH);
+            self.refresh().await?;
         }
         Ok(())
     }
 
-    async fn call_on_auth(&self, state: ODriveState) {
-        let mut guard = self.inner.lock().await;
+    pub fn spawn_token_thread(&self) {
+        let session = self.clone();
+        tokio::spawn(async move {
+            session.token_thread().await;
+        });
+    }
+
+    pub async fn token_thread(&self) {
+        self.on_auth(Box::new(move |state: ODriveState| {
+            log_and_go(async move {
+                let state_json = serde_json::to_string(&state).context("failed to serialize state")?;
+                File::create("app_data.json").await?.write_all(state_json.as_bytes()).await?;
+                anyhow::Ok(())
+            })
+        })).await;
+        log_and_go(self.load_token()).await;
+        let mut refresh_sec = 300;
+        loop {
+            log_and_go(self.refresh()).await;
+            {
+                let guard = self.inner.lock().await;
+                if let Some(expires_at) = guard.expires_at {
+                    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as u64;
+                    if expires_at > now {
+                        refresh_sec = 0.max(expires_at - now - 60); // refresh 1 min before expiry
+                    } else {
+                        refresh_sec = 0;
+                    }
+                }
+            }
+            log::info!("Next token refresh in {} seconds", refresh_sec);
+            if refresh_sec > 0 {
+                sleep(Duration::from_secs(refresh_sec)).await;
+            }
+        }
+    }
+
+    async fn call_on_auth(&self) {
+        let guard = self.inner.lock().await;
         let state = ODriveState { refresh_token: guard.refresh_token.clone(), expires_at: guard.expires_at };
         for cb in guard.callbacks.iter() {
             cb.call(state.clone()).await;

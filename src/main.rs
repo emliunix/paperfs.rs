@@ -1,7 +1,9 @@
+#![feature(tuple_trait)]
+
 use std::error::Error as StdError;
 use std::future::IntoFuture;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use axum::extract::DefaultBodyLimit;
 use axum::response::Html;
 use axum::routing::get;
@@ -17,14 +19,11 @@ use odrive_handler::onedrive_api_router;
 use opendal::layers::LoggingLayer;
 use opendal::services::{Memory, Onedrive};
 use opendal::{Builder, Operator};
-use tokio::fs::File;
-use tokio::io::AsyncWriteExt;
 
 // use reqwest::{Certificate, Proxy};
 use tower_http::trace::TraceLayer;
 use types::OneDriveArgs;
 use uninit_svc::UninitSvc;
-use utils::LogError;
 
 use crate::odrive::ODriveSession;
 
@@ -88,30 +87,6 @@ fn dav_svc<B, D, E>(args: &OneDriveArgs) -> Result<DavHandlerWrapper> where
     Ok(svc)
 }
 
-async fn set_token(svc: UninitSvc<DavHandlerWrapper>, args: &OneDriveArgs) -> Result<(), anyhow::Error> {
-        svc.init(dav_svc::<axum::body::Body, Bytes, axum::Error>(args)?).await;
-        anyhow::Ok(())
-}
-
-async fn save_token(state: ODriveState) -> Result<(), anyhow::Error> {
-    // persist tokens
-    let state_json = serde_json::to_string(&state).context("failed to serialize state")?;
-    File::create("app_data.json").await?.write_all(state_json.as_bytes()).await?;
-    Ok(())
-}
-
-fn token_cb(svc: UninitSvc<DavHandlerWrapper>, args: OneDriveArgs) -> impl Fn(ODriveState) + Clone + Send + 'static {
-    move |state| {
-        let svc = svc.clone();
-        let args = args.clone();
-        tokio::spawn(async move {
-            save_token(state.clone()).await.log_err("failed to save refresh token");
-            let refresh_token = state.refresh_token.expect("refresh token not found");
-            set_token(svc.clone(), &OneDriveArgs { refresh_token: Some(refresh_token), ..args}).await.log_err("failed to set refresh token");
-        });
-    }
-}
-
 // shutdown helper: listen for Ctrl+C and SIGTERM on unix
 async fn shutdown_signal() {
     // Wait for Ctrl+C
@@ -145,6 +120,7 @@ async fn main() {
     tracing_subscriber::fmt::init();
 
     log::info!("paperfs version: {}", GIT_REVISION);
+    log::debug!("debug logging enabled");
     
     // console_subscriber::init();
     // get paraemters from env
@@ -187,8 +163,7 @@ async fn main() {
             }).expect("failed to create dav svc")).await
         } 
     })).await;
-
-    session.load_token().await.expect("failed to load persisted token");
+    session.spawn_token_thread();
 
     // axum router
     let router = axum::Router::new()

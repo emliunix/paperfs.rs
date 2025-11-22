@@ -1,4 +1,4 @@
-use std::{fmt::Debug, future::Future, pin::Pin};
+use std::{fmt::{Debug, Display}, future::Future, pin::Pin};
 
 pub trait LogError {
     type Output;
@@ -12,6 +12,17 @@ impl<T, E> LogError for Result<T, E> where E: Debug {
             log::error!("{}: {:?}", ctx, e);
         }
         self.unwrap()
+    }
+}
+
+pub fn log_and_go<Fut, E>(fut: Fut) -> impl Future<Output=()> where
+    Fut: Future<Output = Result<(), E>>,
+    E: Display,
+{
+    async {
+        if let Err(e) = fut.await {
+            log::error!("silented error: {}", e);
+        }
     }
 }
 
