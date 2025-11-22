@@ -11,6 +11,7 @@ use bytes::{Buf, Bytes};
 use dav_server::memls::MemLs;
 use dav_server::DavHandler;
 use dav_server_opendalfs::OpendalFs;
+use futures::FutureExt;
 use mux_layer::MuxLayer;
 use odrive::ODriveState;
 use odrive_handler::onedrive_api_router;
@@ -19,6 +20,7 @@ use opendal::services::{Memory, Onedrive};
 use opendal::{Builder, Operator};
 
 // use reqwest::{Certificate, Proxy};
+use tracing_subscriber::prelude::*;
 use tower_http::trace::TraceLayer;
 use types::OneDriveArgs;
 use uninit_svc::UninitSvc;
@@ -115,12 +117,22 @@ static GIT_REVISION: &str = env!("GIT_REVISION");
 
 #[tokio::main]
 async fn main() {
+    #[cfg(not(feature = "console-subscriber"))]
     tracing_subscriber::fmt::init();
 
     log::info!("paperfs version: {}", GIT_REVISION);
     log::debug!("debug logging enabled");
     
-    // console_subscriber::init();
+    #[cfg(feature = "console-subscriber")]
+    {
+        let console_layer = console_subscriber::spawn();
+        tracing_subscriber::registry()
+            .with(console_layer)
+            // .with(tracing_subscriber::filter::EnvFilter::from_default_env())
+            .with(tracing_subscriber::fmt::layer())
+            .init();
+    }
+    
     // get paraemters from env
     let onedrive_root = std::env::var("ONEDRIVE_ROOT").expect("ONEDRIVE_ROOT not provided");
     let onedrive_client_id = std::env::var("ONEDRIVE_CLIENT_ID").expect("ONEDRIVE_CLIENT_ID not provided");
@@ -128,6 +140,9 @@ async fn main() {
     // let onedrive_access_token = std::env::var("ONEDRIVE_ACCESS_TOKEN").unwrap();
     let bind_addr = std::env::var("PAPERFS_BIND_ADDR").ok().unwrap_or_else(|| "0.0.0.0:3000".to_string());
     let exposed_url = std::env::var("PAPERFS_EXPOSED_URL").ok().unwrap_or_else(|| "http://localhost:3000".to_string());
+
+    // shudown signal
+    let signal = shutdown_signal().shared();
 
     // dav service
     let svc = UninitSvc::new();
@@ -161,7 +176,7 @@ async fn main() {
             }).expect("failed to create dav svc")).await
         } 
     })).await;
-    session.spawn_token_thread();
+    session.spawn_token_thread(signal.clone());
 
     // axum router
     let router = axum::Router::new()
@@ -178,7 +193,7 @@ async fn main() {
     let addr: std::net::SocketAddr = bind_addr.parse().expect("invalid bind address");
     log::info!("Listening on http://{}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await.expect("failed to bind address");
-    let server = axum::serve(listener, router).with_graceful_shutdown(shutdown_signal()).into_future();
+    let server = axum::serve(listener, router).with_graceful_shutdown(signal).into_future();
     if let Err(e) = server.await {
         log::error!("server error: {}", e);
     }

@@ -31,11 +31,13 @@ pub trait AsyncHook<Arg>: Send + Sync {
         &'a self,
         arg: Arg,
     ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>;
+
+    fn clone_box(&self) -> Box<dyn AsyncHook<Arg>>;
 }
 
 impl<Arg, F, Fut> AsyncHook<Arg> for F
 where
-    F: Fn(Arg) -> Fut + Send + Sync,
+    F: Fn(Arg) -> Fut + Send + Sync + Clone + 'static,
     Fut: Future<Output = ()> + Send + 'static,
 {
     fn call<'a>(
@@ -43,5 +45,15 @@ where
         arg: Arg,
     ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>> {
         Box::pin((self)(arg))
+    }
+    
+    fn clone_box(&self) -> Box<dyn AsyncHook<Arg>> {
+        Box::new(self.clone())
+    }
+}
+
+impl<Arg> Clone for Box<dyn AsyncHook<Arg>> {
+    fn clone(&self) -> Self {
+        self.clone_box()
     }
 }

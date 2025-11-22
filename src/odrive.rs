@@ -12,7 +12,7 @@ use anyhow::{Context, Error as AnyError};
 use oauth2::*;
 use oauth2::basic::{BasicErrorResponse, BasicRevocationErrorResponse, BasicTokenIntrospectionResponse, BasicTokenType};
 use serde::{Deserialize, Serialize};
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, MutexGuard};
 use oauth2::url::Url;
 
 use crate::utils::{AsyncHook, LogError, log_and_go};
@@ -118,7 +118,7 @@ impl ODriveSession {
         log::debug!("PKCE Verifier: {}", pkce_verifier.secret());
         guard.states.insert(csrftoken.secret().clone(), pkce_verifier);
 
-        let (auth_url, _csrf_token) = guard.client
+        let (auth_url, _) = guard.client
             .authorize_url(move || csrftoken)
             .add_scopes(SCOPES.iter().map(|s| Scope::new(s.to_string())))
             .set_pkce_challenge(pkce_challenge)
@@ -129,15 +129,18 @@ impl ODriveSession {
 
     pub async fn auth(&self, state: String, authorization_code: String) -> Result<(), AnyError> {
         log::info!("Authenticating with authorization code");
-        let mut guard = self.inner.lock().await;
-        let verifier = if let Entry::Occupied(entry) = guard.states.entry(state) {
-            entry.remove()
-        } else {
-            return Err(anyhow::anyhow!("auth state not found"));
+        let (verifier, client) = {
+            let mut guard = self.inner.lock().await;
+            let verifier = if let Entry::Occupied(entry) = guard.states.entry(state) {
+                entry.remove()
+            } else {
+                return Err(anyhow::anyhow!("auth state not found"));
+            };
+            (verifier, guard.client.clone())
         };
 
         let requestor = self.requestor();
-        let token_result = guard.client
+        let token_result = client
             .exchange_code(AuthorizationCode::new(authorization_code))
             .set_pkce_verifier(verifier)
             .request_async(&requestor)
@@ -146,26 +149,36 @@ impl ODriveSession {
         let id_token = token_result.extra_fields().id_token.as_ref().expect("id_token not present");
         log::debug!("id_token: {}", id_token);
 
-        guard.update_tokens(&token_result)?;
-        self.call_on_auth().await;
+        let (callbacks, state) = {
+            let mut guard = self.inner.lock().await;
+            guard.update_tokens(&token_result)?;
+            (guard.callbacks.clone(), guard.state())
+        };
+        call_on_auth(callbacks, state).await;
         Ok(())
     }
 
     pub async fn refresh(&self) -> Result<(), AnyError> {
         log::info!("Refreshing token");
-        let mut guard = self.inner.lock().await;
-        let refresh_token = guard.refresh_token.clone()
-            .map(|s| RefreshToken::new(s))
-            .context("Refresh token not found")?;
+        let (refresh_token, client) = {
+            let guard = self.inner.lock().await;
+            let refresh_token = guard.refresh_token.clone()
+                .map(|s| RefreshToken::new(s))
+                .context("Refresh token not found")?;
+            (refresh_token, guard.client.clone())
+        };
         let requestor = self.requestor();
-        let token_result = guard.client
+        let token_result = client
             .exchange_refresh_token(&refresh_token)
             .request_async(&requestor)
             .await?;
-
+        let (callbacks, state) = {
+            let mut guard = self.inner.lock().await;
+            guard.update_tokens(&token_result)?;
+            (guard.callbacks.clone(), guard.state())
+        };
+        call_on_auth(callbacks, state).await;
         log::info!("Token refreshed successfully");
-        guard.update_tokens(&token_result)?;
-        self.call_on_auth().await;
         Ok(())
     }
 
@@ -189,7 +202,8 @@ impl ODriveSession {
         move |request| {
             let http_client = self.http_client.clone();
             Box::pin(async move {
-                log::debug!("Making HTTP request: {:?}", request);
+                log::debug!("Making HTTP request: {:?} {:?} headers = {:?}, payload = {:?}", 
+                    request.method(), request.uri(), request.headers(), unsafe { String::from_utf8_unchecked(request.body().clone()) });
                 let res = http_client.execute(request.try_into().map_err(RequestorError::HTTPError)?)
                     .await
                     .map_err(RequestorError::HTTPError)?;
@@ -216,19 +230,18 @@ impl ODriveSession {
                 guard.expires_at = data.expires_at;
             }
             log::info!("Loaded token from {}", APP_DATA_PATH);
-            self.refresh().await?;
         }
         Ok(())
     }
 
-    pub fn spawn_token_thread(&self) {
+    pub fn spawn_token_thread(&self, signal: impl Future<Output=()> + 'static + Send + Clone) {
         let session = self.clone();
         tokio::spawn(async move {
-            session.token_thread().await;
+            session.token_thread(signal).await;
         });
     }
 
-    pub async fn token_thread(&self) {
+    pub async fn token_thread(&self, signal: impl Future<Output=()> + 'static + Send + Clone) {
         self.on_auth(Box::new(move |state: ODriveState| {
             log_and_go(async move {
                 let state_json = serde_json::to_string(&state).context("failed to serialize state")?;
@@ -237,9 +250,9 @@ impl ODriveSession {
             })
         })).await;
         log_and_go(self.load_token()).await;
+        log_and_go(self.refresh()).await;
         let mut refresh_sec = 300;
         loop {
-            log_and_go(self.refresh()).await;
             {
                 let guard = self.inner.lock().await;
                 if let Some(expires_at) = guard.expires_at {
@@ -253,16 +266,15 @@ impl ODriveSession {
             }
             log::info!("Next token refresh in {} seconds", refresh_sec);
             if refresh_sec > 0 {
-                sleep(Duration::from_secs(refresh_sec)).await;
+                tokio::select!{
+                    _ = sleep(Duration::from_secs(refresh_sec)) => {},
+                    _ = signal.clone() => { 
+                        log::info!("shutdown signal received, exiting token thread");
+                        return
+                    },
+                }
             }
-        }
-    }
-
-    async fn call_on_auth(&self) {
-        let guard = self.inner.lock().await;
-        let state = ODriveState { refresh_token: guard.refresh_token.clone(), expires_at: guard.expires_at };
-        for cb in guard.callbacks.iter() {
-            cb.call(state.clone()).await;
+            log_and_go(self.refresh()).await;
         }
     }
 
@@ -272,12 +284,25 @@ impl ODriveSession {
     }
 }
 
+async fn call_on_auth(callbacks: Vec<Box<dyn AsyncHook<ODriveState>>>, state: ODriveState) {
+    for cb in callbacks.iter() {
+        cb.call(state.clone()).await;
+    }
+}
+
 impl Inner {
-    fn update_tokens(self: &mut Self, token_result: &OpenIDTokenResponse) -> Result<(), std::time::SystemTimeError> {
+    fn update_tokens(&mut self, token_result: &OpenIDTokenResponse) -> Result<(), std::time::SystemTimeError> {
         self.token = Some(token_result.access_token().secret().clone());
         self.refresh_token = token_result.refresh_token().map(|t| t.secret().clone());
         let now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as u64;
         self.expires_at = token_result.expires_in().map(|d| d.as_secs() + now);
         Ok(())
+    }
+
+    fn state(&self) -> ODriveState {
+        ODriveState {
+            refresh_token: self.refresh_token.clone(),
+            expires_at: self.expires_at,
+        }
     }
 }
