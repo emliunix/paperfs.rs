@@ -1,5 +1,3 @@
-#![feature(tuple_trait)]
-
 use std::error::Error as StdError;
 use std::future::IntoFuture;
 
