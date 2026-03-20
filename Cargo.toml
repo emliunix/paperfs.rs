@@ -36,4 +36,4 @@ console-subscriber = ["dep:console-subscriber"]
 # Using local patched opendal for OneDrive upload fix
 # See: https://github.com/apache/opendal/issues/...
 [patch.crates-io]
-opendal = { path = "../opendal/core" }
+opendal = { path = "./opendal/core" }

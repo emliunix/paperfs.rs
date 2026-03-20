@@ -1,13 +1,11 @@
 use std::fmt::Debug;
 use std::future::Future;
-use std::ops::DerefMut;
 use std::sync::Arc;
 
 use futures::lock::Mutex;
-use opendal::raw::oio::List;
-use opendal::raw::*;
-use opendal::ErrorKind;
 use opendal::Result;
+use opendal::raw::oio::DeleteDyn;
+use opendal::raw::*;
 
 /// Hopped it can function as a multiplexer of accessors
 /// but turns out it's hard to take care of all possible semantic differences
@@ -29,16 +27,20 @@ pub struct MuxAccess<A, B, F> {
     b: B,
 }
 
-impl<A, B, F> Debug for MuxAccess<A, B, F> where 
+impl<A, B, F> Debug for MuxAccess<A, B, F>
+where
     A: Debug,
     B: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("MuxAccess").field("a", &self.a).field("b", &self.b).finish()
+        f.debug_struct("MuxAccess")
+            .field("a", &self.a)
+            .field("b", &self.b)
+            .finish()
     }
 }
 
-impl <A, B, F> MuxAccess<A, B, F> {
+impl<A, B, F> MuxAccess<A, B, F> {
     fn new(a: A, b: B, f: F) -> Self {
         MuxAccess { a, b, is_a: f }
     }
@@ -49,7 +51,7 @@ where
     AF: Fn() -> A,
     A: Access,
     F: (Fn(&str) -> bool) + 'static + Send + Sync + Unpin + Clone,
-    MuxAccess<A, B, F>: Access
+    MuxAccess<A, B, F>: Access,
 {
     type LayeredAccess = MuxAccess<A, B, F>;
 
@@ -59,7 +61,7 @@ where
 }
 
 impl<A, B, F> Access for MuxAccess<A, B, F>
-where 
+where
     A: Access,
     B: Access,
     F: (Fn(&str) -> bool) + 'static + Send + Sync + Unpin + Clone,
@@ -101,13 +103,16 @@ where
     }
 
     async fn delete(&self) -> Result<(RpDelete, Self::Deleter)> {
-        if (self.is_a)("") {
-            let (rp, deleter) = self.a.delete().await?;
-            Ok((rp, Box::new(deleter)))
-        } else {
-            let (rp, deleter) = self.b.delete().await?;
-            Ok((rp, Box::new(deleter)))
-        }
+        let (rp_a, deleter_a) = self.a.delete().await?;
+        let (_rp_b, deleter_b) = self.b.delete().await?;
+        Ok((
+            rp_a,
+            Box::new(MuxDeleter::new(
+                Box::new(self.is_a.clone()),
+                Box::new(deleter_a),
+                Box::new(deleter_b),
+            )),
+        ))
     }
 
     async fn stat(&self, path: &str, args: OpStat) -> Result<RpStat> {
@@ -119,11 +124,7 @@ where
         }
     }
 
-    async fn create_dir(
-            &self,
-            path: &str,
-            args: OpCreateDir,
-        ) -> Result<RpCreateDir> {
+    async fn create_dir(&self, path: &str, args: OpCreateDir) -> Result<RpCreateDir> {
         log::debug!("create_dir B {}", path);
         self.b.create_dir(path, args).await
     }
@@ -141,7 +142,10 @@ struct ConcatList_<A, B> {
 impl<A, B> ConcatList<A, B> {
     fn new(a: A, b: B) -> Self {
         ConcatList {
-            inner: Arc::new(Mutex::new(ConcatList_{a: Some(a), b: Some(b)})),
+            inner: Arc::new(Mutex::new(ConcatList_ {
+                a: Some(a),
+                b: Some(b),
+            })),
         }
     }
 }
@@ -156,7 +160,7 @@ impl<A: oio::List, B: oio::List> oio::List for ConcatList<A, B> {
                 log::info!("listing A");
                 if let Some(entry) = a.next().await? {
                     log::info!("A entry: {:?}", entry);
-                    return Ok(Some(entry))
+                    return Ok(Some(entry));
                 }
                 (*guard).a = None;
             }
@@ -164,12 +168,46 @@ impl<A: oio::List, B: oio::List> oio::List for ConcatList<A, B> {
                 log::info!("listing B");
                 if let Some(entry) = b.next().await? {
                     log::info!("B entry: {:?}", entry);
-                    return Ok(Some(entry))
+                    return Ok(Some(entry));
                 }
                 (*guard).b = None;
             }
             log::info!("listing finished");
             Ok(None)
         }
+    }
+}
+
+struct MuxDeleter {
+    is_a: Box<dyn Fn(&str) -> bool + Send + Sync>,
+    del_a: Box<dyn DeleteDyn>,
+    del_b: Box<dyn DeleteDyn>,
+}
+
+impl MuxDeleter {
+    fn new(
+        is_a: Box<dyn Fn(&str) -> bool + Send + Sync>,
+        del_a: Box<dyn DeleteDyn>,
+        del_b: Box<dyn DeleteDyn>,
+    ) -> Self {
+        Self { is_a, del_a, del_b }
+    }
+}
+
+impl DeleteDyn for MuxDeleter {
+    fn delete_dyn<'a>(&'a mut self, path: &'a str, args: OpDelete) -> BoxedFuture<'a, Result<()>> {
+        if (self.is_a)(path) {
+            self.del_a.delete_dyn(path, args)
+        } else {
+            self.del_b.delete_dyn(path, args)
+        }
+    }
+
+    fn close_dyn(&mut self) -> BoxedFuture<'_, Result<()>> {
+        Box::pin(async move {
+            self.del_a.close_dyn().await?;
+            self.del_b.close_dyn().await?;
+            Ok(())
+        })
     }
 }
