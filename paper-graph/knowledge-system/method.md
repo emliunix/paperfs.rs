@@ -88,6 +88,23 @@ A rule may carry several tags. The tags say what would have to change to strengt
 7. Every path must resolve from the paper-graph repository root. A locator that only works from another directory is not a locator.
 8. A gate row that cites a command which no longer exists is stale, not green. Re-run it or mark it "no".
 
+## Precedence and ownership
+
+When two documents could answer the same question, the order is:
+
+1. `CONSTITUTION.md` — the invariants; it wins over everything below.
+2. `method.md` — the procedure and evidence vocabulary.
+3. The owning project doc (`docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md`, `docs/EVALUATION.md`, ...).
+4. `README.md` — orientation and status only.
+
+A fact stated twice is a defect: the lower document links up instead of restating. The owner map in `STATUS.md` names the single owner for each subject and the check that enforces it; a subject with two owners is a defect, and a check with no owner is a wish. Paths resolve from the `paper-graph` crate root, and run artefacts live under `paper-graph/_runs/<date>/` — including the docs hash manifest that freezes an eval input.
+
+## Reviewer independence
+
+A review counts as independent only when the reviewer is a different model family from the writer: Gemini cannot review Gemini, Gemma counts as Google, and zcode/GLM-5.3, devin/glm-5-3 and auto/glm-5.3 are one model behind three gateways. A same-family review is allowed but must be labelled *same-family* in the artifact, and a human adjudicates it. No document may describe a same-family review as independent. The authorizing routes and the evidence for them live in `models.md`.
+
+Case note: this file is `method.md` (lowercase) on a case-insensitive filesystem. A write to `METHOD.md` edits this file silently on APFS and creates a second file on Linux; the docs lint rejects case-only twins.
+
 ## Reproducing the corpus
 
 The thread ids and message indexes are in corpus.md and in the two JSON files. The code baseline is paper-graph at f1e46d9. The retrieval queries are listed in corpus.md. A rerun should expect the same 18 threads, but message counts and summaries can change if Nowledge Mem re-syncs a source.

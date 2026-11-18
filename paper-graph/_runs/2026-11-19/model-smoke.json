@@ -1,0 +1,58 @@
+{
+  "schema_version": "model-smoke-v1",
+  "recorded_at": "2026-11-19T03:45:00+08:00",
+  "method": "one child-agent call per route, prompt 'Reply with exactly the two characters: OK. No other text.', reasoning effort low",
+  "routes": [
+    {
+      "provider": "magpie",
+      "model": "deepseek/deepseek-flash",
+      "result": "OK",
+      "status": "authorized"
+    },
+    {
+      "provider": "magpie",
+      "model": "auto/gemini-4-carbon",
+      "result": "OK",
+      "status": "authorized"
+    },
+    {
+      "provider": "magpie",
+      "model": "kimi/k3.1-pro",
+      "result": "OK",
+      "status": "authorized"
+    },
+    {
+      "provider": "magpie-anthropic",
+      "model": "devin/claude-opus-5-5",
+      "result": "OK",
+      "status": "authorized"
+    },
+    {
+      "provider": "magpie-anthropic",
+      "model": "zcode/GLM-5.3",
+      "result": "OK",
+      "status": "authorized",
+      "note": "preferred GLM route; earlier 429 was quota exhaustion, cleared after re-login"
+    },
+    {
+      "provider": "magpie",
+      "model": "devin/glm-5-3",
+      "result": "OK",
+      "status": "authorized",
+      "note": "GLM fallback"
+    },
+    {
+      "provider": "magpie",
+      "model": "auto/glm-5.3",
+      "result": "OK",
+      "status": "authorized",
+      "note": "routing group; assert served model"
+    }
+  ],
+  "not_tested": [
+    "structured-output schema validity (T0.6)",
+    "quote recovery (T0.6)",
+    "devin/swe-2 chat/JSON",
+    "local gemma4-12b structured output"
+  ]
+}

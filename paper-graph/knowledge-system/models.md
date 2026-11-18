@@ -4,6 +4,16 @@
 
 The important distinction: **authorized for this agent's subagents** is not the same as **configured in another client** or **served by the local llama.cpp router**. Only the first is guaranteed usable by the workflow and subagent tools.
 
+## Route status (2026-11-19, T0.5)
+
+| Bucket | Routes | What was proven |
+|---|---|---|
+| **Authorized** | `magpie/*`: deepseek-flash, auto/gemini-4-carbon, kimi/k3.1-pro, devin/glm-5-3, auto/glm-5.3, devin/swe-2 (+lightning). `magpie-anthropic/*`: zcode/GLM-5.3, devin/claude-opus-5-5 | one real two-token child call each, returning the expected text; catalog contexts and effort ladders read from the live config |
+| **Local** | gemma4-12b, gemma4-e4b, qwen3.5-4b, glm-ocr, bge-m3 (llama.cpp router) | endpoint reachable, five models listed; unloaded models cold-start on demand. **Structured-output validity unmeasured** |
+| **Unverified** | Claude Code and Codex client aliases; any route not listed above; `devin/swe-2` chat/JSON behaviour; no published per-token cost for the GLM routes | configured in a client, or listed in a catalog, but never called by this harness |
+
+An *authorized* row means the transport works. It does not mean the model is good at the task: T0.6 measures schema validity and quote recovery, and nothing here replaces that.
+
 ## Authorized for DSH subagents
 
 **Updated 2026-11-19 ~03:40** (before the subagent allowlist patch the only route was `deepseek-official`; that provider is now gone from discovery and Magpie took its place).

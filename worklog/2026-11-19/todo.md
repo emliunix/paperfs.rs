@@ -20,16 +20,16 @@
 | Eval prompt to check effectiveness, using pstack and encode-lessons | W4 (rule-to-check coverage) and W5 (docs-to-decision eval) |
 | Next experiments and feature roadmap, including HawDB utilization | W6-W9 (parse, pilot, held-out, identity/rebuild/HawDB) and W10 (roadmap) |
 | Other recommendations: status as data, one statement per fact, pre-mortem, negative results, review queue, narrow paper claim | W0, W4, W10, and the guardrails |
-| Lessons as first-class knowledge entities | W2 (Episode/Lesson/Check praxis schema, normalized lessons.jsonl) and W9.8 (projection into the graph) |
-| nmem keys and pointers | W2.4 (five keys stay the index; lessons stay in the praxis file) |
+| Lessons as first-class knowledge entities | W2 (Episode/Lesson/Check praxis schema, normalized lessons.jsonl) and T9.8 (projection into the graph) |
+| nmem keys and pointers | T2.4 (five keys stay the index; lessons stay in the praxis file) |
 
 ## Workstreams at a glance
 
 | W | Workstream | Effort | Depends on | Exit |
 |---|---|---|---|---|
-| W0 | Baseline and guardrails | 1 day | — | Branch, docs hash, templates, model inventory, smoke test |
+| W0 | Baseline and guardrails | 0.5 day | — | Branch, docs hash, templates, model inventory, smoke test |
 | W1 | Spine and constitution | 1.5 days | W0 | Every key has owner + check; no duplicate rules |
-| W2 | Praxis schema and lesson entities | 1 day | W1.1 | 14 valid lesson records; 5 eval scenarios |
+| W2 | Praxis schema and lesson entities | 1 day | T1.1 | 14 valid lesson records; 5 eval scenarios |
 | W3 | Project docs | 2 days | W1 | Each doc owns one subject; link check passes |
 | W4 | Encode checks | 2 days | W1, W3 | 10 checks; one seeded defect each |
 | W5 | Docs-effectiveness eval | 1.5 days | W3, W4 | Gate pass or documented failure |
@@ -91,7 +91,7 @@ Plain-text view:
 | 5 | W8, W9 tail | Held-out needs W7; HawDB experiments can finish in parallel |
 | 6 | W10 | Roadmap/paper framing needs W8 and W9 findings |
 
-The practical rule: start W6 on day 1, not after the docs. Start W9 as soon as W6 has a parsed corpus. Do not start W3 until W1.1 is frozen, and do not start W7 until W2, W4, and W6 are all green.
+The practical rule: start W6 on day 1, not after the docs. Start W9 as soon as W6 has a parsed corpus. Do not start W3 until T1.1 is frozen, and do not start W7 until W2, W4, and W6 are all green.
 
 ## Workstream dependency matrix
 
@@ -99,7 +99,7 @@ The practical rule: start W6 on day 1, not after the docs. Start W9 as soon as W
 |---|---|---|---|
 | W0 | — | W1, W6 | — |
 | W1 | W0 | W2, W3 | W6 |
-| W2 | W1.1, W0.3 | W7 | W3, W6 |
+| W2 | T1.1, T0.3 | W7 | W3, W6 |
 | W3 | W1 | W4, W5 | W2, W6 |
 | W4 | W1, W3 | W5, W7 | W9 |
 | W5 | W3, W4 | — (docs gate) | W7 |
@@ -173,29 +173,37 @@ flowchart LR
   T0_5 --> T0_8["T0.8 Reviewer independence"]
 ~~~
 
-- [ ] **T0.1 Branch and worktree.** Create a branch or worktree for the spine work; record the base commit f1e46d9. Keep code changes off the docs branch until W4.
+- [x] **T0.1 Branch and worktree.** Create a branch or worktree for the spine work; record the base commit f1e46d9. Keep code changes off the docs branch until W4.
   - Output: branch name + base commit in this file.
   - Exit: clean worktree; git status shows only intended files.
-- [ ] **T0.2 Docs hash manifest.** Hash the current knowledge-system docs and experiment records into _runs/2026-11-19/docs.sha256.
+  - **Recorded 2026-11-19 03:5x:** branch `pg/w0-baseline` from `migrate-paper-graph-rust`; code base `f1e46d9`; freeze commit `3cd97fc` (`docs(pg): freeze design corpus and 2026-11-19 plan`) covering `paper-graph/knowledge-system/` and `worklog/2026-11-19/`. Worktree clean except untracked `test_onedrive/`, which is not part of this work.
+- [x] **T0.2 Docs hash manifest.** Hash the current knowledge-system docs and experiment records into _runs/2026-11-19/docs.sha256.
   - Why: W5 must evaluate a frozen docs version.
   - Exit: manifest exists; rerunning the hash is deterministic.
-- [ ] **T0.3 Templates.** Add _templates/lesson.md, _templates/check.md, _templates/eval-case.json, _templates/adr.md.
+  - **Recorded:** 27 files hashed (knowledge-system + experiments), sorted by path, `shasum -a 256`; aggregate digest `76a2ef2ffbae2212` reproduced identically on a second run (re-hashed after the T0.4/T0.5 doc edits).
+- [x] **T0.3 Templates.** Add _templates/lesson.md, _templates/check.md, _templates/eval-case.json, _templates/adr.md.
   - Exit: each template has required fields and one worked example.
-- [ ] **T0.4 Precedence.** Record the document order: constitution > method > owning project doc > README status. A fact stated twice is a defect.
+  - **Recorded:** four templates; worked examples are L03 (lesson), check_sync_count_guard (check), ADR 0001 docs freeze (ADR), and `sync-destroys-derived` (eval case, JSON validated).
+- [x] **T0.4 Precedence.** Record the document order: constitution > method > owning project doc > README status. A fact stated twice is a defect.
   - Exit: one paragraph in method.md; owner map skeleton in STATUS.md.
-- [ ] **T0.5 Model inventory and freeze.** Write models.md from live endpoints; record provider, model, context, quantization, status, and role. Choose one extraction candidate and one second-family reviewer candidate.
+  - **Recorded:** `method.md` now has *Precedence and ownership* (order, one-owner rule, `_runs/` pinned to `paper-graph/_runs/`, lowercase-filename note); `STATUS.md` carries the owner-map skeleton and a gate ledger.
+- [x] **T0.5 Model inventory and freeze.** Write models.md from live endpoints; record provider, model, context, quantization, status, and role. Choose one extraction candidate and one second-family reviewer candidate.
   - Exit: models.md exists; every route is marked authorized, local, or unverified.
+  - **Recorded:** `models.md` now carries a *Route status* table with the three buckets. Second-family reviewer chosen: **zcode/GLM-5.3** (Zhipu), fallbacks devin/glm-5-3 then auto/glm-5.3. Extraction candidate stays open until T0.6.
 - [ ] **T0.6 Structured-output smoke test.** Run deepseek-flash and gemma4-12b on the same three PL extraction cases: a theorem/definition/citation excerpt, a five-relation schema with evidence offsets, and an ambiguous mention-vs-use case.
   - Measure: first-pass schema validity, empty/truncated rate, finish reason, exact quote recovery, TTFT, tokens/s, cold start, cost.
   - Exit: model-smoke.json; one candidate frozen for the pilot, or the pilot is blocked.
+  - **Partial 2026-11-19:** route reachability recorded in `_runs/2026-11-19/model-smoke.json` (seven routes answered). The three structured-output cases are **not** run, so no extraction candidate is frozen yet.
 - [ ] **T0.7 nmem budget fix.** Read the provider config without exporting credentials; set max_tokens >= output_budget and timeout >= output_budget / measured tokens-per-second, or reduce the budget.
   - Current risk: GLM-4.7 at 8192 max_tokens and 60 s, the configuration that failed 16 of 17 KG extractions.
   - Exit: a preflight request with the intended budget succeeds, or the mismatch is recorded as a blocker.
-- [ ] **T0.8 Reviewer independence.** Pick a second model family for review: gemma4-12b locally, or a verified Claude/Codex route. If neither is callable, record the review as same-family and require human adjudication.
+  - **BLOCKER recorded 2026-11-19:** nmem serves GLM-4.7 at 8192 max_tokens / 60 s; no output budget has been chosen yet, so no preflight can be written. Fix belongs with the extraction pipeline (W7), not with a blind config bump. Tracked in STATUS.md.
+- [x] **T0.8 Reviewer independence.** Pick a second model family for review: gemma4-12b locally, or a verified Claude/Codex route. If neither is callable, record the review as same-family and require human adjudication.
   - Exit: rule in method.md; no document calls a same-family review independent.
+  - **Recorded:** second family = **GLM-5.3 (Zhipu)** via zcode, callable and verified; rule written into `method.md` (*Reviewer independence*). Same model behind zcode/devin/auto is explicitly one family.
 - [ ] **T0.8b Magpie smoke test.** Send one 16-token request through each of magpie, magpie-anthropic, and magpie-responses; record status, served model, latency, and cold start.
   - Exit: three route records in _runs/2026-11-19/model-smoke.json; any 429/quota is recorded as an upstream blocker, not an unknown model.
-  - Note: zcode/GLM-5.3 is catalogued on magpie but currently returns 429 "ZCode: exceed quota limit"; devin/glm-5-3 works as the non-Flash fallback.
+  - **Recorded 2026-11-19:** `magpie` and `magpie-anthropic` are authorized for subagents; **`magpie-responses` is not** (`list_subagent_models` does not list it), so the grok wire can be reached only by direct HTTP. Seven route records written. zcode/GLM-5.3 answered after the re-login; the earlier 429 was quota exhaustion, now cleared.
 
 ## W1 — Spine and constitution
 
@@ -243,7 +251,7 @@ flowchart LR
 
 ## W2 — Praxis schema and lesson entities
 
-**Depends on:** W1.1 (constitution), W0.3 (template). **Unblocks:** W7, W5.1 via T2.5, W9 (soft). **Parallel note:** T2.4 and T2.5 can run together after T2.3; T2.1 is the schema gate for T2.2.
+**Depends on:** T1.1 (constitution), T0.3 (template). **Unblocks:** W7, T5.1 via T2.5, W9 (soft). **Parallel note:** T2.4 and T2.5 can run together after T2.3; T2.1 is the schema gate for T2.2.
 
 ~~~mermaid
 flowchart LR
@@ -451,11 +459,11 @@ Rules: one writer per file; a subagent output is a draft or a finding, never don
 
 | Task | Agent | Kind | Context to provide | Output | Review |
 |---|---|---|---|---|---|
-| W1.1 constitution | constitution-drafter | subagent | 14 lessons, status tags, check list; template | CONSTITUTION.md draft | spine-reviewer |
-| W1.2 status | status-drafter | subagent | gate ledger, README, test list | STATUS.md draft | spine-reviewer |
-| W1.3 method + glossary | method-drafter | subagent | precedence, rounds, status tags | method.md, GLOSSARY.md | spine-reviewer |
-| W2.1 praxis schema | praxis-drafter | subagent_fork | last two conversations, ontology.md, lessons JSON | PRAXIS.md + schema | ontology-reviewer |
-| W2.2 normalize lessons | lesson-normalizer | subagent | round-2-rescan.json, template | lessons.jsonl | main validates quotes |
+| T1.1 constitution | constitution-drafter | subagent | 14 lessons, status tags, check list; template | CONSTITUTION.md draft | spine-reviewer |
+| T1.2 status | status-drafter | subagent | gate ledger, README, test list | STATUS.md draft | spine-reviewer |
+| T1.3 method + glossary | method-drafter | subagent | precedence, rounds, status tags | method.md, GLOSSARY.md | spine-reviewer |
+| T2.1 praxis schema | praxis-drafter | subagent_fork | last two conversations, ontology.md, lessons JSON | PRAXIS.md + schema | ontology-reviewer |
+| T2.2 normalize lessons | lesson-normalizer | subagent | round-2-rescan.json, template | lessons.jsonl | main validates quotes |
 | W3 architecture + data model | arch-drafter | subagent | constitution, code, README | two docs | doc-reviewer |
 | W3 pipeline + operations | pipeline-drafter | subagent | code, gate ledger, failure modes | two docs | doc-reviewer |
 | W3 evaluation + experiments | eval-drafter | subagent | methodology.md, plan, rubric | two docs | doc-reviewer |
