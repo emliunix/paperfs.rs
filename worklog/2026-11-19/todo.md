@@ -180,7 +180,7 @@ flowchart LR
 - [x] **T0.2 Docs hash manifest.** Hash the current knowledge-system docs and experiment records into _runs/2026-11-19/docs.sha256.
   - Why: W5 must evaluate a frozen docs version.
   - Exit: manifest exists; rerunning the hash is deterministic.
-  - **Recorded:** 27 files hashed (knowledge-system + experiments), sorted by path, `shasum -a 256`; aggregate digest `76a2ef2ffbae2212` reproduced identically on a second run (re-hashed after the T0.4/T0.5 doc edits).
+  - **Recorded:** 27 files hashed (knowledge-system + experiments), sorted by path, `shasum -a 256`; rerunning the hash reproduces the manifest byte-for-byte. The digest itself lives in the manifest and the W0 commit message, never inside a hashed doc (self-reference would invalidate it).
 - [x] **T0.3 Templates.** Add _templates/lesson.md, _templates/check.md, _templates/eval-case.json, _templates/adr.md.
   - Exit: each template has required fields and one worked example.
   - **Recorded:** four templates; worked examples are L03 (lesson), check_sync_count_guard (check), ADR 0001 docs freeze (ADR), and `sync-destroys-derived` (eval case, JSON validated).
