@@ -33,3 +33,22 @@
 | SA-29 | TESTABILITY | STATUS.md:44,79 vs owner-map.md:14-30; todo.md T4.2:317-328 | STATUS says the owner map contains ten planned checks, but the map contains eleven unique check_* IDs. The extra ID is check_lesson_schema (SA-25), so the stated ten-check coverage is not currently true. | Correct the check inventory after resolving SA-25 and make the count derive from the registered checks rather than prose. | medium |
 
 FAIL — 8 high-severity findings.
+
+## Re-audit — targeted verification (2026-11-19 04:40)
+
+Gate: *no high-severity finding unresolved*. Method: direct re-check of each HIGH id against the post-remediation tree (not a second full audit).
+
+| ID | What was checked | Status |
+|---|---|---|
+| SA-01 | GUIDELINES.md:28 — every named evaluator failure maps to BLOCKED; NEEDS_REVIEW only for complete results needing interpretation | resolved |
+| SA-02 | GUIDELINES.md:122 — independence requires no self-review AND a different family; same-family labelled and human-adjudicated | resolved |
+| SA-03 | todo.md:549 Guardrail 3 — both conditions stated; same-family non-independent | resolved |
+| SA-22 | STATUS.md retitles the map as moved; CONSTITUTION/method/GUIDELINES/GLOSSARY/ADR-0002 point to docs/owner-map.md | resolved |
+| SA-23 | owner-map.md §Conflict Dispositions (14 rows) + §Unresolved Content Conflicts (2, each with a named human decider) | resolved |
+| SA-25 | `check_praxis_schema` registered in owner-map as planned (W2); no `check_lesson_schema` remains anywhere | resolved |
+| SA-27 | CONSTITUTION.md Invariant 7 falsifier fires on any agent/model authorship, modification or movement of gold, approvals notwithstanding | resolved |
+| SA-28 | 11 distinct check ids referenced across the spine, 11 registered in owner-map, 0 unregistered; 169 relative links, 0 broken | resolved |
+
+**Verdict: PASS — 8/8 high-severity findings resolved.** The 19 medium and 2 low findings do not gate W1; they are carried into the W1 backlog and must be closed before the paper claim is written (W10).
+
+*Signed off as a mechanical verification by the lead agent; the independent reviewer's original report above is unchanged.*
