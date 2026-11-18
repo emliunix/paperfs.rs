@@ -17,7 +17,27 @@
         inherit (pkgs) lib;
 
         craneLib = crane.mkLib pkgs;
-        src = craneLib.cleanCargoSource ./.;
+        # Keep Cargo sources plus the HTML pages embedded with include_str!.
+        # Exclude the local HawDB database and large OneDrive test fixtures.
+        src = lib.cleanSourceWith {
+            src = lib.cleanSource ./.;
+            filter = path: type:
+              let
+                full = toString path;
+                base = baseNameOf full;
+                parent = baseNameOf (dirOf full);
+              in
+                !(lib.hasInfix "/target" full)
+                && !(lib.hasInfix "/opendal" full)
+                && !(lib.hasInfix "/paper-graph/data" full)
+                && !(lib.hasInfix "/test_onedrive" full)
+                && (type == "directory"
+                    || lib.hasSuffix ".rs" base
+                    || lib.hasSuffix ".toml" base
+                    || lib.hasSuffix ".html" base
+                    || base == "Cargo.lock"
+                    || (parent == ".cargo" && base == "config"));
+        };
 
 
         args = {

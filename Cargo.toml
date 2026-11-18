@@ -1,34 +1,45 @@
+[workspace]
+members = ["paper-graph"]
+default-members = [".", "paper-graph"]
+resolver = "2"
+
 [package]
 name = "paperfs_rs"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.97.1"
 
 [dependencies]
-anyhow = "1.0.86"
-axum = { version = "0.8.1", features = ["macros"] }
-bytes = "1.6.0"
-console-subscriber = { version = "0.5.0", optional = true }
+anyhow = "1.0"
+axum = { version = "0.8", features = ["macros"] }
+bytes = "1.6"
+console-subscriber = { version = "0.5", optional = true }
 # console-subscriber = "0.4.1"
-dav-server = "0.8.0"
-dav-server-opendalfs = "0.6.2"
-env_logger = "0.11.3"
-futures = "0.3.30"
-http = "1.1.0"
-http-body = "1.0.0"
-log = { version = "0.4.22", features = ["std"] }
-oauth2 = "5.0.0"
-opendal = { version = "0.54.0", features = ["services-onedrive", "layers-tracing"] }
-reqwest = { version = "0.12.5", features = ["json"] }
-serde = "1.0.203"
-serde_json = "1.0.120"
-thiserror = "2.0.12"
-tokio = { version = "1.38.0", features = ["full", "tracing"] }
-tower = "0.5.2"
-tower-http = { version = "0.6.2", features = ["trace"] }
-tower-layer = "0.3.2"
-tower-service = "0.3.2"
-tracing = "0.1.40"
-tracing-subscriber = "0.3.18"
+dav-server = "0.8"
+dav-server-opendalfs = "0.7"
+env_logger = "0.11"
+futures = "0.3"
+http = "1.1"
+http-body = "1.0"
+log = { version = "0.4", features = ["std"] }
+oauth2 = "5.0"
+opendal = { version = "0.55", features = ["services-onedrive", "layers-tracing"] }
+reqwest = { version = "0.12", features = ["json"] }
+serde = "1.0"
+serde_json = "1.0"
+thiserror = "2.0"
+tokio = { version = "1.38", features = ["full", "tracing"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["trace"] }
+tower-layer = "0.3"
+tower-service = "0.3"
+tracing = "0.1"
+tracing-subscriber = "0.3"
 
 [features]
 console-subscriber = ["dep:console-subscriber"]
+
+# The OneDrive upload fix lives in this public fork commit. Pinning the git
+# source keeps clean checkouts and CI buildable without an untracked local clone.
+[patch.crates-io]
+opendal = { git = "https://github.com/emliunix/opendal", rev = "fbfb7658a0c34d1aee5acf8f7bf27124cc729fa3" }

@@ -2,3 +2,5 @@
 *~
 /app_data.json
 .env
+/paper-graph/data/
+/opendal/
