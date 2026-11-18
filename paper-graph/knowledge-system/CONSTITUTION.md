@@ -11,7 +11,7 @@ Document authority follows a strict order: **`CONSTITUTION.md` > `method.md` > o
 3. **Owning project doc** (`docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md`, `docs/PIPELINE.md`, `docs/EVALUATION.md`, `docs/OPERATIONS.md`, `docs/EXPERIMENTS.md`, `docs/ROADMAP.md`, `docs/REVIEW.md`, `PRAXIS.md`) — one subject per document.
 4. `README.md` — orientation and current status summary only.
 
-Lower documents link upward instead of restating invariants; a fact stated twice is a defect. A rule that can be structurally tested must not remain prose: [STATUS.md](STATUS.md) maps each subject to one owning document and one `check_*` ID or explicit `judgment (human)` gate. Lesson IDs (`L01`–`L14`) refer to [lessons.md](lessons.md); code paths resolve from the `paper-graph` crate root.
+Lower documents link upward instead of restating invariants; a fact stated twice is a defect. A rule that can be structurally tested must not remain prose: [docs/owner-map.md](docs/owner-map.md) maps each subject to one owning document and one `check_*` ID or explicit `judgment (human)` gate. Lesson IDs (`L01`–`L14`) refer to [lessons.md](lessons.md); code paths resolve from the `paper-graph` crate root.
 
 ---
 
@@ -46,7 +46,7 @@ Lower documents link upward instead of restating invariants; a fact stated twice
 - **Check pointer:** `check_corpus_admission` (planned).
 
 ### 5. Evidence is atomic and unknown stays visible
-- **Status:** Specified | **Owning doc:** `docs/DATA_MODEL.md` (vocabulary bounds in `ontology.md` and `docs/EVALUATION.md`)
+- **Status:** Specified | **Owning doc:** `docs/DATA_MODEL.md` (ontology vocabulary in [ontology.md](ontology.md); evaluation use in `docs/EVALUATION.md`)
 - **Rule:** Ontology predicates grow only from frozen competency questions with evidence-graded roles (`MENTIONS`, `USES`, `INTRODUCES`), every claim binds one atomic proposition to a verbatim substring quote and resolvable locator, and missing or ambiguous inputs remain `unknown` or `unreviewed`.
 - **Why it holds:** Unchecked catalogues smuggle taxonomy through `IS_A` or closed `kind` enums (`L05`), ungraded mentions inflate into contributions or false merges (`L06`), and overlapping chunks or silent defaults fabricate support unless evidence is leaf-atomic and unknowns propagate (`L07`).
 - **Falsifier:** Schema types are added without a blocking competency question, a bare mention is scored as `USES`/`INTRODUCES`, a quote fails substring or locator checks, overlapping spans count twice, or missing data silently coerces to a value.
@@ -60,8 +60,8 @@ Lower documents link upward instead of restating invariants; a fact stated twice
 - **Check pointer:** `check_eval_manifest` (planned); `check_budget_preflight` (planned).
 
 ### 7. Human owns gold, verdict, spend, and the claim
-- **Status:** Decided · Specified | **Owning doc:** `docs/REVIEW.md` (paper framing in `docs/ROADMAP.md`)
+- **Status:** Decided · Specified | **Owning doc:** `docs/REVIEW.md` (reviewer independence procedure in [method.md](method.md#reviewer-independence); paper framing in `docs/ROADMAP.md`)
 - **Rule:** A human authors all gold annotations, adjudicates final verdicts and same-family reviews, approves hosted spend, and authorizes every paper claim; model output never moves an expected gold answer.
 - **Why it holds:** Editing expected answers or writing outcome-presupposing questions tunes the oracle to the model (`L10`), same-family model routes share correlated blind spots ([method.md](method.md)), and pre-verdict artifacts justify only architectural and protocol claims (`L08`, `L13`).
-- **Falsifier:** An agent creates or modifies gold expectations without a cited human decision and second review, a same-family review is marked independent, paid extraction runs without approval, or docs claim empirical extraction/QA gains before a held-out verdict.
-- **Check pointer:** `check_gold_diff` (planned); `judgment (human)` for gold, verdict, spend, and paper claim.
+- **Falsifier:** An agent or model authors, modifies, or moves any expected gold answer, regardless of approvals; a same-family review is marked independent; paid extraction runs without approval; or docs claim empirical extraction/QA gains before a held-out verdict.
+- **Check pointer:** `check_gold_diff` (planned); a cited human decision and second review remain required checks for human gold changes and never authorize agent/model authorship or movement; `judgment (human)` for gold, verdict, spend, and paper claim.

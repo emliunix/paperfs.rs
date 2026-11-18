@@ -23,4 +23,4 @@ We will commit the knowledge-system documents and the 2026-11-19 work plan befor
 - Every worktree receives an identical, reviewable document set, and later artifacts can name their exact baseline.
 - Documentation corrections become deliberate baseline changes rather than invisible local edits; this adds coordination overhead.
 - W5 and other downstream consumers must record the selected tag and digest without claiming empirical validation from documentation alone (L08).
-- Check pointer: `check_docs_freeze` (planned) will verify the worktree base, tag resolution, and recorded digest; human review approves any re-freeze.
+- Verification: an explicit script step verifies the worktree base, tag resolution, and recorded digest; `judgment (human)` approves any re-freeze.

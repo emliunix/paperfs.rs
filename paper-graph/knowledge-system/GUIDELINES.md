@@ -2,7 +2,7 @@
 
 **Status:** Decided · Specified | **Governs:** day-to-day agent and human execution across `paper-graph` and `knowledge-system`.
 
-System invariants live in [CONSTITUTION.md](CONSTITUTION.md); evidence tags, adjudication rules, and reviewer independence live in [method.md](method.md); subject ownership and active gate status live in `STATUS.md`; empirical failure rules (`L01`–`L14`) live in [lessons.md](lessons.md). Lower procedures link to those documents rather than restating their rules. Every procedure below binds an input trigger to ordered steps, a closing check or command, a clean rollback path, and an explicit human **STOP** condition.
+System invariants live in [CONSTITUTION.md](CONSTITUTION.md); evidence tags, adjudication rules, and reviewer independence live in [method.md](method.md); subject ownership lives in [docs/owner-map.md](docs/owner-map.md) and active gate status lives in `STATUS.md`; empirical failure rules (`L01`–`L14`) live in [lessons.md](lessons.md). Lower procedures link to those documents rather than restating their rules. Every procedure below binds an input trigger to ordered steps, a closing check or command, a clean rollback path, and an explicit human **STOP** condition.
 
 ---
 
@@ -10,12 +10,12 @@ System invariants live in [CONSTITUTION.md](CONSTITUTION.md); evidence tags, adj
 
 - **When to use:** Creating or modifying `CONSTITUTION.md`, [method.md](method.md), `STATUS.md`, `GLOSSARY.md`, `GUIDELINES.md`, `ADR/*.md`, or any single-subject owning project document listed in [CONSTITUTION.md](CONSTITUTION.md) (`docs/*.md`, `PRAXIS.md`).
 - **Steps:**
-  1. Verify single-subject ownership against [CONSTITUTION.md](CONSTITUTION.md) Precedence and Enforcement and `STATUS.md`; confirm no parallel writer holds the target file.
+  1. Verify single-subject ownership against [CONSTITUTION.md](CONSTITUTION.md) Precedence and Enforcement and [docs/owner-map.md](docs/owner-map.md); confirm no parallel writer holds the target file.
   2. Respect filesystem case-folding on APFS (for example, edit existing `method.md` rather than creating `METHOD.md`) and link upward instead of restating higher-precedence invariants or definitions.
   3. Tag every architectural or empirical claim with the evidence vocabulary defined in [method.md](method.md) and attach a `check_*` ID or `judgment (human)` pointer for every enforceable rule.
   4. Dispatch an independent, cross-family reviewer agent (never the drafting agent, per [method.md](method.md) and [CONSTITUTION.md](CONSTITUTION.md) Invariant 7) to audit single-statement facts, upward links, and verified code paths.
   5. Recompute the documentation hash and synchronize `STATUS.md` if any subject owner, status tag, or check ID changed; on defect, revert the target file from the clean worktree base before re-drafting.
-- **Closing check:** `check_doc_precedence` / `spine-audit` review pass + `cargo test --manifest-path paper-graph/Cargo.toml`.
+- **Closing check:** `spine-audit` review pass (`judgment (human)`) + `cargo test --manifest-path paper-graph/Cargo.toml`.
 - **STOP:** The proposed edit weakens or removes an invariant in [CONSTITUTION.md](CONSTITUTION.md), alters a human-owned gate, reassigns subject ownership across two documents, or only a same-family reviewer is available for sign-off (`judgment (human)`).
 
 ---
@@ -25,7 +25,7 @@ System invariants live in [CONSTITUTION.md](CONSTITUTION.md); evidence tags, adj
 - **When to use:** Executing any development pilot, docs-effectiveness benchmark, parser gate, or held-out extraction/QA run governed by [CONSTITUTION.md](CONSTITUTION.md) Invariants 6–7 and `L08`–`L12`.
 - **Steps:**
   1. Freeze and hash the evaluation manifest (competency questions, single-axis resolver config, metric panel numerators/denominators/thresholds, prompt/schema/chunker snapshots, and model route) before opening test inputs; verify no edits occur mid-run.
-  2. Run the pre-flight budget validator (`L12`) to assert context, max-token, and timeout inequalities, and run the evaluator property/seeded-failure suite (`L11`) so timeouts, truncated outputs, or unasked atoms map to `BLOCKED` or `NEEDS_REVIEW`.
+  2. Run the pre-flight budget validator (`L12`) to assert context, max-token, and timeout inequalities, and run the evaluator property/seeded-failure suite (`L11`) so evaluator failures—including timeouts, truncated outputs, and unasked atoms—map to `BLOCKED`. Reserve `NEEDS_REVIEW` only for a complete result with every requested atom executed whose interpretation requires human adjudication; no named evaluator failure qualifies.
   3. Diff gold expectation files against the frozen baseline (`L10`) and lint questions for outcome-presupposing wording before invoking any model or scorer.
   4. Execute the harness on a clean checkout, enforcing `executed == corpus_size` and non-zero exit on any skipped or zero-case run (`L10`), while logging per-call provenance with missing token usage recorded literally as `unreported` (`L12`).
   5. Commit the immutable run record (commit SHA, manifest hash, repeat index, per-case expected vs actual, raw outputs, and full metric panel rather than a single aggregate F1 per `L09`); if any harness invariant fails, mark the run `INVALID` in the ledger rather than deleting raw logs.
@@ -69,7 +69,7 @@ System invariants live in [CONSTITUTION.md](CONSTITUTION.md); evidence tags, adj
   2. Screen the proposed element against structural anti-patterns: forbid `IS_A`, `subClassOf`, and `BROADER_THAN`; require an explicit textual cue span for `GENERALIZES`; keep `kind` faceted, multi-valued, and attributed; and enforce graded attribution (`MENTIONS`, `USES`, non-priority `INTRODUCES`) (`L05`, `L06`).
   3. Draft positive, negative, and boundary decision rules plus verbatim counter-examples in `ontology.md` / `docs/DATA_MODEL.md`, defining when an ambiguous span stays `unknown` (`L07`).
   4. Lint competency questions and schema definitions, then pilot-annotate development-split spans only (never held-out) to verify substring/locator binding and inter-annotator clarity; drop the candidate element on rollback if pilot precision or cue-span rules fail.
-- **Closing check:** `check_question_lint` + `check_ontology_anti_taxonomy` (grep check for forbidden hierarchy predicates) + `check_evidence_locator`.
+- **Closing check:** `check_question_lint` + script step (grep for forbidden hierarchy predicates) + `check_evidence_locator`.
 - **STOP:** No frozen competency question is blocked without the element, the addition occurs after an evaluation manifest freeze (requiring a logged protocol deviation per `L08`), or the change alters gold annotation guidelines (`judgment (human)`).
 
 ---
@@ -106,9 +106,9 @@ System invariants live in [CONSTITUTION.md](CONSTITUTION.md); evidence tags, adj
 - **Steps:**
   1. Confirm an explicit promotion trigger exists (a closed topic, verified failure mode, or adjudicated design decision) rather than transient session scaffolding, process narrative, or unexecuted plans (`L13`).
   2. Verify the target does not duplicate an existing invariant in [CONSTITUTION.md](CONSTITUTION.md) or rule `L01`–`L14`; if refining an existing lesson, supersede or update in place with provenance rather than forking a second rule.
-  3. Structure the entry with all required fields (`L13`): concrete decision/rule, causal why, verified repository or run evidence (`file:line`, commit, or run ID), rejected alternative, open issues, and an executable **Operational check** mapped to a `check_*` ID in `STATUS.md`.
+  3. Structure the entry with all required fields (`L13`): concrete decision/rule, causal why, verified repository or run evidence (`file:line`, commit, or run ID), rejected alternative, open issues, and an executable **Operational check** mapped to a `check_*` ID in [docs/owner-map.md](docs/owner-map.md).
   4. Replace raw transcript detail with a concise summary plus archive pointer (`L13`); if subsequent verification falsifies the premise, revert or mark superseded rather than leaving stale guidance active.
-- **Closing check:** `check_praxis_schema` (verifying required lesson fields, evidence pointers, and `STATUS.md` check mapping).
+- **Closing check:** `check_praxis_schema` (verifying required lesson fields, evidence pointers, and [docs/owner-map.md](docs/owner-map.md) check mapping).
 - **STOP:** Promoting durable memory into cross-session knowledge stores without an explicit human promotion decision ([CONSTITUTION.md](CONSTITUTION.md) Invariant 1), or generalizing a `Transferred` external finding as `Observed` on this repository (`judgment (human)`).
 
 ---
@@ -119,8 +119,8 @@ System invariants live in [CONSTITUTION.md](CONSTITUTION.md); evidence tags, adj
 - **Steps:**
   1. Partition targets so every writer agent owns strictly disjoint file paths or isolated git worktrees (one writer per file) and cap concurrency within guardrail budgets (at most 4 concurrent writers; at most 15 workflow agents per phase).
   2. Supply each child with a self-contained prompt naming the exact read budget, target output path, governing spine links ([CONSTITUTION.md](CONSTITUTION.md), [method.md](method.md)), forbidden side effects (no opportunistic edits, no `git` mutations unless assigned), and required return evidence.
-  3. Assign reviewers from an independent agent lineage (and distinct model family whenever available per [method.md](method.md)) — no agent reviews its own draft or code.
+  3. Assign reviewers per [method.md](method.md#reviewer-independence): independence requires both no self-review and a different model family. Label same-family reviews *same-family*, route them to human adjudication, and never count them as independent.
   4. Monitor completions without busy-polling; halt the phase immediately upon two consecutive child failures to triage root causes rather than retrying blindly.
   5. Collect all child results, inspect `git diff` across the integrated workspace, and run the closing checks directly in the integrating agent before reporting completion; discard out-of-scope child edits via targeted checkout.
-- **Closing check:** `check_writer_disjointness` (verified via `git status` / diff scope check) + independent reviewer sign-off + `cargo test --manifest-path paper-graph/Cargo.toml`.
+- **Closing check:** script step (verify writer disjointness via `git status` / diff scope) + independent reviewer sign-off + `cargo test --manifest-path paper-graph/Cargo.toml`.
 - **STOP:** Two consecutive subagent failures occur in a phase, a child requests wider sandbox/network/spend permissions than granted, fan-out exceeds concurrency caps, or a task requires mutating shared canonical/gold files concurrently (`judgment (human)`).

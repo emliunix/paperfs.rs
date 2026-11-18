@@ -10,7 +10,7 @@ The W1 dependency graph in `worklog/2026-11-19/todo.md` assigns documentation wo
 
 ## Decision
 
-We will enforce this authority order: `CONSTITUTION.md`, then `method.md`, then the owning project document, then `README.md`. The owning document contains the sole normative statement of each fact or rule. Other documents link to it and may summarize orientation or status without redefining it. `README.md` never overrides an owner. When documents conflict, we will apply the higher-authority statement, correct the lower document, and remove duplicated rules rather than maintain parallel copies. Each structurally testable rule will have one check identifier mapped through `STATUS.md`; semantic conflicts remain explicit human-judgment gates. ADRs record consequential decisions and point to owners instead of becoming alternate owners of operational detail.
+We will enforce this authority order: `CONSTITUTION.md`, then `method.md`, then the owning project document, then `README.md`. The owning document contains the sole normative statement of each fact or rule. Other documents link to it and may summarize orientation or status without redefining it. `README.md` never overrides an owner. When documents conflict, we will apply the higher-authority statement, correct the lower document, and remove duplicated rules rather than maintain parallel copies. Each structurally testable rule will have one check identifier mapped through [docs/owner-map.md](../docs/owner-map.md); semantic conflicts remain explicit human-judgment gates. ADRs record consequential decisions and point to owners instead of becoming alternate owners of operational detail.
 
 ## Alternatives rejected
 
@@ -24,4 +24,4 @@ We will enforce this authority order: `CONSTITUTION.md`, then `method.md`, then 
 - Reviewers can resolve conflicts deterministically, and readers can navigate from summaries to the authoritative statement.
 - Authors must locate the owner before editing; reorganization requires link and ownership updates.
 - Status summaries cannot manufacture “done” from prose; they derive from checks and the gate ledger required by W1.
-- Check pointers: `check_doc_precedence` and `check_single_statement` (planned) will lint authority links and structural duplication; semantic duplication and final conflict resolution remain `judgment (human)`.
+- Verification: explicit docs-lint script steps check authority links and structural duplication; semantic duplication and final conflict resolution remain `judgment (human)`.

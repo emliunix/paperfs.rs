@@ -546,7 +546,7 @@ Use workflow only where the work is a real fan-out with independent units. Do no
 
 1. **Freeze before eval.** Hash docs and code; no edits during a run. A score is tied to a hash.
 2. **One writer per file.** Parallel writers get disjoint files or worktrees.
-3. **Reviewer independence.** No agent reviews its own draft.
+3. **Reviewer independence.** No agent reviews its own draft, and the reviewer must belong to a different model family. Same-family reviews are non-independent, must be labelled *same-family*, and require human adjudication.
 4. **Evidence or it did not happen.** Every done carries a command, path, or test output.
 5. **Status honesty.** specified is not observed; transferred is not tested here; inconclusive is a result.
 6. **Budget.** Max 4 concurrent writers; max 15 workflow agents per phase; stop a phase after two consecutive failures and triage.

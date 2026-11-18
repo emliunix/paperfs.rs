@@ -38,7 +38,7 @@ The changes from the W0 skeleton are stated rather than implied: "Corpus structu
 | W | State | What exists |
 |---|---|---|
 | W0 | done for its deliverables; two tasks open | Freeze commit `3cd97fc` (docs corpus + 2026-11-19 plan), docs manifest `_runs/2026-11-19/docs.sha256` (27 files, one manifest line per file), four templates in `_templates/`, `models.md` route-status inventory, `model-smoke.json` (seven routes answered a two-token prompt). T0.6 structured-output smoke and T0.7 nmem budget remain open and are carried into W7 |
-| W1 | in progress | Drafted: `CONSTITUTION.md` (seven invariants, `cc3279d`), `method.md` governance sections, `GLOSSARY.md`, `GUIDELINES.md`, `docs/owner-map.md`, ADR `0001`-`0006` (`ac3de4d`). This file is T1.2. Pending: T1.8 spine audit, and resolution of the 14 multi-document conflicts listed in the owner map |
+| W1 | in progress | Drafted: `CONSTITUTION.md` (seven invariants, `cc3279d`), `method.md` governance sections, `GLOSSARY.md`, `GUIDELINES.md`, `docs/owner-map.md`, ADR `0001`-`0006` (`ac3de4d`). This file is T1.2. Pending: T1.8 spine audit, and human decisions for the unresolved content conflicts listed in the owner map |
 | W2 | not started | No `PRAXIS.md`; no `lessons.jsonl`; the 14 lessons remain prose records in `lessons.md` / `round-2-rescan.json` |
 | W3 | not started | `docs/` contains only `owner-map.md`; no ARCHITECTURE, DATA_MODEL, PIPELINE, EVALUATION, OPERATIONS, EXPERIMENTS, ROADMAP, or REVIEW |
 | W4 | not started | Zero `check_*` binaries or tests; the ten checks exist as planned IDs in the owner map |
@@ -84,7 +84,7 @@ Observed facts are the only rows allowed to read as results. Everything else is 
 
 ## Owner map
 
-The subject-to-owner table lives in [docs/owner-map.md](docs/owner-map.md). This file does not duplicate it; a subject with two owner rows is a defect, and the owner map's *Current Multi-Document Conflicts* section already lists the subjects that still appear in more than one document.
+The subject-to-owner table lives in [docs/owner-map.md](docs/owner-map.md). This file does not duplicate or own it. The owner map's *Conflict Dispositions* section assigns each former multi-document conflict to one owning row; only substantive conflicts awaiting a named human decider remain in *Unresolved Content Conflicts*.
 
 The W0 skeleton's inline owner table is removed rather than carried forward. It assigned *Layer ownership* to `CONSTITUTION.md`/`check_sync_count_guard`, which contradicted invariant 1 and the owner map; keeping two tables would have preserved exactly the duplicate ownership the map exists to prevent.
 

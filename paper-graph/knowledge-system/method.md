@@ -97,7 +97,7 @@ When two documents could answer the same question, the order is:
 3. The owning project doc (`docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md`, `docs/EVALUATION.md`, ...).
 4. `README.md` — orientation and status only.
 
-A fact stated twice is a defect: the lower document links up instead of restating. The owner map in `STATUS.md` names the single owner for each subject and the check that enforces it; a subject with two owners is a defect, and a check with no owner is a wish. Paths resolve from the `paper-graph` crate root, and run artefacts live under `paper-graph/_runs/<date>/` — including the docs hash manifest that freezes an eval input.
+A fact stated twice is a defect: the lower document links up instead of restating. The [owner map](docs/owner-map.md) names the single owner for each subject and the check that enforces it; a subject with two owners is a defect, and a check with no owner is a wish. Paths resolve from the `paper-graph` crate root, and run artefacts live under `paper-graph/_runs/<date>/` — including the docs hash manifest that freezes an eval input.
 
 ## Reviewer independence
 

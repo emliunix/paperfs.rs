@@ -6,7 +6,7 @@ Terms are alphabetized; links identify the document that owns the term's governi
 - **Arm** — A pre-registered experimental condition compared under one frozen protocol; not to be confused with a variant (owner: `docs/EXPERIMENTS.md`).
 - **Assertion** — A statement proposed for acceptance that still requires evidence and review; not to be confused with a claim or evidence (owner: `docs/DATA_MODEL.md`).
 - **Canonical** — The authoritative layer from which other state can be rebuilt; not to be confused with derived or distilled state (owner: `docs/ARCHITECTURE.md`).
-- **Check** — An executable validation with a defined pass condition and owning subject; not to be confused with a gate ([owner](STATUS.md)).
+- **Check** — An executable validation with a defined pass condition and owning subject; not to be confused with a gate (schema owner: [ADR 0004](ADR/0004-atomic-claim-evidence-with-quote-and-locator.md); subject/check binding: [owner map](docs/owner-map.md)).
 - **Claim** — One atomic proposition bound to a verbatim quote and a resolvable locator; not to be confused with an assertion or its evidence (owner: `docs/DATA_MODEL.md`).
 - **Concept** — An ontology object admitted only to answer a frozen competency question; not to be confused with a claim ([owner](ontology.md)).
 - **Contested** — A status marking a live counterargument or unresolved contradiction; resolution requires evidence addressing both sides ([owner](method.md#governance)).

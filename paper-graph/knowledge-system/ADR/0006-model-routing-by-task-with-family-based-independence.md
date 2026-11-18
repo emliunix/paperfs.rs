@@ -24,4 +24,4 @@ We will configure model routes by task, recording provider, model, family, versi
 - Review provenance will distinguish corroboration from genuinely cross-family review, while humans retain adjudication authority.
 - Operators must maintain a family map and task-route configuration; unavailable cross-family capacity can block a verdict.
 - Comparative routing claims require their own frozen evaluation and cannot be inferred from successful pipeline completion.
-- Check pointers: `check_model_route` and `check_reviewer_independence` (planned) will validate route manifests, provenance, and family separation; `check_gold_diff`, budget preflight, spend, and final verdict retain their existing human gates.
+- Verification: explicit script steps validate route manifests, provenance, and family separation; `check_gold_diff` and `check_budget_preflight` remain executable checks, while spend and final verdict remain `judgment (human)`.
