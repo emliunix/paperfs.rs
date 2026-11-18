@@ -1,0 +1,552 @@
+[
+ {
+  "lessons": [
+   {
+    "id": "P01",
+    "title": "Layer ownership and persistence guarantees",
+    "rule": "Make Zotero the only canonical home of bibliographic metadata, treat HawDB as disposable derived state, and keep distilled notes as pointers; never let the rebuildable store be the only copy of extraction or human judgment.",
+    "mechanism": "store::rebuild deletes every work row and then every graph node in one transaction before reinserting from a read-only Zotero snapshot taken with SQLite's backup API, so a concept, claim, or annotation stored beside metadata disappears on the next sync. The project's own decision log therefore puts round-1 extraction in a separate derived HawDB. Embeddings are recomputed on every sync (26,466 bge-m3 tokens, 35.238 s), so no expensive artifact is cached outside the rebuildable store either.",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 44,
+      "role": "assistant",
+      "quote": "Zotero stays the source of truth; hawdb becomes a rebuildable graph + search engine; Nowledge Mem keeps only distilled insights and pointers."
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/src/store.rs",
+     "line": 108,
+     "observation": "Rebuild starts by deleting all works and, on line 109, running MATCH (n) DETACH DELETE n; nothing in the target DB survives a sync. experiments/ontology-extraction/decisions.md line 5 records the separate-DB mitigation."
+    },
+    "boundary": "The third layer is procedural only: T1 messages 198-199 show the Nowledge Mem save was blocked and unconfirmed, and no code links a Mem note to an itemID. Zotero is deliberately the sole home of canonical metadata, which the rule permits. The assigned second thread 5509b0c1 never mentions Zotero or HawDB; its index-and-archive remark is an agent-memory analogy, not independent evidence for this system.",
+    "operationalization": [
+     "Before each sync, count non-Zotero labels and rows in the target DB; fail if any exist or require a separate DB path.",
+     "Record embedding model, URL, token count, and elapsed time in every SyncReport, and require the sync to be reproducible from Zotero plus that manifest.",
+     "Refuse to save a distilled note unless it carries at least one Zotero item id or key."
+    ],
+    "confidence": "R2",
+    "verdict": "qualified"
+   },
+   {
+    "id": "P02",
+    "title": "Stable identity and paper addressability",
+    "rule": "Use Zotero's numeric itemID as the local join key for a single-library rebuild, but persist the Zotero key alongside it as the durable address, and give every evidence span explicit source coordinates; never treat a title or a content hash as the paper's identity.",
+    "mechanism": "item_id is the SQL primary key and zotero_key is an ordinary NOT NULL column, so search rows, UI URLs such as /api/work?id=3154, and rebuild joins all key on the numeric local row ID; the key survives only as metadata. This contradicts the assistant's earlier advice in T1[44] to use the stable key instead of the row ID. Addressability is split: the reading workflow uses a .txt file plus an index.md line table plus reading.md as a grand index, while the extraction design proposes EvidenceSpan with attachment_item_id, chunk_id, page, quote, start_char, end_char; paper-graph itself stores no text, page, or offset.",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 49,
+      "role": "user",
+      "quote": "We can reuse the ID in the Zotero library for the identities, so that is fast and we don't need to consider the ID things from, say, Content Hash or whatever"
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 44,
+      "role": "assistant",
+      "quote": "`Work` should use Zotero’s stable item **key**, not its local SQLite row ID."
+     },
+     {
+      "thread_id": "3099ed1f-a355-4ed5-a6ca-526deaabf295",
+      "message_index": 89,
+      "role": "user",
+      "quote": "no, reading is the grand index of multiple papers, so the convention is we have a txt for the paper, a index.md for the txt, and reference them from reading.md with some keynotes"
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/README.md",
+     "line": 12,
+     "observation": "README line 12 states itemID values are the work identities and no content-hash identity is introduced; store.rs line 11 makes item_id the PRIMARY KEY and line 12 keeps zotero_key as a non-key column. No chunk, page, or offset table exists in src."
+    },
+    "boundary": "itemID is stable across rebuilds only while the Zotero library is unchanged; it is a local SQLite row id, so a merge or restore can reassign it, and no test exercises re-import. T4[8] claims an index file was created but that file is outside this repo and was not verified here. The line-index convention and the char-offset EvidenceSpan are two different address spaces, and neither is implemented in paper-graph.",
+    "operationalization": [
+     "Add a fixture test that rebuilds twice and asserts the item_id to zotero_key map is unchanged and one-to-one.",
+     "Reject any evidence record lacking attachment id, page, and char offsets verified against parsed text.",
+     "Resolve works by itemID only within one Zotero library; carry key and DOI for cross-library joins."
+    ],
+    "confidence": "R3",
+    "verdict": "qualified"
+   },
+   {
+    "id": "P03",
+    "title": "Manual sync and non-destructive rebuild",
+    "rule": "Make synchronization a manual, explicit replacement of derived metadata, and evolve schema with additive, reviewed statements; never ship an automatic table-rebuild that drops views or tables.",
+    "mechanism": "sync_library reads Zotero and embeds every work before opening the DB, then rebuild replaces all work rows and all graph nodes in one transaction; there is no watcher, and the README warns that a --limit sync replaces the real database with that subset. In the tape store, the assistant first wrote an automatic table-rebuild migration; the user rejected it, and after a second objection to DROP VIEW the final migration became a single ALTER TABLE ADD COLUMN with a 1970 default.",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 45,
+      "role": "user",
+      "quote": "we can make it just one-off synchronization for a proactive cause only, or some menu triggers only"
+     },
+     {
+      "thread_id": "d9cbb41d-773e-4917-a187-1d83c30991eb",
+      "message_index": 86,
+      "role": "user",
+      "quote": "you have drops in schema? how dare you say it's a migration"
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 175,
+      "role": "assistant",
+      "quote": "`store.rebuild()` currently runs `MATCH (n) DETACH DELETE n`, so a normal metadata sync would erase any extracted domain graph."
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/src/store.rs",
+     "line": 109,
+     "observation": "Every sync runs MATCH (n) DETACH DELETE n inside the same transaction that deletes all works; extraction is protected only by being placed in a separate database (decisions.md line 5), not by a narrowed rebuild."
+    },
+    "boundary": "The rebuild is still destructive, so the rule is enforced by isolation rather than by the rebuild itself; a limited sync can overwrite a full database. The schema-evolution evidence comes from bub_sf's SQLite tape store, a different codebase; only the failure mode transfers, and the final fix relies on SQLite ADD COLUMN with a DEFAULT.",
+    "operationalization": [
+     "Refuse --limit against a non-empty target unless --replace is explicit, and test that a subset sync cannot silently truncate a 324-work DB.",
+     "Fail CI on DROP TABLE or DROP VIEW in migration files; require additive ALTER or a reviewed rebuild with backup.",
+     "Assert extraction and human-label counts are unchanged across a metadata sync, or that extraction lives in a different database."
+    ],
+    "confidence": "R3",
+    "verdict": "confirmed"
+   },
+   {
+    "id": "P04",
+    "title": "Prove the engine and admit sources before architecture",
+    "rule": "Smoke-test the storage and search engine on a tiny corpus before designing around its API, and admit a paper only after resolving a local file and its signature; treat metadata gaps as a ceiling on retrieval claims.",
+    "mechanism": "The HawDB 0.34 smoke test (graph, BM25, exact cosine, hybrid, reopen, double rebuild) preceded the store and pipeline work and exposed that CREATE TABLE IF NOT EXISTS is rejected as hiding schema drift. Corpus planning assumed attachment rows; a filesystem check found 11/15 readable PDFs and four dangling attachment rows (60, 47, 5, 8), forcing replacements and four separate checks: metadata, attachment row, file existence, %PDF- signature. Metadata is thin (117/324 abstracts; one work is titled 'PDF' and wins semantic search), so simple topic queries saturate and cannot demonstrate ontology benefit.",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 44,
+      "role": "assistant",
+      "quote": "Before building around it, run a small smoke test proving:"
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 160,
+      "role": "assistant",
+      "quote": "So “has an attachment row” is not sufficient for corpus admission."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 133,
+      "role": "assistant",
+      "quote": "semantic embeddings recover works with poor titles, but metadata cleanup or title-aware ranking is needed to keep generic titles from dominating."
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/tests/experiment_corpus.rs",
+     "line": 15,
+     "observation": "The corpus test asserts the recorded status string pdf_verified_gold_pending but never stats a PDF or checks %PDF-; admission is a one-time manual record, not an executable gate."
+    },
+    "boundary": "The smoke test did not cover the snapshot and branch behavior that T1[44] listed, and no PDF parser exists yet, so 'usable' is established only to file and signature level, not to text recoverability. All P04 evidence is from thread 71ffc1b7.",
+    "operationalization": [
+     "Add a smoke test that builds a temp HawDB, inserts two works, runs all three search modes, reopens, and rebuilds twice.",
+     "Corpus admission script: resolve each attachment, stat the file, check %PDF-, record SHA-256; fail the test on any missing file.",
+     "Attach a metadata coverage report (abstract/year/author coverage, generic titles) to every retrieval result set."
+    ],
+    "confidence": "R2",
+    "verdict": "qualified"
+   }
+  ]
+ },
+ {
+  "lessons": [
+   {
+    "id": "P05",
+    "title": "Small domain ontology without unearned taxonomy",
+    "rule": "Model only the distinctions the competency questions need, keep the curated reviewed vocabulary separate from paper-derived assertions, and ship no generic IS_A/subclass edge. Add a node or relation type only when a pre-registered question cannot be answered without it.",
+    "mechanism": "A coarse `Concept.kind` category (technique, formal_system, language_feature, mathematical_object, property, proof_method, representation) carries grouping with no hierarchy; each typed edge (INTRODUCES, USES, MENTIONS, EXTENDS_*, GENERALIZES, DEPENDS_ON, RELATED_TO) has a domain/range and an evidence requirement, and a generalization or association edge is admitted only when the paper states it. The curated dictionary supplies reviewed edges; the extractor may propose assertions but never taxonomy.",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 137,
+      "role": "assistant",
+      "quote": "Yes—but I’d build a **small, query-driven property-graph ontology**, not a large OWL ontology up front."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 154,
+      "role": "assistant",
+      "quote": "A useful ontology distinction for our papers is emerging: keep the **curated domain concepts** separate from the **paper-derived assertions**."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 138,
+      "role": "assistant",
+      "quote": "This would expose relationships between *Practical type inference for arbitrary-rank types*, *Complete and Easy Bidirectional Typechecking*, *FreezeML*, and earlier work—**if the papers explicitly support those edges**."
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/analysis/llm-document-graph-research.md",
+     "line": 162,
+     "observation": "States the v0 rule literally: 'There is no generic `IS_A`/subclass edge in v0', with algebraic effects, delimited control, free monads and continuations as related rather than subclasses; line 183 makes `kind` a presentation field, not a subclass graph. Grep over the crate finds IS_A/subclass only inside prohibitions (478, 712; rubric 163) — src/ builds only Work/Person/Collection/Tag/Venue/Attachment, so nothing implements the ontology yet."
+    },
+    "boundary": "Design-only: no extraction arm has run (gates.md:23) and the current Rust store has no Concept or Claim node. The rule also has a documented counterexample — the DeepSeek critique (analysis/deepseek-ontology-critique.md:36) argues that banning IS_A relocated subsumption into the closed, single-valued `kind` enum, so 'no IS_A' alone does not prove no unearned taxonomy. The thread's own advice to add only Chunk/Concept/MENTIONS/ABOUT/CITES first was not followed before the schema grew to 17 relations plus Claim/Experiment/Tool.",
+    "operationalization": [
+     "Grep the emitted schema and manual for IS_A|subClassOf|BROADER_THAN; fail on any generic taxonomy edge, and require every GENERALIZES to cite a span containing an explicit cue ('special case', 'generalizes', 'instance of').",
+     "Require every Concept to carry a kind from the closed enum; a disputed categorization stays needs_review rather than earning a new class or edge.",
+     "Publish reviewed dictionary edges and model-proposed assertions under separate review states so a reader can see which taxonomy is curated and which is extracted."
+    ],
+    "confidence": "R2",
+    "verdict": "qualified"
+   },
+   {
+    "id": "P06",
+    "title": "Relation strength, attribution, and conservative resolution",
+    "rule": "Grade every concept link by the evidence that licenses it — MENTIONS for a bare naming, USES only for the work's own method, INTRODUCES only for an explicitly claimed own contribution — and resolve identity conservatively: aliases are reversible links, ambiguous references stay unresolved, and a merge needs definition-level justification.",
+    "mechanism": "Automatically proposed MENTIONS are kept separate from reviewed ABOUT/USES/INTRODUCES assertions, and cue-constrained validation (first-person method cues for USES; contribution cues minus disclaimer cues for INTRODUCES) blocks role inflation. Aliases become an ALIAS_OF edge carrying its own evidence rather than a node merge, so related-but-distinct notions (free monads vs freer monads, graded vs coeffects) survive as separate concepts; pairwise merge precision is gated at >=.98 and one false merge is reported as a cluster-level incident with its downstream edge count.",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 138,
+      "role": "assistant",
+      "quote": "The distinction between `MENTIONS`, `ABOUT`, `USES`, and `INTRODUCES` is crucial. An extractor should not turn every occurrence of “fixed point” into a claim that the paper introduces fixed-point theory."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 138,
+      "role": "assistant",
+      "quote": "Preserve unresolved references as `ExternalWork`; never silently merge them based only on similar titles."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 178,
+      "role": "assistant",
+      "quote": "Its most useful criticism is that **strict fully-evidenced relation F1 should not stand alone**: it can hide abstention, rare high-risk relation errors, direction mistakes, and clustered damage from one bad concept merge."
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/experiments/ontology-extraction/round-001-rubric.md",
+     "line": 145,
+     "observation": "The high-risk gate requires own-contribution/extension/generalization/refutation precision >= .95 and pairwise merge precision >= .98; lines 30-35 score MENTIONS, USES and own-contribution separately and report 'one false merge ... as one cluster-level incident'. No source file contains these predicates — grep for MENTIONS/USES/INTRODUCES hits only markdown, so the gate currently guards a spec, not code."
+    },
+    "boundary": "Doctrine and gates only: src/ has no relation vocabulary and no arm has run. The design risk is explicit in the critique — 'Work INTRODUCES' smuggles priority (analysis/deepseek-ontology-critique.md:24) and can be read as 'first'; the plan mitigates only with own-contribution cues plus separate human adjudication, and a qualified alias of two partly-overlapping notions still needs a human decision.",
+    "operationalization": [
+     "Re-score a sample of USES/INTRODUCES edges with the cue-and-veto validator, and demote to MENTIONS any edge whose only support is a token match.",
+     "Report pairwise merge precision and list each false merge with its downstream edge count; fail the run below .98.",
+     "For every alias record the surface form, the canonical concept and an evidence span; a merge without definition-level justification stays distinct or uncertain."
+    ],
+    "confidence": "R2",
+    "verdict": "confirmed"
+   },
+   {
+    "id": "P07",
+    "title": "Evidence-bearing claims and unknown propagation",
+    "rule": "Admit a claim only as one atomic, independently evaluable proposition bound to exact evidence — a verbatim quote plus a resolvable locator — and let missing or unresolved inputs stay unknown. Unknown may demote a result; it must never be silently filled, defaulted, or resolved into an answer.",
+    "mechanism": "Claims are reified and projected as Work-[:ASSERTS]->Claim, Claim-[:ABOUT]->Concept, Claim-[:HAS_EVIDENCE {stance}]->EvidenceSpan, with Chunk demoted to a locator; deterministic checks require the quote to be a substring of the cited raw page and dedupe overlapping spans so one sentence cannot count as independent corroboration. Unknowns stay visible: unresolved references remain ExternalWork, citation_function may be `unknown`, unanswerable questions require abstention, and the sibling doc-verify kernel keeps a pessimistic and an optimistic bound so PASS holds only if it survives every way the unknowns could resolve.",
+    "evidence": [
+     {
+      "thread_id": "cb2db461-7165-4291-8607-5e57e973dd81",
+      "message_index": 98,
+      "role": "user",
+      "quote": "well, change the wording, evidence are usage, actully, so what we write as evidence is actually facts"
+     },
+     {
+      "thread_id": "cb2db461-7165-4291-8607-5e57e973dd81",
+      "message_index": 127,
+      "role": "assistant",
+      "quote": "**Facts are now pure code** — one-sentence context + raw artifact only"
+     },
+     {
+      "thread_id": "28b5b22b-ae23-4d14-883f-32f13722ca15",
+      "message_index": 26,
+      "role": "assistant",
+      "quote": "**Unknown propagates and never resolves on its own.** A verdict is PASS only when it would hold under every way the unknown atoms could be answered."
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/analysis/llm-document-graph-research.md",
+     "line": 555,
+     "observation": "Projects Claim-[:HAS_EVIDENCE {stance}]->EvidenceSpan; the evidence table at line 544 stores page, start/end offsets, exact quote and a quote-validation state. This supersedes the thread's earlier Claim-[:SUPPORTED_BY]->Chunk shape. Rubric lines 82-88 add substring/locator checks and span dedup, but gates.md:24 records 'Deterministic scorer | no' — none of it is executable."
+    },
+    "boundary": "Split evidence base: the claim/evidence shape is paper-graph doctrine (unrun, no scorer), while the unknown-propagation sentence is from doc-verify, a different system, used here as a design precedent rather than a measurement of this pipeline. The running Rust code propagates unknown only in presentation — src/ui.html:29 renders 'Year unknown' — not in evaluation: there is no claim store and no abstention logic.",
+    "operationalization": [
+     "Validate every claim's quote as an exact substring of the cited raw page/chunk and its locator to attachment/chunk/page/offset; a fabricated locator is a hard failure.",
+     "Dedupe overlapping spans by fingerprint before counting support, so repeated copies of one sentence are one evidence item.",
+     "Pre-register abstention: each gold question names its unanswerable case, and an answer that fills an unresolved slot instead of abstaining is scored wrong."
+    ],
+    "confidence": "R3",
+    "verdict": "qualified"
+   },
+   {
+    "id": "P08",
+    "title": "Evaluation-first and pre-registration",
+    "rule": "Build the smallest end-to-end artifact that can be evaluated against the real corpus before expanding the model, then pre-register the comparison: one manipulated variable, an explicit frozen list, gates written before outputs are opened, and the already-strong baseline as a non-regression control rather than a success claim.",
+    "mechanism": "The first deliverable was search over the real Zotero library (324 works, 35.238 s sync; BM25, exact vector, weighted-RRF hybrid, loopback UI), so the first experiment measures search rather than extraction depth. Round 1 manipulates ontology constraint only (U2/S2/P2), holding parsed text, chunk IDs, model snapshot, decoding, input order, call budget, JSON envelope, evidence requirements, retry policy, quote/page validation and resolution policy constant; manual, prompts, schemas, chunker, model and gates are frozen before test predictions. Because four simple topic probes already return a sensible rank-1 work, they become non-regression controls, and the primary downstream metric moves to evidence-supported compositional answers on 20 questions (10 deterministic, 6 synthesis, 4 unanswerable).",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 47,
+      "role": "assistant",
+      "quote": "That narrows the problem well. I’d make **search evaluation the first product**, with synchronization reduced to a manual, repeatable command."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 48,
+      "role": "user",
+      "quote": "Sure, it's a good idea to have a proof of work first."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 167,
+      "role": "assistant",
+      "quote": "Simple Recall@5/nDCG can remain a non-regression check, but it should not be the main success criterion."
+     }
+    ],
+    "code_check": {
+     "path": "paper-graph/experiments/ontology-extraction/round-001-plan.md",
+     "line": 18,
+     "observation": "Pre-registration holds parsed text, chunk IDs, model snapshot, decoding, input order, call budget, JSON envelope, evidence requirements, retry, quote/page validation and resolution policy constant (18-21); manual, prompts, schemas, chunker, model and gates are frozen before test predictions (56-59); the four topic probes are non-regression controls only (94). tests/experiment_corpus.rs:31-42 enforces the frozen 4-development/11-test disjoint split."
+    },
+    "boundary": "Pre-registered but unexecuted: gates.md marks plan review, PDF parsing, gold, seeds, extraction, scorer and verdict all 'no' and states a 'no' row 'is not a pass'. Two contradictions: the plan invests in Claim/evidence scoring before the 12-20 search questions the thread said to test first were ever asked; and gates.md:14 still cites 'uv run pytest: 5 passed' although the crate is now Rust (Cargo.toml, 10 #[test] functions, no Python), so that gate row is stale.",
+    "operationalization": [
+     "Freeze hashes for manual, prompts, schemas, chunker, model snapshot and gates before opening test outputs; record any post-freeze change as a protocol deviation.",
+     "Report the four simple topic probes as non-regression checks only, and make the primary downstream score evidence-supported compositional answers with citation precision.",
+     "Keep a gate ledger whose incomplete tracks are recorded as 'no' with no inferred result, and reject any improvement claim that cites an unrun arm."
+    ],
+    "confidence": "R3",
+    "verdict": "qualified"
+   }
+  ]
+ },
+ {
+  "lessons": [
+   {
+    "id": "P09",
+    "title": "Score extraction with a pre-registered metric panel, not one F1, and let the gates stop the round",
+    "rule": "Score the ontology-extraction round with a pre-registered panel, never a single aggregate F1: keep strict fully-evidenced relation F1 as one diagnostic while coverage, high-risk violation rate, evidence validity and downstream answer quality are co-headline. Pre-register the stopping gates before any arm runs and stop the round on a gate instead of reporting the best-looking number.",
+    "mechanism": "Why not a single F1: strict fully-evidenced relation F1 hides selective abstention (a model that emits only easy MENTIONS edges), rare but fatal direction errors on GENERALIZES/EXTENDS_*, and the blast radius of one bad concept merge, so the rubric keeps existence, semantic and strict F1 as three factorized diagnostics and adds per-predicate macro-F1, direction confusion matrices, a risk-coverage curve with matched-coverage F1 (abstentions and discarded hard cases stay false negatives) and a separate per-merge cluster-incident count. Co-headline panel: canonical concept and role F1; per-relation macro-F1; high-risk spontaneous-edge violation rate with its absolute count; merge precision and B-cubed; quote/locator validity plus human evidence sufficiency; downstream answer score with citation precision/recall and abstention; cost, latency and review minutes; inter-annotator agreement before adjudication. Gates that stop a run are pre-registered in rubric section 9: annotation agreement alpha < .67 stops the round; any silent structural failure fails; a single fabricated locator or non-2 evidence score fails canonical provenance; own-contribution/extension/generalization/refutation precision < .95 fails; P2 must beat S2 on concept and per-relation F1 with strict micro-F1 >= .70; any seeded mention-to-contribution, citation-to-extension, related-to-generalization or incomplete-evidence approval fails; spend > US$25 fails; and gates are not relaxed after seeing output, with unstable small-sample intervals marked inconclusive. Two traps recorded in the thread: the four simple topic queries already returned a sensible rank-1 paper, so they have no headroom and were demoted to non-regression controls while the downstream headline moved to compositional, evidence-required questions (msg 167); and the ledger's own semantics, where a complete: no row is not a pass and has no inferred result, is what actually stopped this run - 8 of 19 rows are yes and all 11 extraction, scorer, annotation and verdict rows are no.",
+    "evidence": [
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 178,
+      "role": "assistant",
+      "quote": "Its most useful criticism is that **strict fully-evidenced relation F1 should not stand alone**: it can hide abstention, rare high-risk relation errors, direction mistakes, and clustered damage from one bad concept merge."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 194,
+      "role": "assistant",
+      "quote": "DeepSeek’s main contribution was improving this evaluation: **strict F1 is now one diagnostic, not the sole headline**, because it can hide selective abstention, rare direction errors, and the blast radius of one bad merge."
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 167,
+      "role": "assistant",
+      "quote": "The exploratory baseline exposed an evaluation trap: the current hybrid search already puts a sensible paper at **rank 1 for all four candidate topic queries**. So those queries cannot demonstrate much ontology benefit."
+     }
+    ],
+    "code_check": {
+     "path": "experiments/ontology-extraction/gates.md",
+     "line": 14,
+     "observation": "The corpus row still records `uv run pytest`: 5 passed, but the crate was ported to Rust on 2026-11-18 (README.md:128 says `cargo test -p paper-graph`; README.md:136 records the port) and the repo contains no .py file and no pyproject.toml. The actual corpus gate is tests/experiment_corpus.rs (10 #[test] functions across 5 test files). The thread's verification claim (msg 194, `uv run pytest` -> 5 passed) was true when the repo was Python, but the row is now stale and its command no longer reproduces - which is exactly why a gate row must be re-executed, not transcribed. Also note src/ has no scorer at all, matching gates.md:24, so the whole panel is still pre-registration rather than measurement."
+    },
+    "boundary": "One project and one 15-paper corpus, with no extraction arm, scorer or gold run, so this establishes the decision and its rationale, not that the panel beats F1 empirically; the thresholds (.95 precision, .05 margin, US$25, 20 min/paper) are project choices, not field standards. A single aggregate F1 remains defensible where gold is complete, one relation type dominates, and abstention cannot be rewarded - the critique is about a headline that hides failure modes, not about F1 being invalid.",
+    "operationalization": [
+     "Before any arm runs, publish the panel with a numerator, denominator and stop threshold per metric, and reject any report whose headline is one aggregate F1.",
+     "Run the simple retrieval probes first: if rank-1 is already correct, demote them to non-regression controls and require compositional, evidence-required questions for the downstream headline.",
+     "Re-run every `complete: yes` ledger row from a clean checkout; a row whose command no longer exists (the pytest row after the Rust port) drops to `no` instead of staying green."
+    ],
+    "confidence": "R2",
+    "verdict": "qualified"
+   },
+   {
+    "id": "P10",
+    "title": "Green means executed, traceable and gold-intact - and the question is part of the oracle",
+    "rule": "Treat an eval as evidence only when the run proves it executed every case, records the configuration and raw per-case output that produced the score, and leaves gold untouched; when a model disagrees with gold, gold wins unless a cited skill or decision sentence changes the case. Lint questions and the answer schema as hard as the expected answers, because a presupposing question or a conflated field bends the eval without touching gold.",
+    "mechanism": "How an eval looks green while doing nothing: the harness silently skipped any project that declared no model, so every past eval:full executed zero cases while appearing to work; the lead reproduced it on main with a fake key and an unreachable endpoint - main reported 0 cases executed while the fixed branch actually ran the cases and failed on the connection (msg 330). The tell is a skip path that returns success; the fix is a placeholder model plus a counting runner that prints each case's expected and actual decision. What a run record must contain: commit, model id, extra body/config (the thinking-mode switch), repeat index, per-case expected vs actual, and the raw output files, plus which runs are credited. The review found results recorded neither the model nor the extra fields, so a score could not be traced to its configuration (msg 330); in a second project only the verdict JSON was committed without its evidence files, so the record could not be re-verified, and one record passed only because its verdict was already unavailable while two others failed because the recompute used today's track list instead of the record's own (msgs 1284, 1313). Who wins on disagreement: the cases are the spec and a failing expected answer is never changed because a model answered differently; every miss gets exactly one of three labels - skill finding, ambiguous question, out-of-date case - and only the last two permit editing, with the deciding sentence cited and a second reviewer. A draft field definition would have quietly moved six expected answers toward what the model said (msg 62); the fix produced a table derived from the corpus's 12 distinct expected answers plus an automated check that fails if an expected answer is missing. Post-fix verification: 43/43 expected tuples unchanged, 32 misses each with exactly one row, and an independent re-run reproducing the recorded score. How questions and schema leak: rewording questions to presuppose the outcome (asking what file the retro creates assumes a file is created) makes the trap case unable to catch the failure it was written for, and a next_action field that mixes which stage is running with what it decides makes 'run the retro' a true answer for any decision inside a retro (msg 139). Both are the same bending done through the prompt or schema instead of the expected answer, so the fix is neutral wording that names only the decision being scored, a lint for conditional wording, and a quoted skill fragment required in every case.",
+    "evidence": [
+     {
+      "thread_id": "78dd3c13-7698-4bfc-ad30-b3005f2aa7bf",
+      "message_index": 352,
+      "role": "assistant",
+      "quote": "vieval silently skips any project that declares no model, and this one declared none. So every past `eval:full` run executed 0 cases while appearing to work."
+     },
+     {
+      "thread_id": "d64e9502-1a93-45cf-8f19-9f4befc28b17",
+      "message_index": 330,
+      "role": "assistant",
+      "quote": "A run's results don't record the model or the extra fields used, so a score like \"64/126 on deepseek-flash\" can't be traced to its configuration."
+     },
+     {
+      "thread_id": "d64e9502-1a93-45cf-8f19-9f4befc28b17",
+      "message_index": 343,
+      "role": "user",
+      "quote": "none bends an expected answer; question/fixture edits don't leak answers."
+     }
+    ],
+    "code_check": {
+     "path": "tests/experiment_corpus.rs",
+     "line": 15,
+     "observation": "assert_eq!(corpus[\"status\"], \"pdf_verified_gold_pending\") makes 'gold not yet adjudicated' a machine-checked fact: no green test run can silently promote the 15-paper corpus to gold, and the split assertion (4 development / 11 test, all four domains) is the same test. The repo enforces the boundary in code, whereas gates.md:14 still transcribes a past pytest green whose command no longer exists after the Rust port - the ledger records history, the test records the current state."
+    },
+    "boundary": "Two eval projects (the flow-skills L1 harness and the home.conf gate records) plus the paper-graph ledger, not the ontology-extraction experiment itself. 'Gold wins' assumes the cases are the spec, so genuinely wrong gold needs the out-of-date label with a cited sentence and a second reviewer - not a silent edit; the rule does not defend against a model that can read the expected answers or the harness, and with only deepseek models available every skill finding stays unconfirmed across model families. It also does not make a run reproducible: a traceable record can still be a bad corpus.",
+    "operationalization": [
+     "Fail the run and the report whenever executed != corpus size: print executed/skipped/failed counts, make any skip exit non-zero, and treat a zero-case run as a harness failure rather than a score.",
+     "Require one committed run record per execution - commit, model id, extra body/config, repeat index, per-case expected vs actual, and the raw output files - and refuse any score that cannot be traced to one.",
+     "Diff the `expected` lines on every case edit and fail if one moved without a cited deciding sentence and a second reviewer; lint questions for outcome-presupposing wording and require every trap case to fail on its seeded wrong answer."
+    ],
+    "confidence": "R3",
+    "verdict": "confirmed"
+   },
+   {
+    "id": "P11",
+    "title": "Validate the evaluator with independent oracles before trusting any verdict",
+    "rule": "Before trusting any verdict, validate the evaluator itself against invariants and an independent reference that shares no code with it. Map timeouts, budget exhaustion, parse or backend failures and unasked atoms to BLOCKED or unknown, never to PASS.",
+    "mechanism": "Three validation layers, cheapest first (msg 24): invariants that must hold for any program and any answer set - certain is a subset of possible, answering one more atom never grows the gap, answering every demanded atom makes the two bounds equal, the result is independent of rule and fact order, and PASS implies every error constraint has a certain goal - as property tests over generated small programs; a naive, obviously correct reference for the deterministic subset, where no oracle is in play or all atoms are answered and the semantics collapses to ordinary stratified Datalog, which must agree with the production evaluator on derived relations; and a reference for the three-valued part, the doubling transformation run through that same naive evaluator, differentially tested against the direct evaluator. In doc-verify all three exist: tests/kernel-slow/reference/reference.mjs is derived from the model alone and says the old evaluate.ts is neither read nor imported (it reuses only the parser for syntax), random-brute.mjs is an independent two-valued evaluator that shares no code with reference.mjs, and tests/kernel-slow/property generates programs with fast-check and checks sound, cover, verdict, M1, M2, D1, D2 and loop well-foundedness. The invariants to preserve are also constitutional (msg 26): the judge is a fact source never a decider, a threshold may only demote a label to unknown; unknown propagates and a verdict is PASS only when it holds under every way the unknown atoms could be answered; ask only what can still change the verdict in bounded rounds; every verdict carries its derivation to the leaves; finiteness and the trust boundary are enforced before evaluation; identity is by content. Verdict mapping is where this rule earns its keep: the review's blocking bug was that exhausting the kernel's time budget produced PASS instead of BLOCKED (msg 884); the code now returns BLOCKED for budget and resource exhaustion and refuses a PASS that survives an unasked atom - an incomplete run with no conclusive failure is BLOCKED, the same class as a failed round, not a quiet PASS - with precedence NO-GO > BLOCKED > NEEDS-REVIEW > PASS and an absent judge backend BLOCKED rather than faked. Acceptance of the replacement evaluator was itself differential: 359/359 tests, the slow suite complete with 0 refuting, and check --all on main and on the branch sharing one set of judge answers with 0 of 24 documents differing (msg 1359) - and the review also corrected the evidence count itself (the round-2 kernel run was 200; the 1,500 checked the reference), because a claim about how many programs were checked needs the same scrutiny as a verdict.",
+    "evidence": [
+     {
+      "thread_id": "28b5b22b-ae23-4d14-883f-32f13722ca15",
+      "message_index": 24,
+      "role": "assistant",
+      "quote": "The way to get confidence that your own evaluator has not broken the logic is to pin the semantics with an independent second implementation and test the two against each other."
+     },
+     {
+      "thread_id": "d0e2d0bd-d957-43dd-92d8-3a594578217e",
+      "message_index": 884,
+      "role": "assistant",
+      "quote": "**Blocking:** when the kernel runs out of its time budget, the overall verdict comes out PASS instead of BLOCKED."
+     },
+     {
+      "thread_id": "d0e2d0bd-d957-43dd-92d8-3a594578217e",
+      "message_index": 1359,
+      "role": "assistant",
+      "quote": "On this repo's own 24 documents, swapping the evaluator changes no verdict and no finding."
+     }
+    ],
+    "code_check": {
+     "path": "doc-verify/src/engine/index.ts",
+     "line": 198,
+     "observation": "The coverage rule at 196-201 states that a PASS asserts every constraint was evaluated, so an incomplete run with no conclusive failure is BLOCKED instead of a quiet PASS; line 111 returns BLOCKED for kernel inference budget exceeded, and engine/diagnostics.ts:151 says a budget or resource failure must never be treated as satisfied. That is the timeout-to-verdict mapping the review demanded, applied in code rather than in prose; the independent reference it is checked against lives in tests/kernel-slow/reference and tests/kernel-slow/property."
+    },
+    "boundary": "Covers doc-verify's semantics - stratified Datalog evaluated to two bounds with a third truth value and a demand scheduler - not evaluators in general. The reference covers the deterministic subset and generated small programs, and 0 differing verdicts on 24 real documents is necessary but not sufficient: the branch's own record says those documents do not exercise prefix demand or the three refusals. Invariants catch evaluator bugs but not a wrong specification, since a semantics bug passes every invariant, and the property suite is slow (about 1,006 s), so it runs nightly rather than per change.",
+    "operationalization": [
+     "Run the invariant and property suite on generated programs and require 0 refuting before citing any verdict; a refuting program is a blocker, not a flaky test.",
+     "Differential-test the evaluator against the naive reference on the deterministic subset and against the independent three-valued derivation, accepting only 0 differing verdicts and 0 counterexamples.",
+     "Seed every failure path - tiny budget, absent key, truncated or unparseable output, unasked atom - and assert BLOCKED or NEEDS-REVIEW, never PASS, keeping one regression test per path."
+    ],
+    "confidence": "R3",
+    "verdict": "confirmed"
+   }
+  ]
+ },
+ {
+  "lessons": [
+   {
+    "id": "P12",
+    "title": "Extraction operations and run provenance",
+    "rule": "Derive every extraction call's budget chain from one inequality — context_window ≥ prompt + output_budget, max_tokens ≥ output_budget, timeout ≥ output_budget / measured tok/s, batch limit ≥ largest record — and reject the configuration before the job runs. Classify an empty or truncated result by finish reason, content/reasoning split, and schema validity before calling it a model error, and log per call the run identity, model snapshot, purpose, token counts, attempt, latency, and error class so an app restart is never scored as a model failure.",
+    "mechanism": "The budgets compose, and each mismatch fails differently. A 16,384-token structured budget exceeded the provider's 8,192 max_tokens and 60 s timeout, and the reasoning model spent what it did generate in reasoning_content: the measured call returned finish_reason 'length', content_len 0, 2,836 reasoning tokens, and 1,024 completion tokens on 121 prompt tokens; the remote provider produced 16 timeouts in 17 attempts with usage_unreported true and zero tokens returned. Prompts also reached ~19.8k tokens against a 16k window, and the repo records an input-side version of the same bug — a 512-token physical batch rejecting a 522-token record (README.md:64-66). Because 'empty' can mean budget-exhausted reasoning, context overflow, timeout, or a dead backend, the only reliable discriminator is the per-call record plus an explicit classification of empty/truncated output; the harness therefore keeps empty content, truncation, finish reason, and schema validity as separate failure states.",
+    "evidence": [
+     {
+      "thread_id": "f8ea8d0d-00d5-48d0-ae66-e382c9ef3a92",
+      "message_index": 21,
+      "role": "assistant",
+      "quote": "Failures all request **`output_budget=16384` — but your zai provider (`remote_llm.json`) has `max_tokens: 8192` and `timeout: 60.0`**."
+     },
+     {
+      "thread_id": "c6422ed2-d314-4330-a896-33873a5062c0",
+      "message_index": 19,
+      "role": "assistant",
+      "quote": "finish_reason: length\ncontent_len: 0\nreasoning_len: 2836\nusage: {'completion_tokens': 1024, 'prompt_tokens': 121, 'total_tokens': 1145, 'prompt_tokens_details': {'cached_tokens': 0}}"
+     },
+     {
+      "thread_id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "message_index": 194,
+      "role": "assistant",
+      "quote": "The harness therefore treats empty content, truncation, finish reason, and schema validity as separate failure states."
+     }
+    ],
+    "code_check": {
+     "path": "paperfs.rs/paper-graph/src/embeddings.rs",
+     "line": 112,
+     "observation": "Token accounting silently coerces missing usage to 0 (`.unwrap_or(0)`), so a manifest built from this counter cannot distinguish 'server reported no usage' from 'zero tokens' — the same usage_unreported ambiguity that masked the KG failures. `SyncReport` (src/pipeline.rs:20-29) likewise records only database, model, URL, tokens, elapsed, and counts: no run id, timestamp, attempt, finish reason, or per-batch failure."
+    },
+    "boundary": "The concrete numbers (60 s, 8192, 16384, 16k window) are deployment-specific; the invariant is the budget inequality. The fuller per-run manifest is specified only in a pre-registered rubric (experiments/ontology-extraction/round-001-rubric.md:118-121) and no extraction arm has run (gates.md), so the provenance half is a demonstrated diagnosis requirement, not an exercised harness.",
+    "operationalization": [
+     "Before a run, assert context_window ≥ p95_prompt + output_budget, max_tokens ≥ output_budget, timeout ≥ output_budget / measured_tok_per_s, and batch limit ≥ largest input record; fail the configuration, not the individual job.",
+     "Log per call: run_id, purpose, model snapshot, input/output/cached tokens, attempt, finish_reason, content length, reasoning length, truncation flag, wall time, error class; store missing usage as 'unreported', never 0.",
+     "On an empty result, read finish_reason and the content/reasoning split before retrying; after an app restart, re-issue the same request id and compare outcomes rather than counting the restart as a model failure."
+    ],
+    "confidence": "R3",
+    "verdict": "confirmed"
+   },
+   {
+    "id": "P13",
+    "title": "Durable distillation practice",
+    "rule": "Write to durable memory only on an explicit decision; until then keep the material in working context. When a topic finishes or outgrows the context, replace its detailed span with a summary record that points at the archived detail, and let a design/lesson record carry only the durable decision, the rejected alternative and why, and the evidence — never temporary test scaffolding or process narrative.",
+    "mechanism": "Working context is cheap and reversible; durable storage is curated and hard to retract, so promotion is a deliberate act rather than an inference from interestingness. The working layer behaves as an index: it holds summaries and pointers, and once a topic finishes or outgrows the context the detailed span is replaced by a summary record that points at the archived detail, keeping the live context bounded without losing the source. The durable record is a decision/lesson log, not a diary — it names the decision, the rejected alternative and why, and the evidence — while temporary spike artifacts are excluded because they describe the process; unperformed checks stay marked 'complete: no' rather than being reported as passes.",
+    "evidence": [
+     {
+      "thread_id": "5509b0c1-64da-43ed-81b1-c2a72f6da6ab",
+      "message_index": 15,
+      "role": "user",
+      "quote": "Not that keep in mem (calling nowledge memory add) I mean you just remember, actually it has the working mem tool, i don't know exactly what it does, but sounds like the keep in mem"
+     },
+     {
+      "thread_id": "5509b0c1-64da-43ed-81b1-c2a72f6da6ab",
+      "message_index": 31,
+      "role": "user",
+      "quote": "and I think memory works more like an index, it doesn't make sense to fill the context with details of everything. So after a topic finish or has grown larger, we can replace that detailed part into summarizaiton records pointing to the archived details."
+     },
+     {
+      "thread_id": "7172fd66-4eb3-4819-aea3-02629fcc7029",
+      "message_index": 50,
+      "role": "user",
+      "quote": "some are just temporary test like the flip, that's not what we need to record. the design is to record the hard lessons we learnt"
+     }
+    ],
+    "code_check": {
+     "path": "paperfs.rs/paper-graph/experiments/ontology-extraction/decisions.md",
+     "line": 3,
+     "observation": "The decision log's columns are Timestamp | Decision | Why | Evidence | Result, so each durable entry must name its rationale and evidence and is dated; the gate ledger separately marks unperformed checks `complete: no` and states that such a row 'is not a pass and has no inferred result'."
+    },
+    "boundary": "Single-user local practice across a firmware design series and an experiment repo; it records what the user required and did, not a measured improvement in outcomes. It does not fix how long an episode may stay open — only what closing it must produce.",
+    "operationalization": [
+     "Before any durable write, require an explicit decision; otherwise keep the item in session context only.",
+     "When a topic ends or exceeds its context budget, write a summary record with a pointer to the archived detail and stop carrying the detail in the live context.",
+     "For each lesson record, require decision + rejected alternative + why + evidence + open issues, and reject entries containing temporary test scaffolding or a result that was never executed."
+    ],
+    "confidence": "R3",
+    "verdict": "confirmed"
+   },
+   {
+    "id": "P14",
+    "title": "Backend selection and migration safety",
+    "rule": "Choose the backend with the fewest native moving parts that is already pinned by the runtime, and prove its version and capabilities before adopting it. Execute every schema change as a reviewed one-off script against a copy — additive wherever possible, never a table rebuild that application code runs at startup — and publish only after a count oracle passes.",
+    "mechanism": "At a few hundred works the corpus is small enough that an exact scan plus an in-process full-text index are sufficient, so the decisive variable is how many native layers can drift, not search quality. The LanceDB attempt died on a numpy/libstdc++ ABI conflict and the workable prototype was SQLite FTS5 (286 sections from 45 files, BM25 ranking); the paper-graph backend likewise pins a native crate and a rustc floor. Migration is the same risk in time: an automatic table-rebuild embedded in application code, with DROP VIEW/DROP TABLE, was rejected as dangerous and replaced by a one-off SQL file; the accepted statement was a single additive ALTER with a default, verified by the full test suite before commit.",
+    "evidence": [
+     {
+      "thread_id": "05a7de1d-2a8f-49cd-a93d-0aa1ab261f8e",
+      "message_index": 45,
+      "role": "assistant",
+      "quote": "Interesting - hit a dependency issue with numpy/libstdc++.so.6. This is a known issue with PyTorch environments. Let me document this and try a simpler approach first."
+     },
+     {
+      "thread_id": "d9cbb41d-773e-4917-a187-1d83c30991eb",
+      "message_index": 62,
+      "role": "user",
+      "quote": "this is dangerous, provide the one off migration sql to me and remove that logic"
+     },
+     {
+      "thread_id": "d9cbb41d-773e-4917-a187-1d83c30991eb",
+      "message_index": 86,
+      "role": "user",
+      "quote": "you have drops in schema? how dare you say it's a migration"
+     }
+    ],
+    "code_check": {
+     "path": "paperfs.rs/paper-graph/tests/existing_database.rs",
+     "line": 15,
+     "observation": "The only check against a real database is an ignored test pinned to exact counts (324 works, 171 unfiled, 347 persons, 5 collections, 24 tags, 10 venues, 161 attachments), so a rebuild/migration is verified by a count oracle rather than a schema diff; `store.rebuild()` still begins with `DELETE FROM works` plus `MATCH (n) DETACH DELETE n` (src/store.rs:108-109), a full destructive replace."
+    },
+    "boundary": "Single-writer embedded stores with an offline migration window; not zero-downtime or multi-writer. paper-graph itself still rebuilds destructively (src/store.rs:108-109), so the additive rule is a target there rather than current behavior, and extracted domain data must live in a separate derived DB (experiments/ontology-extraction/README.md:44-46).",
+    "operationalization": [
+     "Before adopting a backend, print and store engine version, compiled features, and toolchain floor (SQLite version + FTS5, HawDB/rustc, extension versions); fail the plan if any is unverified.",
+     "Apply migrations as a reviewed one-off script on a copy inside a transaction, additive first; forbid startup or rebuild code that drops tables or views.",
+     "Gate publish on a count/content oracle (works, unfiled, persons, collections, tags, venues, attachments) and roll back on mismatch."
+    ],
+    "confidence": "R3",
+    "verdict": "qualified"
+   }
+  ]
+ }
+]

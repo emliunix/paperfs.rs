@@ -1,0 +1,600 @@
+[
+ {
+  "findings": [
+   {
+    "kind": "conflict",
+    "ids": [
+     "P01",
+     "P03",
+     "P14"
+    ],
+    "issue": "P01 licenses the destructive rebuild (\"treat HawDB as disposable derived state\") while P03 and P14 forbid exactly what store.rs:108-109 does on every manual sync: DELETE FROM works plus MATCH (n) DETACH DELETE n in one transaction, called by pipeline.rs::sync_library. The only reconciliation is decisions.md:5, a decision row saying round 1 \"must use a separate derived HawDB database\"; no such database, schema, or code exists (data/ contains only library.hawdb). P03 also equivocates on \"rebuild\": its rule is about a schema table-rebuild that drops views/tables (the bub_sf SQLite case), but its code check is a data wipe, so the cited evidence does not support the schema half.",
+    "corrected_wording": "Scope the disposability claim to the metadata graph only: that graph may be fully rebuilt from Zotero. Extraction, human judgment, and run provenance require a separate database with an additive migration path; until that database exists, P03/P14's no-destructive-rebuild rule is unmet, and \"table-rebuild\" must not be used for a data wipe.",
+    "severity": "high"
+   },
+   {
+    "kind": "overclaim",
+    "ids": [
+     "P01",
+     "P03",
+     "P04",
+     "P05",
+     "P06",
+     "P10",
+     "P13",
+     "P14"
+    ],
+    "issue": "The verdict labels are not comparable: four pairs read the same artifact and split. P03 is \"confirmed\" and P14 \"qualified\" for the same store.rs:108-109 rebuild rule; P10 is \"confirmed\" and P04 \"qualified\" on the same experiment_corpus.rs:15; P06 is \"confirmed\" and P05 \"qualified\" although both are design-only with no implementation (P06's own check says the predicates exist only in markdown); P13 is \"confirmed\" and P01 \"qualified\" on the same third-layer/Mem evidence. Compound rules also get one verdict: P03's manual sync is implemented, but its additive schema evolution is not (initialize() is create-if-absent; there is no ALTER anywhere).",
+    "corrected_wording": "Grade each conjunct separately and reserve \"confirmed\" for a rule observed in executed code or a measured run. On that standard P03's schema half, P06, P10's execution half, and P13 are \"qualified -- one conjunct evidenced\", and P03/P14 cannot carry different verdicts for the same rule.",
+    "severity": "high"
+   },
+   {
+    "kind": "conflict",
+    "ids": [
+     "P04",
+     "P10"
+    ],
+    "issue": "Both cite tests/experiment_corpus.rs:15 and contradict each other. P04 says the test \"never stats a PDF or checks %PDF-; admission is a one-time manual record, not an executable gate.\" P10 says it \"makes gold not yet adjudicated a machine-checked fact\" and \"the repo enforces the boundary in code.\" The line only asserts corpus[\"status\"] == \"pdf_verified_gold_pending\"; the JSON's verification block (\"Zotero attachment row exists\", \"at least one referenced local PDF exists\", \"first five bytes ... are %PDF-\") is not asserted, and an added gold/ directory or annotations would leave the status string unchanged. It is a tripwire on a self-declared label, not an admission gate (P04 is right) and not a gold guarantee (P10 is wrong). There are no gold files at all (gates.md:19), so the gold-wins half of P10 has no instance in this repo.",
+    "corrected_wording": "Describe the line as a status-string tripwire: it fails if the corpus JSON's own status is edited, but it neither verifies PDF admission nor protects gold. If gold-intact is required, assert the absence of gold artifacts and the presence of verified PDF signatures in the same test.",
+    "severity": "high"
+   },
+   {
+    "kind": "overclaim",
+    "ids": [
+     "P08"
+    ],
+    "issue": "P08's \"one manipulated variable\" is not established by the plan text it cites. Plan:21 lists resolution policy as held constant, but plan:27 gives U2 \"exact normalized-name merge only\" while plan:28 gives S2 \"exact known-alias rules\", and plan:29 makes \"curated PL aliases\" P2's only additional input. If those resolver descriptions are equivalent, the plan should say so and use one resolver; if they are not, U2-vs-S2 changes vocabulary and resolution, and P2-vs-S2 changes the alias dictionary as well as the vocabulary.",
+    "corrected_wording": "Either make U2/S2/P2 share one resolver with the alias table as the only difference, or state the axis as \"vocabulary plus curated aliases\" and add an arm that separates vocabulary from resolution; do not cite lines 18-21 as proving a constant resolution policy while lines 27-29 describe different merge rules.",
+    "severity": "medium"
+   },
+   {
+    "kind": "caveat_invalidates_headline",
+    "ids": [
+     "P05"
+    ],
+    "issue": "The rule's operative test -- add a type only when a pre-registered question cannot be answered without it -- cannot have been applied: gates.md:20 records \"Downstream gold questions | no\" and no questions.json exists, while the research report's sections 3.2/3.3 already carry 9 node types and 17 relations. P05's own boundary admits the recommended five-relation start \"was not followed.\" The cited counterexample (deepseek-ontology-critique.md:36) says the IS_A ban relocated subsumption into the closed, single-valued kind enum, so \"ship no generic IS_A edge\" does not establish \"no unearned taxonomy.\"",
+    "corrected_wording": "The headline should be: v0 has no named IS_A edge but does have a 17-relation vocabulary and a closed kind enum written before any competency question was frozen. Cut the vocabulary to what the questions need, or make kind faceted, multi-valued, and attributed so subsumption is not merely renamed.",
+    "severity": "high"
+   },
+   {
+    "kind": "overclaim",
+    "ids": [
+     "P02"
+    ],
+    "issue": "P02's second thread is 3099ed1f (\"OCaml explicit pattern matching syntax\"); a full-text search returns zero matches for \"Zotero\" and zero for \"hash\", and its \"index\" hits are markdown reading notes (putting2007-reading.md, carnier-2023-index.md). It supplies no evidence for itemID, zotero_key, or content-hash identity, so the R3 two-thread corroboration is one paper-graph thread plus a paper-notes conversation that never mentions the system. The implementation is also weaker than the rule: zotero_key is stored, selected, and displayed but never used in a WHERE or lookup, so nothing exercises it as \"the durable address.\"",
+    "corrected_wording": "Cite only the paper-graph thread and README/store.rs for the identity rule, and add a key-based lookup or a key-to-itemID assertion before calling zotero_key the durable address. Drop the OCaml/paper-notes thread from the evidence base or label it a counterexample about title-keyed note indexes.",
+    "severity": "high"
+   },
+   {
+    "kind": "caveat_invalidates_headline",
+    "ids": [
+     "P01",
+     "P13"
+    ],
+    "issue": "P01 explicitly disqualifies thread 5509b0c1 -- \"never mentions Zotero or HawDB; its index-and-archive remark is an agent-memory analogy, not independent evidence for this system\" -- yet P13 lists it as one of two supporting threads and is \"confirmed.\" The other thread (7172fd66) supports dropping temporary detail (\"dropping temporary spike/test artifacts like the demo flip\"), not replacing it with a summary that points at an archived original; decisions.md:3 is only a table header (Timestamp | Decision | Why | Evidence | Result), with no archive pointer and no rejected-alternative column (row 7 embeds one in Why). Only \"dated decision + why + evidence\" is evidenced.",
+    "corrected_wording": "Limit the confirmed claim to a dated decision log with a rationale and evidence, plus a firmware practice that deletes temporary scaffolding. The durable-memory gate, the archive pointer, and the rejected-alternative field are prescriptions not present in either artifact; remove the P01-disqualified analogy from the evidence list.",
+    "severity": "high"
+   },
+   {
+    "kind": "unstated_dependency",
+    "ids": [
+     "P02",
+     "P08"
+    ],
+    "issue": "P08's frozen 4-development/11-test split is stored in round-001-corpus.json with only item_id, split, domain, and title -- no zotero_key, no DOI. P02 warns that itemID is a local SQLite row id and that \"a merge or restore can reassign it.\" experiment_corpus.rs asserts only the split shape and title non-emptiness, not an ID-to-key mapping. A Zotero restore can therefore re-point the pre-registered test set at different papers while every test stays green.",
+    "corrected_wording": "Add zotero_key (and DOI where available) to each corpus entry and assert the key-to-itemID mapping in the corpus test; otherwise the pre-registration is anchored to an identifier the synthesis itself declares unstable.",
+    "severity": "high"
+   },
+   {
+    "kind": "unstated_dependency",
+    "ids": [
+     "P02",
+     "P07"
+    ],
+    "issue": "P07 requires \"a verbatim quote plus a resolvable locator,\" but P02 records that \"No chunk, page, or offset table exists in src\" and gates.md:17 records \"PDF parse smoke test | no | No PDF parsed.\" The report's evidence table (analysis/llm-document-graph-research.md:544) stores page/start/end offsets against a parser chunk that does not exist. P07's boundary admits there is no claim store, but not that its locator half depends on P02's unbuilt coordinate layer and on a parser that has never run.",
+    "corrected_wording": "Make the claim rule explicitly conditional: until the parser and the chunk/page/offset table exist, evidence can only be quote-checked against Zotero metadata or abstract text, and locators must be marked unavailable rather than assumed.",
+    "severity": "medium"
+   },
+   {
+    "kind": "conflict",
+    "ids": [
+     "P09"
+    ],
+    "issue": "P09's rule says \"never a single aggregate F1,\" but the project's primary design document still says the opposite twice: analysis/llm-document-graph-research.md:23 (\"The headline metric is strict, fully evidenced relation F1\") and line 643 (\"Strict evidenced relation F1 (headline)\"). The rubric (lines 3-6) demotes F1 to a diagnostic, but the report was never amended, and P09's own boundary says \"A single aggregate F1 remains defensible where gold is complete, one relation type dominates, and abstention cannot be rewarded\" -- which retracts the absolute \"never.\"",
+    "corrected_wording": "Use the panel by default and keep strict evidenced F1 as one diagnostic; permit it as headline only under the three stated conditions. Amend the report's \"headline\" lines so the primary design document and the rubric do not contradict each other.",
+    "severity": "medium"
+   },
+   {
+    "kind": "overclaim",
+    "ids": [
+     "P14"
+    ],
+    "issue": "P14 stitches three systems into one \"qualified\" rule: backend choice from an OpenClaw agent-memory thread (05a7de1d, SQLite FTS5 vs LanceDB), migration safety from bub_sf's SQLite tape store (d9cbb41d, table rebuild -> one-off ALTER TABLE ADD COLUMN), and a count oracle from paper-graph's tests/existing_database.rs. That test is #[ignore]d, opens a database, asserts seven hardcoded 2026-11-17 counts, and never calls rebuild() or applies a migration; cargo test --workspace skips it. No system in the evidence actually published after a rebuilding migration passed a count oracle.",
+    "corrected_wording": "State that the backend and migration clauses are transferred from other projects and untested on HawDB. For paper-graph, run the count assertion inside a copy->migrate->count harness in CI, or stop citing it as a publication gate; the current test is a snapshot assertion, not a migration check.",
+    "severity": "medium"
+   },
+   {
+    "kind": "unstated_dependency",
+    "ids": [
+     "P10",
+     "P11"
+    ],
+    "issue": "P10 says an eval is evidence only when \"the run proves it executed every case,\" but the proof is the harness's own execution accounting; P11 exists precisely because that accounting can be wrong (the cited 78dd3c13 bug is a harness that silently executed 0 cases because projects without a declared model were skipped). P10 never requires the accounting to be validated against an independent reference, so a harness with the same skip bug can still report \"all cases executed\" and be believed.",
+    "corrected_wording": "Add P11 as a precondition: the execution accounting itself must be validated against an independent oracle before a green run counts. Otherwise \"proves it executed every case\" is a self-report, which is the failure that motivated the rule.",
+    "severity": "medium"
+   },
+   {
+    "kind": "caveat_invalidates_headline",
+    "ids": [
+     "P06"
+    ],
+    "issue": "P06's rule treats \"INTRODUCES only for an explicitly claimed own contribution\" as the fix, but the critique it cites (deepseek-ontology-critique.md:24) says the predicate itself is wrong: \"Work INTRODUCES is the wrong subject/arity and smuggles priority ... will be read as 'first' downstream and will silently conflict with EXTENDS_CONCEPT/GENERALIZES.\" P06's boundary admits this and says the plan mitigates \"only with own-contribution cues plus separate human adjudication\" -- which does not change the predicate's arity or its priority reading, so the caveat undercuts the rule's sufficiency.",
+    "corrected_wording": "Keep the cue gate, but define INTRODUCES as \"this work claims the contribution,\" add a non-priority qualifier, and test the \"Dunfield and Krishnaswami introduce X\" case against the renamed predicate. Cue-gating alone does not fix the priority reading.",
+    "severity": "medium"
+   },
+   {
+    "kind": "overclaim",
+    "ids": [
+     "P03"
+    ],
+    "issue": "P03 transfers the remedy \"SQLite ADD COLUMN with a DEFAULT\" from bub_sf's SQLite tape store to paper-graph/HawDB without checking that HawDB supports it. In paper-graph there is no ALTER anywhere, store.rs::initialize() only runs CREATE TABLE when works is absent, INSERT_WORK hardcodes 13 columns, and no schema version exists; an additive column change would leave the old table and fail at INSERT. P03's boundary discloses the cross-codebase transfer, but the rule still presents the remedy as settled.",
+    "corrected_wording": "Say the additive remedy is proven only on SQLite/bub_sf. For HawDB, verify ALTER support first, add a schema-version check, and make initialize() reconcile columns rather than only creating the table; until then the schema-evolution half is unproven.",
+    "severity": "medium"
+   },
+   {
+    "kind": "overclaim",
+    "ids": [
+     "P12"
+    ],
+    "issue": "P12's rule is about extraction-call budgets and the classification of empty/truncated extraction results, but its code check is src/embeddings.rs:112 (.unwrap_or(0) on missing usage) and SyncReport in pipeline.rs:20-29 -- the embedding client, not an extraction call. No extraction call exists (gates.md:23), and there is no budget-inequality validator anywhere (only a fixed 120 s timeout in embeddings.rs:25). The observation \"token accounting is lossy and SyncReport lacks run identity\" is real; the budget chain and failure classifier are unexercised.",
+    "corrected_wording": "Mark the rule \"qualified -- two provenance defects observed in the embedding path; no extraction call to test.\" Keep the budget inequality as a pre-flight checklist to implement with the first extraction arm, not as a confirmed finding.",
+    "severity": "medium"
+   },
+   {
+    "kind": "conflict",
+    "ids": [
+     "P07",
+     "P11"
+    ],
+    "issue": "The two lessons use \"unknown\" for different things without a boundary. P07 says \"Unknown may demote a result; it must never be silently filled\"; P11 says timeouts, budget exhaustion, parse/backend failures, and unasked atoms must map to BLOCKED or unknown, \"never to PASS.\" If \"demote\" is implemented as a lower score, an unasked atom becomes a partial pass -- the exact silent resolution P11's BLOCKED rule exists to prevent. The synthesis never says whether demotion is allowed for input uncertainty but forbidden for evaluation incompleteness.",
+    "corrected_wording": "Split the vocabulary: an unknown input demotes the affected claim and marks it unreviewed; an incomplete evaluation blocks the run and produces no score. Never let an incomplete run be reported as a lower number.",
+    "severity": "low"
+   },
+   {
+    "kind": "overclaim",
+    "ids": [
+     "P07",
+     "P12",
+     "P13",
+     "P14"
+    ],
+    "issue": "The audit's own locators do not resolve from one root. P01-P08 use paper-graph/... (resolvable from /Users/emliunix/Documents/paperfs.rs), P09 and P10 use repo-relative experiments/... and tests/..., P11 points at a different repo (doc-verify/...), and P12-P14 use paperfs.rs/paper-graph/... (resolvable only from /Users/emliunix/Documents). None of these is uniformly repo-relative to the audit root /Users/emliunix/Documents/paperfs.rs/paper-graph, so a synthesis whose P07 rule demands \"a resolvable locator\" ships three roots.",
+    "corrected_wording": "Normalize every code_check path to repo-relative form (src/store.rs, tests/experiment_corpus.rs, experiments/...) and verify each one opens from the audit root; a locator that only resolves from a different directory is not resolvable.",
+    "severity": "low"
+   }
+  ]
+ },
+ {
+  "claims": [
+   {
+    "claim": "P01: Rebuild starts by deleting all works and running MATCH (n) DETACH DELETE n, so derived graph data in the target DB cannot survive a sync.",
+    "status": "verified",
+    "path": "paper-graph/src/store.rs",
+    "line": 109,
+    "observation": "rebuild() opens the transaction at 107, executes DELETE FROM works WHERE item_id IS NOT NULL at 108, MATCH (n) DETACH DELETE n at 109, then re-inserts and commits at 188. All rows and nodes are replaced; only the table/search-index definitions from initialize() (50-58) survive, so 'nothing survives' is true of content, not schema. decisions.md:5 records the separate-DB mitigation."
+   },
+   {
+    "claim": "P01/P03: A separate derived HawDB store is the recorded mitigation for the destructive metadata rebuild.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/decisions.md",
+    "line": 5,
+    "observation": "The 2026-11-18 row reads 'The current metadata rebuild deletes every graph node', cites store.rebuild() containing MATCH (n) DETACH DELETE n, and names the result 'Domain extraction cannot be erased by a metadata sync'. experiments/ontology-extraction/README.md:44-46 repeats the requirement."
+   },
+   {
+    "claim": "P01: No code links a Nowledge Mem note to a Zotero itemID.",
+    "status": "verified",
+    "path": "paper-graph/src",
+    "observation": "Grep for nowledge|memory|mem over src/*.rs and ui.html returns only the words 'knowledge graph' in module doc comments (lib.rs:1, cli.rs:1) and 'in-memory database' in store.rs:40. There is no Mem client, note table, or pointer field anywhere in the crate."
+   },
+   {
+    "claim": "P02: item_id is the works PRIMARY KEY, zotero_key is a non-key column, and itemID comes from Zotero's numeric row id.",
+    "status": "verified",
+    "path": "paper-graph/src/store.rs",
+    "line": 11,
+    "observation": "WORK_COLUMNS (10-24) has 'item_id BIGINT PRIMARY KEY' at 11 and 'zotero_key TEXT NOT NULL' at 12; INSERT_WORK (26-31) persists both. src/zotero.rs:181 selects i.itemID, i.key and reads key at 195, so itemID is Zotero's local SQLite row id, not the key."
+   },
+   {
+    "claim": "P02: The README states numeric itemID values are the work identities and no content-hash identity is introduced.",
+    "status": "verified",
+    "path": "paper-graph/README.md",
+    "line": 12,
+    "observation": "Line 12: 'Zotero numeric itemID values are the work identities; no content-hash identity is introduced.' Lines 10-11 also state the pipeline indexes metadata and abstracts only, which bounds the identity claim to metadata records."
+   },
+   {
+    "claim": "P02: No chunk, page, or offset table exists in src.",
+    "status": "verified",
+    "path": "paper-graph/src/store.rs",
+    "line": 54,
+    "observation": "The only CREATE TABLE in the crate is 'CREATE TABLE works (...)' at 54; a repo-wide grep for CREATE TABLE over *.rs returns that single hit. No chunk/page/offset/evidence struct or graph label exists, so the line-index convention and char-offset EvidenceSpan are unimplemented."
+   },
+   {
+    "claim": "P02: No test exercises re-import or an itemID reassignment.",
+    "status": "verified",
+    "path": "paper-graph/tests/store.rs",
+    "line": 84,
+    "observation": "rebuild_is_idempotent (83-94) rebuilds the same synthetic Library with the same ids twice, and zotero_fixture.rs reads one fixture once. No test imports a changed library, simulates a Zotero merge/restore, or checks that a re-keyed work is re-addressable, so itemID stability across re-import is untested."
+   },
+   {
+    "claim": "P03/P14: Every sync performs the full destructive replace in one transaction; isolation, not a narrowed rebuild, protects extraction.",
+    "status": "verified",
+    "path": "paper-graph/src/store.rs",
+    "line": 108,
+    "observation": "DELETE FROM works at 108 and MATCH (n) DETACH DELETE n at 109 run inside the single transaction begun at 107; no partial or upsert path exists. P14's boundary is therefore accurate: the additive/no-rebuild rule is a target, not current behavior. tests/store.rs shows the same code path used by every sync."
+   },
+   {
+    "claim": "P03: The schema-evolution evidence comes from bub_sf's SQLite tape store, with the final fix relying on ADD COLUMN plus a DEFAULT.",
+    "status": "unverifiable",
+    "path": "/Users/emliunix/Documents/systemf/bub_sf",
+    "observation": "This is a different codebase outside the audited tree and was not inspected. paper-graph contains no migration scripts or schema-evolution tests (only the works table is created), so the transferable failure mode and the ADD COLUMN/DEFAULT remedy cannot be checked from this repository."
+   },
+   {
+    "claim": "P04: The corpus test asserts the recorded status string pdf_verified_gold_pending but never stats a PDF or checks the %PDF- signature; admission is a one-time manual record, not an executable gate.",
+    "status": "verified",
+    "path": "paper-graph/tests/experiment_corpus.rs",
+    "line": 15,
+    "observation": "Line 15 asserts corpus['status'] == 'pdf_verified_gold_pending'; the rest of the test checks 15 papers, unique ids, 4/11 split, disjointness, domain coverage and non-empty titles. The %PDF- check survives only as prose in round-001-corpus.json 'verification' and gates.md:12. The corpus JSON records only item_id/split/domain/title (no attachment id or path), so admission cannot even be re-executed from the artifact."
+   },
+   {
+    "claim": "P04: No PDF parser exists in the crate, so 'usable' is established only to file/signature level.",
+    "status": "verified",
+    "path": "paper-graph/src",
+    "observation": "Grep for %PDF, lopdf, pdf-extract, pdftotext, PdfParser or any fn .*pdf over *.rs returns no hits. README:10-11 states the pipeline indexes metadata and abstracts only and does not extract PDF full text; gates.md:17 marks the PDF parse smoke test 'no'."
+   },
+   {
+    "claim": "P05: The research report bans a generic IS_A/subclass edge in v0 and makes Concept.kind a presentation field rather than a subclass graph.",
+    "status": "verified",
+    "path": "paper-graph/analysis/llm-document-graph-research.md",
+    "line": 162,
+    "observation": "Line 162 states 'There is no generic IS_A/subclass edge in v0' and names algebraic effects, delimited control, free monads and continuations as related, not subclasses; line 183 says Concept.kind is a 'presentation/category field, not a subclass graph'; lines 206, 217 and 226 reinforce the ban. No Rust source contains IS_A/subclass."
+   },
+   {
+    "claim": "P05: src/ builds only Work, Person, Collection, Tag, Venue and Attachment nodes; there is no Concept or Claim node or table.",
+    "status": "verified",
+    "path": "paper-graph/src/store.rs",
+    "line": 128,
+    "observation": "CREATE (:Work) at 128, (:Person) 143, (:Collection) 158, (:Tag) 173, (:Venue) 183, (:Attachment) 270; the only SQL table is works (54). Nothing in src creates Concept, Claim, EvidenceSpan, Chunk, Experiment, Tool or BenchmarkSuite, so the ontology is design-only."
+   },
+   {
+    "claim": "P05: The design has grown to 17 relation types plus Claim/Experiment/Tool before the thread's Chunk/Concept/MENTIONS/ABOUT/CITES-first step was taken.",
+    "status": "verified",
+    "path": "paper-graph/analysis/llm-document-graph-research.md",
+    "line": 199,
+    "observation": "The relation table at 199-215 contains exactly 17 rows (INTRODUCES through ALIAS_OF), and the node table at 171-181 includes Claim, EvidenceSpan, Experiment, BenchmarkSuite and Chunk. gates.md:23 confirms no extraction arm has run, so this is documented scope rather than implemented schema."
+   },
+   {
+    "claim": "P05: Grep finds IS_A/subclass only inside prohibitions (research 478, 712; rubric 163).",
+    "status": "verified",
+    "path": "paper-graph/analysis/llm-document-graph-research.md",
+    "line": 478,
+    "observation": "478 says 'Do not infer subclass relationships. There is no IS_A output'; 712 is a negative seed row; rubric 163 is a required seeded defect. The word 'only' is imprecise: prose hits also occur at 14, 162, 183, 206, 217, 226 and 810, plus deepseek-ontology-critique.md:36; src/zotero.rs:137 matches only because is_ascii_digit contains the letters. No code hit exists, so the substantive conclusion holds."
+   },
+   {
+    "claim": "P06: The high-risk gate requires own-contribution/extension/generalization/refutation precision >= .95 and pairwise merge precision >= .98.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/round-001-rubric.md",
+    "line": 145,
+    "observation": "Line 145: 'Own-contribution/extension/generalization/refutation precision >= .95; pairwise merge precision >= .98'. These are pre-registered project thresholds (line 138 says so), not measurement: gates.md:24 marks the deterministic scorer 'no'."
+   },
+   {
+    "claim": "P06: MENTIONS, USES and own-contribution are scored separately, and one false merge is reported as one cluster-level incident.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/round-001-rubric.md",
+    "line": 30,
+    "observation": "Line 30 is 'Role macro-F1: MENTIONS, USES, and own-contribution scored separately'; lines 33-35 require candidate-generation recall to be reported separately from adjudication precision and say 'One false merge is also reported as one cluster-level incident so its downstream blast radius is visible'."
+   },
+   {
+    "claim": "P06: No source file contains MENTIONS/USES/INTRODUCES; the relation vocabulary exists only in markdown.",
+    "status": "verified",
+    "path": "paper-graph/src",
+    "observation": "grep -rl for MENTIONS|USES|INTRODUCES returns only analysis/deepseek-ontology-critique.md, analysis/llm-document-graph-research.md, experiments/ontology-extraction/{grounding,round-001-plan,round-001-rubric}.md. A *.rs grep for MENTIONS|USES|INTRODUCES|HAS_EVIDENCE|ABOUT|CITES returns nothing, so the gate guards a specification, not code."
+   },
+   {
+    "claim": "P07: The design projects Claim-[:HAS_EVIDENCE {stance}]->EvidenceSpan, with evidence rows storing page, start/end offsets, exact quote and a validation state.",
+    "status": "verified",
+    "path": "paper-graph/analysis/llm-document-graph-research.md",
+    "line": 555,
+    "observation": "Line 555: 'Project Work-[:ASSERTS]->Claim, Claim-[:ABOUT]->Concept, and Claim-[:HAS_EVIDENCE {stance}]->EvidenceSpan'; the evidence table at 544 stores owner, stance, attachment/chunk ids, page, start/end offsets, exact quote and quote-validation state. The earlier SUPPORTED_BY/Chunk shape is gone. Rubric 82-88 add quote/locator checks and span dedup; gates.md:24 says the scorer is not implemented."
+   },
+   {
+    "claim": "P07: The gate ledger records the deterministic scorer as not implemented.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/gates.md",
+    "line": 24,
+    "observation": "Line 24: '| Deterministic scorer | no | Not implemented |'. The same ledger marks gold, PDF parse, questions, seeds, model freeze, arms, blind scoring and verdict all 'no' (16-26), and lines 3-4 state a 'no' row is not a pass."
+   },
+   {
+    "claim": "P07: Unknown propagation exists only in presentation (ui.html renders 'Year unknown'); there is no claim store and no abstention logic.",
+    "status": "verified",
+    "path": "paper-graph/src/ui.html",
+    "line": 29,
+    "observation": "Line 29 builds the detail line with (w.year||'Year unknown') and (w.authors||'No authors recorded'); no evaluation path consumes unknown. There is no claims/evidence table (only works) and no abstention branch in src, so the doc-verify unknown-propagation precedent is not implemented here."
+   },
+   {
+    "claim": "P08: The plan holds parsed text, chunk ids, model snapshot, decoding, order, budget, envelope, evidence rules, retry, quote/page validation and resolution constant, and freezes manual/prompts/schemas/chunker/model/gates before test predictions.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/round-001-plan.md",
+    "line": 18,
+    "observation": "Lines 18-21 enumerate exactly those held-constant inputs; lines 56-59 say development work refines only the manual and validators and require the manual, prompts, schemas, chunker, model and gates to be frozen before test predictions; line 94 makes the four topic queries non-regression controls only. Line 3 states the plan is pre-registered, not reviewed and not run."
+   },
+   {
+    "claim": "P08: tests/experiment_corpus.rs enforces the frozen 4-development/11-test disjoint, domain-stratified split.",
+    "status": "verified",
+    "path": "paper-graph/tests/experiment_corpus.rs",
+    "line": 31,
+    "observation": "Lines 31-32 assert 4 development and 11 test papers; 42 asserts the id sets are disjoint; 52-64 assert both splits cover all four domains; 16 fixes the count at 15. The test reads round-001-corpus.json from CARGO_MANIFEST_DIR and needs no network."
+   },
+   {
+    "claim": "P08/P09/P10: The gate ledger's corpus-structure row still cites 'uv run pytest: 5 passed on 2026-11-18' as current evidence.",
+    "status": "stale",
+    "path": "paper-graph/experiments/ontology-extraction/gates.md",
+    "line": 14,
+    "observation": "Line 14 records it, but the crate is now Rust: Cargo.toml is the package, README:128 says 'cargo test -p paper-graph', README:136 records the 2026-11-18 port, and the repo has no *.py and no pyproject.toml. All 10 #[test] functions are Rust. The row was true before the port but is now a transcribed historical green; re-running the stated command is impossible, which is exactly the re-execution failure the lesson warns about."
+   },
+   {
+    "claim": "P08: The 12-20 search questions the thread said to test first were never asked while the plan already invests in Claim/evidence scoring.",
+    "status": "verified",
+    "path": "paper-graph/README.md",
+    "line": 150,
+    "observation": "README:150 calls 12-20 preselected questions 'a useful next evaluation'; gates.md:20 says 'Question design only; no reviewed questions.json'; experiments/ontology-extraction/questions.json does not exist (ls ENOENT). Meanwhile plan sections 4-6 and rubric sections 4-5 already define claim atomicity, evidence scoring and downstream gold, so the scoring apparatus precedes the retrieval baseline it was meant to justify."
+   },
+   {
+    "claim": "P09: The actual corpus gate is tests/experiment_corpus.rs, described as 10 #[test] functions across 5 test files.",
+    "status": "contradicted",
+    "path": "paper-graph/tests/experiment_corpus.rs",
+    "line": 6,
+    "observation": "experiment_corpus.rs contains exactly one #[test] (round_001_corpus_is_disjoint_and_stratified). The 10 tests are spread across 5 files: store.rs 4, zotero.rs 2, zotero_fixture.rs 2, experiment_corpus.rs 1, existing_database.rs 1. The stale-pytest conclusion is unaffected, but the file-level attribution conflates the corpus test with the whole suite."
+   },
+   {
+    "claim": "P09: src/ has no scorer at all, so the metric panel is pre-registration rather than measurement.",
+    "status": "verified",
+    "path": "paper-graph/src",
+    "observation": "Grep for scorer|score_arm|fn score|precision|recall|f1 over *.rs returns no hits; there is no results directory, no gold reader, and no per-relation metric code. gates.md:24 and README:160-163 agree that no arm has run."
+   },
+   {
+    "claim": "P10: assert_eq!(corpus['status'], 'pdf_verified_gold_pending') makes 'gold not yet adjudicated' a machine-checked fact that a green run cannot silently promote.",
+    "status": "verified",
+    "path": "paper-graph/tests/experiment_corpus.rs",
+    "line": 15,
+    "observation": "The exact-string assertion at 15 fails if the status is changed to gold; no gold/ directory, questions.json or adjudication artifact exists in experiments/ontology-extraction (only six markdown files plus the corpus JSON). The split assertion at 31-42 is part of the same test, so the boundary is enforced in code while gates.md:14 records an older history."
+   },
+   {
+    "claim": "P11: doc-verify returns BLOCKED for incomplete coverage or kernel budget exhaustion, checks against tests/kernel-slow/{reference,property}, and never converts an unasked atom into PASS.",
+    "status": "verified",
+    "path": "/Users/emliunix/Documents/home.conf/doc-verify/src/engine/index.ts",
+    "line": 196,
+    "observation": "Outside the audited paper-graph tree (the lesson's repo-relative path resolves to home.conf/doc-verify). Lines 196-201 implement the coverage rule ('a PASS asserts that every constraint was evaluated ... BLOCKED instead of a quiet PASS'), line 111 returns BLOCKED for 'kernel inference budget exceeded', engine/diagnostics.ts:151 says a budget/resource failure must never be treated as satisfied, and both tests/kernel-slow/reference and tests/kernel-slow/property exist. visflow/doc-verify has no src/engine/index.ts."
+   },
+   {
+    "claim": "P12: Embedding token accounting coerces a missing usage field to 0, so 'server reported no usage' is indistinguishable from 'zero tokens'.",
+    "status": "verified",
+    "path": "paper-graph/src/embeddings.rs",
+    "line": 112,
+    "observation": "Lines 109-112 accumulate response.pointer('/usage/total_tokens').and_then(Value::as_u64).unwrap_or(0) per batch; no Option, flag or warning records an absent usage field. The same function keeps only the summed total, not per-call tokens, finish reason or latency."
+   },
+   {
+    "claim": "P12: SyncReport records only database, model, URL, tokens, elapsed and counts; it has no run id, timestamp, attempt, finish reason or per-batch failure.",
+    "status": "verified",
+    "path": "paper-graph/src/pipeline.rs",
+    "line": 21,
+    "observation": "The struct at 20-29 has database, embedding_model, embedding_url, embedding_tokens, elapsed_seconds and a flattened Stats; the constructor at 31-48 fills exactly those. There is no run identity, start/end timestamp, attempt counter, finish reason, per-batch error class or raw output, so an app restart or empty batch cannot be reconstructed from the report."
+   },
+   {
+    "claim": "P12: The fuller per-call provenance manifest exists only as a pre-registered rubric requirement.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/round-001-rubric.md",
+    "line": 118,
+    "observation": "Lines 118-121 require provider/model snapshot, dated price, input/output/cached tokens, calls, p50/p95 wall clock, queue time, structural retries, empty responses and truncation, plus cost per paper/assertion/claim. No code emits any of it; gates.md:23 confirms no extraction run."
+   },
+   {
+    "claim": "P13: The decision log's columns are Timestamp | Decision | Why | Evidence | Result, so durable entries carry rationale, evidence and a date.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/decisions.md",
+    "line": 3,
+    "observation": "Line 3 is exactly that header, and every row is dated 2026-11-18 with an evidence cell (code reference, filesystem check or research section). The gate ledger separately marks unperformed checks complete: no, so process narrative is not promoted to a result."
+   },
+   {
+    "claim": "P13: The gate ledger defines a 'complete: no' row as not a pass with no inferred result.",
+    "status": "verified",
+    "path": "paper-graph/experiments/ontology-extraction/gates.md",
+    "line": 3,
+    "observation": "Lines 3-4: 'A complete: yes row records work actually performed. A complete: no row is not a pass and has no inferred result.' Twelve rows are currently 'no', including plan review, PDF parsing, gold, seeds, extraction, scorer, blind scoring and verdict (16-26)."
+   },
+   {
+    "claim": "P14: The only check against a real database is an ignored test pinned to exact counts (324 works, 171 unfiled, 347 persons, 5 collections, 24 tags, 10 venues, 161 attachments).",
+    "status": "verified",
+    "path": "paper-graph/tests/existing_database.rs",
+    "line": 10,
+    "observation": "The test is #[ignore] at 9, gated on PAPER_GRAPH_REAL_DB, and asserts exactly those seven counts at 15-21. Every other test uses an in-memory HawDB (tests/store.rs) or a synthetic Zotero fixture created in a temp dir (tests/zotero_fixture.rs:4-45); none compares schema, only counts."
+   }
+  ],
+  "summary": "Audited the current paper-graph tree at clean HEAD f1e46d9 (2026-11-18, the sole paper-graph commit); no files were modified. Of 35 checked propositions: 32 verified, 1 contradicted, 1 stale, 1 unverifiable. The code-level spine of the lessons holds: rebuild is a full destructive transaction (store.rs:108-109), item_id is the primary key with zotero_key non-key (store.rs:11-12), the crate builds only six node labels with no Concept/Claim/Chunk store, the corpus test asserts the pdf_verified_gold_pending status but no code stats a PDF or checks %PDF- (admission is prose in the corpus JSON and gates.md), embeddings coerce missing usage to 0 (embeddings.rs:112), SyncReport lacks run/attempt/finish-reason provenance (pipeline.rs:20-29), no scorer or PDF parser exists, and the ontology gates are pre-registration only. The gate ledger's pytest row (gates.md:14) is genuinely stale after the Rust port. Discrepancies: P09's parenthetical attributes all 10 tests to experiment_corpus.rs, which has one test (the 10 span five files); P05's 'only inside prohibitions' is imprecise though no code hit exists; P01's 'nothing survives' is true of rows/nodes but not of table/index definitions. P03's bub_sf schema-evolution evidence is outside this tree and was not audited; P11's doc-verify claims were confirmed in the sibling home.conf/doc-verify repo."
+ },
+ {
+  "replication": [
+   {
+    "id": "P01",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "paper-graph/src/store.rs:108-109",
+     "experiments/ontology-extraction/decisions.md:5"
+    ],
+    "independence": "single",
+    "gap": "Single-source. The only listed thread is paper-graph, and the boundary itself concedes the third 'distilled notes' layer is procedural: the Mem save was blocked/unconfirmed and no code links a Mem note to an itemID. The assigned second thread 5509b0c1 is not even in the threads array; the boundary excludes it as an agent-memory analogy, yet P13 later uses that same thread as evidence — an internal inconsistency. Strengthen with an integration test that writes a distilled note pointing at an itemID and survives a rebuild, or with a second project that actually has a note layer."
+   },
+   {
+    "id": "P02",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "paper-graph/README.md:12",
+     "paper-graph/src/store.rs:11-12"
+    ],
+    "independence": "single",
+    "gap": "Single-source despite R3. The listed second thread 3099ed1f is an OCaml pattern-matching conversation: searches for Zotero and itemID return zero matches, so it cannot support this lesson, and the boundary does not disclose the mismatch. itemID is a local SQLite row id, zotero_key is a non-key column, no test exercises merge/restore/re-import, and no chunk/page/offset table exists. Strengthen with a re-import test that changes itemIDs, a second Zotero library, and an implemented EvidenceSpan table with page/offset coordinates."
+   },
+   {
+    "id": "P03",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "thread d9cbb41d (tape-store schema/backfill)",
+     "paper-graph/src/store.rs:108-109",
+     "experiments/ontology-extraction/decisions.md:5"
+    ],
+    "independence": "multi",
+    "gap": "Two independent projects, but they support different halves and one is a counterexample. d9cbb41d is an additive schema change; paper-graph's own code still deletes every work and runs MATCH (n) DETACH DELETE n on each sync, and the only mitigation is a separate DB. No project demonstrates a manual, non-destructive metadata sync, so 'confirmed' is overstated; 'qualified' fits better. Strengthen with a paper-graph sync test against a populated derived DB and a second migration that includes rollback."
+   },
+   {
+    "id": "P04",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "paper-graph/tests/experiment_corpus.rs:15"
+    ],
+    "independence": "single",
+    "gap": "Single-source; the record itself says all P04 evidence comes from 71ffc1b7. The corpus test asserts the status string pdf_verified_gold_pending but never opens a PDF, so admission is a one-time manual record; no PDF parser exists and the smoke test skipped snapshot/branch behavior. Strengthen with an executable admission gate (stat the file, check %PDF-, then parse) and a second engine smoke test on the same tiny corpus."
+   },
+   {
+    "id": "P05",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "paper-graph/analysis/llm-document-graph-research.md:162,183",
+     "paper-graph/analysis/deepseek-ontology-critique.md:36"
+    ],
+    "independence": "single",
+    "gap": "Design-only and single-project. No Concept or Claim node exists in src/ and no extraction arm has run; the only counterargument (banning IS_A relocated subsumption into the closed kind enum) comes from the same repo's DeepSeek critique, not an independent source. The lesson's own boundary concedes the schema grew to 17 relations plus Claim/Experiment/Tool, past the advice to start with Chunk/Concept/MENTIONS/ABOUT/CITES. Strengthen with a pilot extraction comparing curated vs generic vocabulary on the 4 development papers, and a second ontology project where IS_A is actually tested."
+   },
+   {
+    "id": "P06",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "paper-graph/experiments/ontology-extraction/round-001-rubric.md:145,30-35",
+     "paper-graph/analysis/deepseek-ontology-critique.md:24"
+    ],
+    "independence": "single",
+    "gap": "Single-source and spec-only: MENTIONS/USES/INTRODUCES appear only in markdown, src/ has no relation vocabulary, and no arm has run. The INTRODUCES-priority risk also comes from the same repo's critique. 'Confirmed' is not supported by execution; the gate currently guards a specification. Strengthen with an implemented predicate layer, gold relation pairs, inter-annotator merge precision, and a second corpus/domain."
+   },
+   {
+    "id": "P07",
+    "sources": [
+     "thread cb2db461 (Mem note Evidence/Notes/Claims structure)",
+     "thread 28b5b22b (doc-verify unknown invariant)",
+     "paper-graph/analysis/llm-document-graph-research.md:544,555",
+     "paper-graph/experiments/ontology-extraction/round-001-rubric.md:82-88"
+    ],
+    "independence": "multi",
+    "gap": "Two independent projects, but clause-split: cb2db461 supplies atomic evidence/claims in a notes document, 28b5b22b supplies unknown propagation in doc-verify, and the paper-graph Claim/EvidenceSpan projection is an unrun design with no scorer. No single project binds exact evidence and abstention together, and the boundary attributes the claim/evidence half to paper-graph, which is not in the thread list. Strengthen with an implemented EvidenceSpan plus abstention test in paper-graph on missing or ambiguous evidence."
+   },
+   {
+    "id": "P08",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "paper-graph/experiments/ontology-extraction/round-001-plan.md:18,56-59",
+     "paper-graph/tests/experiment_corpus.rs:31-42"
+    ],
+    "independence": "single",
+    "gap": "Single-source and unexecuted: the plan is pre-registered, but gates.md marks plan review, PDF parsing, gold, arms, scorer and verdict all 'no', and the ledger's 'uv run pytest' row is stale after the Rust port. The plan also invests in claim scoring before the competency questions are asked, which is the ordering the lesson itself warns against. Strengthen by running the development-paper pilot and recording deviations, and by asking/linting the questions before freezing the claim schema."
+   },
+   {
+    "id": "P09",
+    "sources": [
+     "thread 71ffc1b7 (paper-graph)",
+     "paper-graph/experiments/ontology-extraction/gates.md:14",
+     "paper-graph/experiments/ontology-extraction/round-001-rubric.md:140-151"
+    ],
+    "independence": "single",
+    "gap": "Single-source rationale with no measurement: no arm, scorer or gold exists, so 'the panel beats a single F1' is an argument, not a result; the thresholds are project choices. The gate row the lesson cites is itself stale (pytest after the Rust port), which illustrates the lesson but also proves the ledger is not executable. Strengthen with one scored arm comparing panel vs F1 rankings, and make each gate row a CI command that is re-run, not transcribed."
+   },
+   {
+    "id": "P10",
+    "sources": [
+     "thread 78dd3c13 (flow-skills L1 eval, 0 cases executed)",
+     "thread d64e9502 (home.conf question-edit leak, 66/66)",
+     "paper-graph/tests/experiment_corpus.rs:15"
+    ],
+    "independence": "code-plus",
+    "gap": "Strongest replication in the corpus: two independent eval projects plus a third project's machine-checked gold-pending test. Residual gaps: no shared experiment; 'gold wins' is not tested against genuinely wrong gold; only deepseek models were used, so every skill finding stays single-family. Strengthen with an injected wrong-gold case plus a cited decision and a second reviewer, and a second model family."
+   },
+   {
+    "id": "P11",
+    "sources": [
+     "thread d0e2d0bd (doc-verify; 28b5b22b is its 27-message prefix)",
+     "doc-verify/src/engine/index.ts:196-201",
+     "doc-verify/src/engine/diagnostics.ts:151"
+    ],
+    "independence": "single",
+    "gap": "Not two sources. 28b5b22b and d0e2d0bd share the same first user message and timestamp, and 28b5b22b's 27 messages match d0e2d0bd's first 27 (sampled at orders 15, 18, 20, 26), so this is one doc-verify session captured twice; the code is also doc-verify. 0 differing verdicts on 24 documents is necessary but not sufficient, the reference covers only the deterministic subset, and the property suite is nightly (~1,006 s). 'Confirmed'/R3 overstates independence. Strengthen with a second evaluator/project sharing the invariant, mutation tests of the evaluator, and prefix-demand/refusal cases in the 24-document set."
+   },
+   {
+    "id": "P12",
+    "sources": [
+     "thread f8ea8d0d (Nowledge Mem 60 s, 16384 vs 8192)",
+     "thread c6422ed2 (llama.cpp ctx 16384 / Nowledge timeout)",
+     "paper-graph/src/embeddings.rs:109-112",
+     "paper-graph/src/pipeline.rs:20-29"
+    ],
+    "independence": "code-plus",
+    "gap": "Code-plus, but the two incident threads are the same Nowledge Mem system and root cause on different dates, not independent projects; the paper-graph code is negative evidence (missing usage coerced to 0, SyncReport lacks run id, timestamp, attempt, finish reason and per-batch failure), and the manifest is only rubric text. Strengthen by instrumenting paper-graph, forcing timeout/truncation/restart and classifying each, and by a second extraction backend with a run manifest."
+   },
+   {
+    "id": "P13",
+    "sources": [
+     "thread 7172fd66 (firmware design lessons; temporary test not recorded)",
+     "thread 5509b0c1 (index/archive summary idea; explicit no-write)",
+     "paper-graph/experiments/ontology-extraction/decisions.md:3"
+    ],
+    "independence": "multi",
+    "gap": "Multi-context but a synthesis, not a replication: 7172fd66 shows design docs recording hard lessons and excluding temporary test scaffolding, 5509b0c1 is an idea-capture conversation where the user forbade writing, and the decision log is paper-graph's own. P01 explicitly rejected 5509b0c1 as an agent-memory analogy, so P13's use of it is inconsistent; no outcome is measured. Strengthen with a longitudinal audit of notes written vs later used/reverted, or a second team's decision log with the same columns."
+   },
+   {
+    "id": "P14",
+    "sources": [
+     "thread d9cbb41d (tape schema add/backfill)",
+     "thread 05a7de1d (SQLite FTS5 memory search; no schema/migration content)",
+     "paper-graph/tests/existing_database.rs:15"
+    ],
+    "independence": "code-plus",
+    "gap": "The ignored count oracle and the tape thread support migration safety, but 05a7de1d never mentions DB backend/schema/migration (zero 'schema' hits; 'migration' only for SOUL.md), so it supports the backend-reuse half only loosely and cannot support the migration half. paper-graph still rebuilds destructively, the count test is #[ignore] and manual, and P03 and P14 both draw on d9cbb41d — it is one migration incident, not two. Strengthen with a second real migration with rollback and a schema diff, a CI-run count oracle against a copy, and an additive change on paper-graph itself."
+   }
+  ],
+  "top_gaps": [
+   {
+    "gap": "The ontology-extraction round has never executed: gates.md marks independent plan review, PDF parse smoke test, annotation manual, gold annotations and agreement, downstream questions, seeded defects, model freeze, U2/S2/P2 arms, deterministic scorer, blind scoring and round verdict all 'no'. There is no Concept or Claim node in src/, so P05-P09 are pre-registration, not measurement.",
+    "why_it_matters": "The corpus cannot answer whether the curated ontology beats a generic one, whether the metric panel beats F1, or whether 15 papers suffice; it can only say the design is internally coherent. It is also one library and one model family, so even a successful pilot would not generalize.",
+    "next_scan_or_experiment": "Run the 4-development-paper pilot (parse, annotate, U2/S2/P2 extraction, pre-registered panel) with two annotators; keep the 11 test papers closed and record deviations before opening test predictions."
+   },
+   {
+    "gap": "There is no PDF text or evidence substrate: README:10-12 says the pipeline indexes metadata and abstracts only, no PDF parser exists, and src/ has no chunk/page/offset table (grep finds only texts.chunks() in embeddings). gates.md marks the PDF parse smoke test 'no'.",
+    "why_it_matters": "P07's exact quote plus resolvable locator and P02's evidence coordinates cannot be implemented against text the system never parsed; the graph can only cite abstracts, so 'evidence-bearing claim' is currently a schema drawing. PL papers put their hardest content in notation, theorems and tables, which an abstract-only pipeline never sees.",
+    "next_scan_or_experiment": "Parse all 15 PDFs, add a chunk/page/offset table, and measure quote recovery and locator validity per domain including theorem/table/code cases; fail the round below the rubric's 100% locator gate."
+   },
+   {
+    "gap": "The evaluator has no validated oracle: no deterministic scorer, no seeded defects, no gold agreement, no downstream questions (gates.md); the only independent reference implementation in the corpus belongs to doc-verify, a different system (P11). The flow-skills incident shows a 0-case run can report green (78dd3c13), and the home.conf review shows question edits can leak answers (d64e9502).",
+    "why_it_matters": "Even after an arm runs, a green score could be vacuous, leak answers, or reward abstention; the corpus cannot distinguish a correct extraction from a lucky one. P10's 'question is part of the oracle' has no paper-system implementation.",
+    "next_scan_or_experiment": "Implement the deterministic scorer and a seeded-defect suite (mention-to-contribution, fabricated quote, false merge, unsupported claim), measure false-pass/false-fail on a two-annotator subset, and lint the competency questions before answers."
+   },
+   {
+    "gap": "Stable identity is asserted but untested across re-import: item_id is the SQLite PRIMARY KEY and zotero_key is a non-key column (store.rs:11-12); no test exercises a Zotero merge, restore or duplicate that changes itemIDs. The boundary concedes itemID is a local row id and no re-import test exists.",
+    "why_it_matters": "A merge or restore can renumber itemIDs, orphaning every claim, evidence link and distilled note; storing zotero_key without joining on it gives the appearance of a durable address without the guarantee.",
+    "next_scan_or_experiment": "Clone the library, force a merge/restore that changes itemIDs, sync, and assert join/evidence survival; add an itemID-to-zotero_key mapping table or promote zotero_key to the durable join."
+   },
+   {
+    "gap": "Derived-state isolation is a convention, not a guarantee: store.rebuild() deletes all works and runs MATCH (n) DETACH DELETE n (store.rs:108-109), and the only mitigation is putting extraction in a separate DB (decisions.md:5). There is no guard or test that a metadata sync leaves the derived store intact.",
+    "why_it_matters": "One sync against the wrong database erases the extraction layer; the rule 'never let the rebuildable store be the only copy' is enforced by operator memory, not code. P01, P03 and P14 all depend on this boundary.",
+    "next_scan_or_experiment": "Add an integration test that populates a derived DB, runs a metadata sync, and asserts extraction/claim/evidence counts unchanged; fail closed if derived data is present, or implement a non-destructive upsert."
+   },
+   {
+    "gap": "There is no per-call provenance or failure classification: SyncReport records only database, model, URL, tokens, elapsed and counts (pipeline.rs:20-29); missing usage is coerced to 0 (embeddings.rs:109-112); there is no run id, timestamp, attempt, finish reason or per-batch failure.",
+    "why_it_matters": "Timeouts, truncation, empty responses and app restarts are indistinguishable from model errors or zero cost, so the budget inequality and the metric panel cannot be audited. P12's diagnosis was possible only from external logs, not from the pipeline's own record.",
+    "next_scan_or_experiment": "Add a run manifest (run id, timestamp, attempt, finish reason, usage_unreported, per-batch failure) and replay forced timeout, truncation and restart; assert each is classified and an app restart is never scored as a model failure."
+   }
+  ]
+ }
+]
