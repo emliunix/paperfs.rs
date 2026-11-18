@@ -24,7 +24,7 @@ One row per subject; one owner; one check. Empty check cells are allowed only wh
 
 | Subject | Owning doc | Owner | Check | Status |
 |---|---|---|---|---|
-| Layer ownership (canonical vs rebuildable vs distilled) | CONSTITUTION.md | W1.1 | check_metadata_sync_guard | planned |
+| Layer ownership (canonical vs rebuildable vs distilled) | CONSTITUTION.md | W1.1 | check_sync_count_guard | planned |
 | Source admission | docs/PIPELINE.md | W3.3 | check_corpus_admission | planned |
 | Evidence and provenance | docs/DATA_MODEL.md | W3.2 | check_evidence_locator | planned |
 | Evaluation protocol | docs/EVALUATION.md | W3.4 | check_eval_manifest | planned |

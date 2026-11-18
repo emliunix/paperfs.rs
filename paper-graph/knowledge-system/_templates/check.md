@@ -21,7 +21,7 @@ One file per structural check. A check exists only if it can turn red on a named
 check_id: check_sync_count_guard
 lesson: [L03, L02]
 type: fixture
-path: paper-graph/tests/check_sync_count_guard.rs
+path: tests/check_sync_count_guard.rs
 command: cargo test -p paper-graph --test check_sync_count_guard
 pass_condition: exit 0 and stdout contains "derived rows unchanged: 3/3"
 seeded_defect: comment out the non-metadata count assertion in sync_library; the test must fail with "derived rows changed: 3/0"

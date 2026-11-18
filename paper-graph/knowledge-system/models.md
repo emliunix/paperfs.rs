@@ -39,7 +39,7 @@ Configured in ~/.dsh/profiles/dsh-tui/cordis.patch.yml and ~/.dsh/settings.yaml.
 
 Verified calls on 2026-11-19: magpie/deepseek-flash, magpie/auto/gemini-4-carbon, magpie/kimi/k3.1-pro, magpie/devin/swe-2, magpie/devin/glm-5-3, magpie/auto/glm-5.3 and magpie-anthropic/devin/claude-opus-5-5 returned OK. **Update ~03:45:** magpie-anthropic/zcode/GLM-5.3 also returned OK after the ZCode re-login. The earlier 429 ("ZCode: exceed quota limit") was quota exhaustion, not a bad id. zcode is not in the openai-completions allowlist, so it is reachable only through magpie-anthropic.
 
-Caveat: the catalog is generated and updated by Magpie; a manual edit to the dsh-tui patch can be overwritten. `zcode/GLM-5.3-Flash` and `zcode/GLM-5.3` reappear under magpie-anthropic after Magpie writes settings, so the Anthropic-only split needs a post-generation override, not a hand edit. Use magpie for ZCode GLM-5.3.
+Caveat: the catalog is generated and updated by Magpie; a manual edit to the dsh-tui patch can be overwritten. `zcode/GLM-5.3-Flash` and `zcode/GLM-5.3` reappear under magpie-anthropic after Magpie writes settings, so the Anthropic-only split needs a post-generation override, not a hand edit. For **subagents**, use `magpie-anthropic` for ZCode GLM-5.3: `magpie/zcode/GLM-5.3` is refused by the child-route allowlist (measured 2026-11-19), even though the model id is recognized on the openai-completions wire. The allowlist, not the catalog, decides what a child call may use.
 
 ## Local llama.cpp router
 
@@ -113,7 +113,7 @@ Measure: JSON-schema validity on first pass, empty/truncated rate, finish reason
 
 ## Sources
 
-- list_subagent_models (deepseek-official).
+- list_subagent_models (magpie, magpie-anthropic), queried 2026-11-19 ~03:40.
 - http://192.168.50.18:8080/v1/models and https://llama.gw.emliunix.cc/v1/models, queried 2026-11-19.
 - Local Nowledge Mem remote_llm.json, read with credentials redacted.
 - Claude Code settings.json and Codex config.toml, read for model aliases only.
