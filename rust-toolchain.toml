@@ -1,0 +1,4 @@
+# hawdb 0.34 requires rustc >= 1.97.1. The configured rustup mirror does not
+# carry the exact 1.100.0 artifact, so track stable (currently 1.100.0).
+[toolchain]
+channel = "stable"

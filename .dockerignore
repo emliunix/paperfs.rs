@@ -1,1 +1,6 @@
 /target
+/test_onedrive
+/opendal
+/paper-graph/data
+/paper-graph/.venv
+/.git

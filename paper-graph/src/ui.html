@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paper graph</title><style>
+:root{color-scheme:light dark;--bg:#f5f6f8;--panel:#fff;--text:#17202a;--muted:#657080;--line:#dce1e8;--accent:#2563eb}
+@media(prefers-color-scheme:dark){:root{--bg:#11151b;--panel:#1b222c;--text:#edf2f7;--muted:#9ba8b8;--line:#344050;--accent:#7aa7ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:24px}h1{font-size:28px;margin:0}h2{font-size:18px}.muted{color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:16px}.stats{display:flex;gap:20px;flex-wrap:wrap}.stat b{font-size:22px;display:block}.controls{display:grid;grid-template-columns:1fr 150px 90px 120px 120px auto auto;gap:10px}.controls input,.controls select,button{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text)}button{cursor:pointer;background:var(--accent);color:white;border:0}button.secondary{background:var(--panel);color:var(--text);border:1px solid var(--line)}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted)}tr.result{cursor:pointer}tr.result:hover{background:var(--bg)}.badge{font:12px monospace;color:var(--muted)}.error{color:#dc2626}.layout{display:grid;grid-template-columns:minmax(0,3fr) minmax(240px,1fr);gap:16px}.history button{padding:6px;text-align:left;margin:3px 0}.hidden{display:none}@media(max-width:800px){main{padding:12px}.controls{grid-template-columns:1fr 1fr}.controls .query{grid-column:1/-1}.layout{grid-template-columns:1fr}td:nth-child(4),th:nth-child(4){display:none}}
+</style></head><body><main>
+<header><h1>Paper graph</h1><div class="muted">Zotero + HawDB 0.34.0 + bge-m3 on llama.cpp</div></header>
+<section class="panel stats" id="stats"></section>
+<form class="panel controls" id="searchForm">
+<input class="query" id="q" placeholder="Try: higher-rank polymorphism" required>
+<select id="mode"><option value="hybrid">Hybrid</option><option value="bm25">BM25</option><option value="vector">Vector</option></select>
+<input id="topK" type="number" min="1" max="50" value="10" title="Top K">
+<input id="bm25Weight" type="number" min="0" step="0.1" value="1" title="BM25 weight">
+<input id="vectorWeight" type="number" min="0" step="0.1" value="1" title="Vector weight">
+<button type="submit">Search</button><button type="button" class="secondary" id="syncButton">Sync</button>
+</form>
+<div class="panel muted" id="status">Ready</div>
+<div class="layout"><section class="panel"><h2>Results</h2><table><thead><tr><th>#</th><th>Work</th><th>Year</th><th>Venue</th><th>Score</th></tr></thead><tbody id="results"></tbody></table></section>
+<aside class="panel"><h2>Recent searches</h2><div id="history" class="history"></div></aside></div>
+<section class="panel hidden" id="detail"></section>
+</main><script>
+const $=id=>document.getElementById(id);
+function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
+async function json(url,options){const r=await fetch(url,options);const data=await r.json();if(!r.ok)throw new Error(data.error||r.statusText);return data}
+async function loadStats(){try{const s=await json('/api/stats');$('stats').replaceChildren(...Object.entries(s).map(([k,v])=>{const d=el('div','','stat');d.append(el('b',v),el('span',k));return d}))}catch(e){$('stats').textContent=e.message}}
+function render(rows){const body=$('results');body.replaceChildren();rows.forEach((r,i)=>{const tr=el('tr','','result');tr.onclick=()=>showWork(r.item_id);tr.append(el('td',i+1),el('td',r.title),el('td',r.year||'—'),el('td',r.venue||'—'));const score=r.rrf_score??r.score??r.distance;tr.append(el('td',score===undefined?'':Number(score).toFixed(5),'badge'));body.append(tr)})}
+async function search(q){const query=q||$('q').value;const p=new URLSearchParams({q:query,mode:$('mode').value,top_k:$('topK').value,bm25_weight:$('bm25Weight').value,vector_weight:$('vectorWeight').value});$('status').textContent='Searching '+query+'…';try{const rows=await json('/api/search?'+p);render(rows);$('status').textContent=rows.length+' results for “'+query+'”';loadHistory()}catch(e){$('status').textContent=e.message;$('status').className='panel error'}}
+async function showWork(id){const w=await json('/api/work?id='+id);const d=$('detail');d.replaceChildren(el('h2',w.title),el('div',(w.year||'Year unknown')+' · '+(w.authors||'No authors recorded')+' · '+(w.venue||'No venue'),'muted'),el('p',w.abstract||'No abstract recorded.'));d.append(el('p','Zotero itemID '+w.item_id+' · key '+w.zotero_key,'badge'));for(const name of ['collections','tags','attachments']){const values=w.graph[name]||[];d.append(el('p',name+': '+(values.map(x=>x.name||x.path||x.zoteroKey).join(', ')||'none')))}d.classList.remove('hidden');d.scrollIntoView({behavior:'smooth'})}
+async function loadHistory(){try{const rows=await json('/api/history');const h=$('history');h.replaceChildren();rows.reverse().forEach(r=>{const b=el('button',r.query+' · '+r.mode,'secondary');b.onclick=()=>{$('q').value=r.query;$('mode').value=r.mode;search(r.query)};h.append(b)})}catch(e){}}
+$('searchForm').onsubmit=e=>{e.preventDefault();search()};$('syncButton').onclick=async()=>{if(!confirm('Rebuild all works and embeddings from Zotero?'))return;$('syncButton').disabled=true;$('status').textContent='Running full Zotero sync and bge-m3 embeddings…';try{const s=await json('/api/sync',{method:'POST'});$('status').textContent='Synced '+s.works+' works in '+s.elapsed_seconds+' s using '+s.embedding_tokens+' tokens';loadStats()}catch(e){$('status').textContent=e.message}finally{$('syncButton').disabled=false}};
+loadStats();loadHistory();
+</script></body></html>

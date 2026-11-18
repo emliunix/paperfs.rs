@@ -1,0 +1,28 @@
+{
+  "schema_version": "round-001-corpus-v1",
+  "status": "pdf_verified_gold_pending",
+  "verified_on": "2026-11-18",
+  "verification": [
+    "Zotero attachment row exists",
+    "at least one referenced local PDF exists",
+    "first five bytes of one existing PDF are %PDF-"
+  ],
+  "papers": [
+    {"item_id": 3154, "split": "development", "domain": "type_inference", "title": "Complete and Easy Bidirectional Typechecking for Higher-Rank Polymorphism"},
+    {"item_id": 713, "split": "development", "domain": "recursion_schemes", "title": "Fantastic Morphisms and Where to Find Them: A Guide to Recursion Schemes"},
+    {"item_id": 49, "split": "development", "domain": "effects_control", "title": "Freer Monads, More Extensible Effects"},
+    {"item_id": 6, "split": "development", "domain": "dependent_lean", "title": "The Lean Theorem Prover (System Description)"},
+
+    {"item_id": 2777, "split": "test", "domain": "type_inference", "title": "Practical type inference for arbitrary-rank types"},
+    {"item_id": 3229, "split": "test", "domain": "type_inference", "title": "Visible Type Application (Extended version)"},
+    {"item_id": 41, "split": "test", "domain": "type_inference", "title": "A quick look at impredicativity"},
+    {"item_id": 18, "split": "test", "domain": "recursion_schemes", "title": "A Note on Recursive Types and Fixed Points"},
+    {"item_id": 2314, "split": "test", "domain": "recursion_schemes", "title": "Unifying structured recursion schemes"},
+    {"item_id": 1483, "split": "test", "domain": "effects_control", "title": "Hefty Algebras: Modular Elaboration of Higher-Order Algebraic Effects"},
+    {"item_id": 675, "split": "test", "domain": "effects_control", "title": "Answer-Type Modification without Tears: Prompt-Passing Style Translation for Typed Delimited-Control Operators"},
+    {"item_id": 1490, "split": "test", "domain": "effects_control", "title": "A Framework for Higher-Order Effects & Handlers"},
+    {"item_id": 1348, "split": "test", "domain": "dependent_lean", "title": "Canonical for Automated Theorem Proving in Lean"},
+    {"item_id": 637, "split": "test", "domain": "dependent_lean", "title": "Type Inference, Haskell and Dependent Types"},
+    {"item_id": 774, "split": "test", "domain": "dependent_lean", "title": "Use and abuse of instance parameters in the Lean mathematical library"}
+  ]
+}

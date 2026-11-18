@@ -8,6 +8,12 @@ And I use it to connect to my personal onedrive.
 
 Still working towards MVP.
 
+## Sub-projects
+
+- [`paper-graph/`](paper-graph/) — Rust port of the Zotero paper graph, BM25 /
+  vector / hybrid search, and local axum UI. Run it with
+  `cargo run -p paper-graph -- --help`.
+
 ## TODO
 
 * [ ] rename odrive.rs to msauth.rs,
