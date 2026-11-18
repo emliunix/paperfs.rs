@@ -108,3 +108,33 @@ Case note: this file is `method.md` (lowercase) on a case-insensitive filesystem
 ## Reproducing the corpus
 
 The thread ids and message indexes are in corpus.md and in the two JSON files. The code baseline is paper-graph at f1e46d9. The retrieval queries are listed in corpus.md. A rerun should expect the same 18 threads, but message counts and summaries can change if Nowledge Mem re-syncs a source.
+
+## Governance
+
+### Status vocabulary
+
+A status applies to one atomic statement in the current context; statuses may coexist and are not a confidence score.
+
+- **Observed** — Directly seen in current code, an artifact, or a recorded incident; strengthen it with a reproducible observation, a resolvable run or source locator, and a relevant negative case.
+- **Decided** — Explicitly chosen by the human, without implying implementation; strengthen it with a cited decision followed by an executed check of the implementation.
+- **Specified** — Written as intended behavior but not executed; strengthen it with an executable check or run whose inputs and result are recorded.
+- **Transferred** — Supported by experience outside this project but not established here; strengthen it with a local reproduction, incident, or test.
+- **Contested** — Facing a live counterargument or unresolved contradiction; strengthen the underlying statement with evidence that addresses both sides and, where a decision or verdict is involved, recorded human adjudication.
+- **Untested** — Not yet exercised by an executed test in this context; strengthen it with a recorded test run, its input and code versions, and its unedited result.
+
+### Review rounds and stop rules
+
+A review round starts from frozen inputs and a named scope, records the reviewer family, and produces findings tied to an atomic statement, evidence, and an owning document. The author must resolve or explicitly dispose of every finding; another round is warranted only when those dispositions change the artifact or new evidence arrives.
+
+Stop iterating when all findings are resolved or have an explicit human-owned disposition, no contradiction remains hidden, required checks and gates are either passing or recorded as blocking, and further edits would be polish rather than new evidence. An unexecuted required check or a failed gate blocks promotion or completion; it does not prohibit drafting or recording the blocker.
+
+A contradiction marks the affected statement **Contested** and blocks that statement's promotion, every dependent gate or merge, and any paper claim that relies on it; unrelated statements may proceed. Resolve it against current artifacts and verbatim sources, with human adjudication for decisions and verdicts, rather than averaging incompatible accounts.
+
+A same-family review is allowed for preliminary or mechanical feedback, or when no different-family reviewer is available, but it must be labelled *same-family*, must not count as independent, and requires human adjudication. Additional same-family rounds cannot substitute for the missing independent review.
+
+### One-statement-per-fact enforcement
+
+Each atomic rule, status, and decision has exactly one owning document; every other document links to that owner instead of restating it. The owner map binds each subject to one owner and either an executable check or an explicit human-judgment gate.
+
+The docs lint is specified to reject a subject with zero or multiple owners, an unresolved owner or check reference, a broken relative link, a repeated normative rule outside its owner, and case-only filename twins. It also rejects a check with no owning subject; editorial summaries may describe status, but may not create a second normative copy of a rule.
+
