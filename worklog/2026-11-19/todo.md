@@ -225,7 +225,7 @@ flowchart LR
   T1_7 --> T1_8
 ~~~
 
-- [ ] **T1.1 CONSTITUTION.md.** Seven invariants, one page, each with a falsifier and a check pointer:
+- [x] **T1.1 CONSTITUTION.md.** Seven invariants, one page, each with a falsifier and a check pointer:
   1. Zotero is canonical; the HawDB metadata graph is derived and rebuildable.
   2. Extraction, review state, and run provenance never live in the rebuild target.
   3. No claim without a verbatim quote and a resolvable locator; unknown stays unknown.
@@ -234,19 +234,19 @@ flowchart LR
   6. Ontology grows only from a frozen competency question; no unearned taxonomy.
   7. A rule that can be a check must not remain prose.
   - Exit: each invariant has an owner doc, a falsifier, and a check ID or check pending.
-- [ ] **T1.2 STATUS.md.** Built / specified / missing, gate ledger state, commit, docs hash. Generate the table from tests and the gate ledger; do not hand-write done.
+- [x] **T1.2 STATUS.md.** Built / specified / missing, gate ledger state, commit, docs hash. Generate the table from tests and the gate ledger; do not hand-write done.
   - Exit: status table names the owning doc for every subject.
-- [ ] **T1.3 Extend method.md.** Add rounds, records, gates, review, delegation, and precedence to the existing mining method. Do not create METHOD.md; APFS resolves it to this file.
+- [x] **T1.3 Extend method.md.** Add rounds, records, gates, review, delegation, and precedence to the existing mining method. Do not create METHOD.md; APFS resolves it to this file.
   - Exit: a new contributor can tell what to do first and what done means.
-- [ ] **T1.4 GLOSSARY.md.** Work, Concept, Claim, EvidenceSpan, Episode, Lesson, Check, MENTIONS/USES/INTRODUCES, review states, status tags.
+- [x] **T1.4 GLOSSARY.md.** Work, Concept, Claim, EvidenceSpan, Episode, Lesson, Check, MENTIONS/USES/INTRODUCES, review states, status tags.
   - Exit: one definition per term; links to the owning doc.
-- [ ] **T1.5 Owner map.** Subject -> owning doc -> enforcement check. At minimum: identity, rebuild, admission, ontology, relations, evidence, evaluation, integrity, operations, distillation.
+- [x] **T1.5 Owner map.** Subject -> owning doc -> enforcement check. At minimum: identity, rebuild, admission, ontology, relations, evidence, evaluation, integrity, operations, distillation.
   - Exit: no subject has two owners.
-- [ ] **T1.6 GUIDELINES.md.** Decision procedures for: adding a relation; changing schema; changing an eval; admitting a corpus; promoting a memory. Each ends in a checklist and a stop rule.
+- [x] **T1.6 GUIDELINES.md.** Decision procedures for: adding a relation; changing schema; changing an eval; admitting a corpus; promoting a memory. Each ends in a checklist and a stop rule.
   - Exit: each procedure has an input, a decision, a check, and a rollback.
-- [ ] **T1.7 ADR/0001-0006.** Separate derived DB; identity strategy; ontology budget; one resolver; metric panel; migration policy. Each with context, decision, rejected alternative, consequences, check.
+- [x] **T1.7 ADR/0001-0006.** Separate derived DB; identity strategy; ontology budget; one resolver; metric panel; migration policy. Each with context, decision, rejected alternative, consequences, check.
   - Exit: six ADRs, each with a rejected alternative and a check pointer.
-- [ ] **T1.8 Spine review.** Independent reviewer runs spine-orient: reading order, one statement per fact, owning doc decides, environment facts verified.
+- [x] **T1.8 Spine review.** Independent reviewer runs spine-orient: reading order, one statement per fact, owning doc decides, environment facts verified.
   - Exit: reviewer findings resolved; no duplicated rule remains.
 
 ## W2 — Praxis schema and lesson entities
