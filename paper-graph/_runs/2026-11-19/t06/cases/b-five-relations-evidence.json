@@ -1,0 +1,107 @@
+{
+  "schema_version": "t06-case-v1",
+  "source": {
+    "paper_id": 3154,
+    "attachment_id": 3157,
+    "attachment_sha256": "0e75ac60ee631775d663189bf5fc4811275e84c62178f826879feed4555ad941",
+    "pages": [
+      1,
+      20
+    ],
+    "offset_convention": "Zero-based Unicode code-point offsets over the complete excerpt_text string, including page markers and newlines; end_offset is exclusive.",
+    "line_convention": "One-based line numbers over the complete excerpt_text string; line_start and line_end bound the full quoted evidence."
+  },
+  "excerpt_text": "=== PAGE 1 ===\narXiv:1306.6032v2 [cs.PL] 22 Aug 2020\nComplete and Easy Bidirectional Typechecking\nfor Higher-Rank Polymorphism\nJana Dunfield Neelakantan R. Krishnaswami\nMax Planck Institute for Software Systems\nKaiserslautern and Saarbrücken, Germany\njd169@queensu.ca nk480@cl.cam.ac.uk\nAbstract\nBidirectional typechecking, in which terms either synthesize a type\nor are checked against a known type, has become popular for its\nscalability (unlike Damas-Milner type inference, bidirectional typ-\ning remains decidable even for very expressive type systems), its\nerror reporting, and its relative ease of implementation. Following\ndesign principles from proof theory, bidirectional typing can be ap-\nplied to many type constructs. The principles underlying a bidirec-\ntional approach to polymorphism, however, are less obvious. We\ngive a declarative, bidirectional account of higher-rank polymor-\nphism, grounded in proof theory; this calculus enjoys many proper-\nties such as η-reduction and predictability of annotations. We give\nan algorithm for implementing the declarative system; our algo-\nrithm is remarkably simple and well-behaved, despite being both\nsound and complete.\nCategories and Subject Descriptors D.3.3 [Programming\nLanguages]: Language Constructs and Features—polymorphism\nKeywords bidirectional typechecking, higher-rank polymorphism\n1. Introduction\nBidirectional typechecking (Pierce and Turner 2000) has become\none of the most popular techniques for implementing typecheck-\ners in new languages. This technique has been used for depen-\ndent types (Coquand 1996; Abel et al. 2008; Löh et al. 2008; As-\nperti et al. 2012); subtyping (Pierce and Turner 2000); intersec-\ntion, union, indexed and refinement types (Xi 1998; Davies and\nPfenning 2000; Dunfield and Pfenning 2004); termination check-\ning (Abel 2004); higher-rank polymorphism (Peyton Jones et al.\n2007; Dunfield 2009); refinement types for LF (Lovas 2010); con-\ntextual modal types (Pientka 2008); compiler intermediate repre-\nsentations (Chlipala et al. 2005); and object-oriented languages in-\ncluding C♯ (Bierman et al. 2007) and Scala (Odersky et al. 2001).\nAs can be seen, it scales well to advanced type systems; moreover,\nit is easy to implement, and yields relatively high-quality error mes-\nsages (Peyton Jones et al. 2007).\nPermission to make digital or hard copies of all or part of this work for personal or\nclassroom use is granted without fee provided that copies are not made or distributed\nfor profit or commercial advantage and that copies bear this notice and the full citation\non the first page. Copyrights for components of this work owned by others than the\nauthor(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or\nrepublish, to post on servers or to redistribute to lists, requires prior specific permission\nand/or a fee. Request permissions from permissions@acm.org.\nICFP ’13, September 25–27, 2013, Boston, MA, USA.\nCopyright is held by the owner/author(s). Publication rights licensed to ACM.\nACM 978-1-4503-2326-0/13/09. . . $15.00.\nhttp://dx.doi.org/10.1145/2500365.2500582 Reprinted from ICFP ’13, [Unknown Pro-\nceedings], September 25–27, 2013, Boston, MA, USA, pp. 1–13.\nThis is the 2020 version, which corrects the name of the first author and updates URLs\nfor the appendix and Dunfield (2009).\nHowever, the theoretical foundation of bidirectional typecheck-\ning has lagged behind its application. As shown by Watkins et al.\n(2004), bidirectional typechecking can be understood in terms of\nthe normalization of intuitionistic type theory, in which normal\nforms correspond to the checking mode of bidirectional typecheck-\ning, and neutral (or atomic) terms correspond to the synthesis\nmode. This enables a proof of the elegant property that type anno-\ntations are only necessary at reducible expressions, and that normal\nforms need no annotations at all. The benefit of the proof-theoretic\nview is that it gives a simple and easy-to-understand declarative ac-\ncount of where type annotations are necessary, without reference to\nthe details of the typechecking algorithm.\nWhile the proof-theoretic account of bidirectional typecheck-\ning has been scaled up as far as type refinements and intersection\nand union types (Pfenning 2008), as yet there has been no com-\npletely satisfactory account of how to extend the proof-theoretic\napproach to handle polymorphism. This is especially vexing, since\nthe ability of bidirectional algorithms to gracefully accommodate\npolymorphism (even higher-rank polymorphism) has been one of\ntheir chief attractions.\nIn this paper, we extend the proof-theoretic account of bidirec-\ntional typechecking to full higher-rank polymorphism (i.e., pred-\nicative System F), and consequently show that bidirectional type-\nchecking is not merely sound with respect to the declarative seman-\ntics, but also that it is complete. Better still, the algorithm we give\nfor doing so is extraordinarily simple.\nFirst, as a specification of type checking, we give a declara-\ntive bidirectional type system which guesses all quantifier instanti-\nations. This calculus is a small but significant contribution of this\npaper, since it possesses desirable properties, such as the preserva-\ntion of typability under η-reduction, that are missing from the type\nassignment version of System F. Furthermore, we can use the bidi-\nrectional character of our declarative calculus to show a number\nof refactoring theorems, enabling us to precisely characterize what\nsorts of substitutions (and reverse substitutions) preserve typability,\nwhere type annotations are needed, and when programmers may\nsafely delete type annotations.\nThen, we give a bidirectional algorithm that always finds corre-\nsponding instantiations. As a consequence of completeness, we can\nshow that our algorithm never needs explicit type applications, and\nthat type annotations are only required for polymorphic, reducible\nexpressions—which, in practice, means that only let-bindings of\nfunctions at polymorphic type need type annotations; no other ex-\npressions need annotations.\nOur algorithm is both simple to understand and simple to im-\nplement. The key data structure is an ordered context containing all\nbindings, including type variables, term variables, and existential\nvariables denoting partial type information. By maintaining order,\nwe are able to easily manage scope information, which is particu-\n1\n=== PAGE 20 ===\nB Type Assignment\nLemma 10 (Well-Formedness).\nIf Ψ ⊢ e ⇐ A or Ψ ⊢ e ⇒ A or Ψ ⊢ A • e ⇒⇒ C then Ψ ⊢ A (and in the last case, Ψ ⊢ C).\nTheorem 1 (Completeness of Bidirectional Typing).\nIf Ψ ⊢ e : A then there exists e such that Ψ ⊢ e ⇒ A and |e |= e.\nLemma 11 (Subtyping Coercion). IfΨ ⊢ A ≤ B then there exists f which is βη-equalto the identity such\nthat Ψ ⊢ f : A → B.\nLemma 12 (Application Subtyping). If Ψ ⊢ A • e ⇒⇒ C then there exists B such that Ψ ⊢ A ≤ B → C\nand Ψ ⊢ e ⇐ B by a smaller derivation.\nTheorem 2 (Soundness of Bidirectional Typing). We have that:\n• If Ψ ⊢ e ⇐ A, then there is an e such that Ψ ⊢ e : A and e =βη |e|.\n• If Ψ ⊢ e ⇒ A, then there is an e such that Ψ ⊢ e : A and e =βη |e|.\nC Robustness of Typing\nLemma 13 (Type Substitution).\nAssume Ψ ⊢ τ.\n• If Ψ, α, Ψ ⊢ e ⇐ C then Ψ, [τ/α]Ψ ⊢ [τ/α]e ⇐ [τ/α]C.\n• If Ψ, α, Ψ ⊢ e ⇒ C then Ψ, [τ/α]Ψ ⊢ [τ/α]e ⇒ [τ/α]C.\n• If Ψ, α, Ψ ⊢ B • e ⇒⇒ C then Ψ, [τ/α]Ψ ⊢ [τ/α]B • [τ/α]e ⇒⇒ [A/α]C.\nMoreover, the resulting derivation contains no more applications of typing rules than the given one.\n(Internal subtyping derivations, however, may grow.)\nDefinition 3 (Context Subtyping). We define the judgment Ψ ≤ Ψ with the following rules:\n· ≤ · CtxSubEmpty\nΨ ≤ Ψ\nΨ , α ≤ Ψ, α\nCtxSubUvar\nΨ ≤ Ψ Ψ ⊢ A ≤ A\nΨ , x : A ≤ Ψ, x : A\nLemma 14 (Subsumption). Suppose Ψ ≤ Ψ. Then:\n(i) If Ψ ⊢ e ⇐ A and Ψ ⊢ A ≤ A then Ψ ⊢ e ⇐ A.\n(ii) If Ψ ⊢ e ⇒ A then there exists A such that Ψ ⊢ A ≤ A and Ψ ⊢ e ⇒ A.\n(iii) If Ψ ⊢ C • e ⇒⇒ A and Ψ ⊢ C ≤ C\nthen there exists A such that Ψ ⊢ A ≤ A and Ψ ⊢ C • e ⇒⇒ A.\nTheorem 3 (Substitution).\nAssume Ψ ⊢ e ⇒ A.\n(i) If Ψ, x : A ⊢ e ⇐ C then Ψ ⊢ [e/x]e ⇐ C.\n(ii) If Ψ, x : A ⊢ e ⇒ C then Ψ ⊢ [e/x]e ⇒ C.\n(iii) If Ψ, x : A ⊢ B • e ⇒⇒ C then Ψ ⊢ B • [e/x]e ⇒⇒ C.\nTheorem 4 (Inverse Substitution).\nAssume Ψ ⊢ e ⇐ A.\n(i) If Ψ ⊢ [(e : A)/x]e ⇐ C then Ψ, x : A ⊢ e ⇐ C.\nCtxSubVar\n7",
+  "offset_and_locator_rules": "Every evidence quote must be an exact contiguous substring of excerpt_text. excerpt_text.slice(start_offset,end_offset) must equal quote under Unicode code-point indexing. page must identify the page segment containing the quote. line_start/line_end must resolve to the quote's inclusive first/last excerpt lines. Do not normalize hyphenation, whitespace, mathematics, or Unicode.",
+  "case_id": "five-relations-evidence",
+  "task": "Return exactly five relations, using each allowed relation_type exactly once. Model only claims supported by the excerpt. CITES connects this paper to a cited work; INTRODUCES connects this paper to a concept it introduces; USES connects this paper to an existing technique it applies; MENTIONS records a concept mentioned without a stronger supported relation; SUPPORTS connects evidence to a stated claim. Each relation must have independently resolvable evidence.",
+  "json_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "paper_id",
+      "relations"
+    ],
+    "properties": {
+      "paper_id": {
+        "const": 3154
+      },
+      "relations": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 5,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "relation_type",
+            "source",
+            "target",
+            "evidence"
+          ],
+          "properties": {
+            "relation_type": {
+              "type": "string",
+              "enum": [
+                "INTRODUCES",
+                "USES",
+                "MENTIONS",
+                "CITES",
+                "SUPPORTS"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "page",
+                "quote",
+                "start_offset",
+                "end_offset",
+                "line_start",
+                "line_end"
+              ],
+              "properties": {
+                "page": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    20
+                  ]
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start_offset": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "end_offset": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "line_start": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "line_end": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

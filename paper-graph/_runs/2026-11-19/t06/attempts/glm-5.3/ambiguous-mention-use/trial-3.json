@@ -1,0 +1,27 @@
+{
+  "schema_version": "t06-attempt-log-v1",
+  "route": "glm-5.3",
+  "provider": "magpie-anthropic",
+  "model": "zcode/GLM-5.3",
+  "case_id": "ambiguous-mention-use",
+  "case_file": "c-ambiguous-mention-use.json",
+  "trial": 3,
+  "effort": "low",
+  "transport": "direct_gateway_not_subagent_depth_restricted",
+  "max_retries": 0,
+  "attempts": [
+    {
+      "started_at": "2026-11-19T12:17:42.402852+08:00",
+      "timeout_ms": 180000,
+      "latency_ms": 180021,
+      "transport_ok": false,
+      "failure_type": "timeout",
+      "error_verbatim": "TimeoutError: timed out",
+      "finished_at": "2026-11-19T12:20:42.421050+08:00",
+      "attempt": 0,
+      "empty": false,
+      "truncated": false,
+      "retry_scheduled": false
+    }
+  ]
+}
