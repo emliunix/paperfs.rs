@@ -306,9 +306,9 @@ flowchart LR
 
 For each key, prefer a check over prose. principle-encode-lessons-in-structure: if the lesson needs judgment and cannot be encoded, make the instruction prominent and add a failure example.
 
-- [ ] **T4.1 Rule-to-check matrix.** 14 lessons -> check type (lint, fixture, preflight, gate, review) -> owner -> path.
+- [x] **T4.1 Rule-to-check matrix.** 14 lessons -> check type (lint, fixture, preflight, gate, review) -> owner -> path.
   - Exit: every lesson has a check or an explicit judgment, reviewed by X.
-- [ ] **T4.2 Implement the ten checks:**
+- [x] **T4.2 Implement the ten checks:**
   1. Pre-sync non-metadata count guard; fail closed.
   2. Populated derived-DB sync test: extraction counts unchanged.
   3. Executable corpus admission: stat, %PDF- signature, SHA-256.
@@ -320,9 +320,9 @@ For each key, prefer a check over prose. principle-encode-lessons-in-structure: 
   9. Budget preflight: context/max_tokens/timeout/batch inequalities.
   10. Migration lint: no DROP TABLE/VIEW in startup; count oracle on a copy.
   - Exit: 10 checks run locally; each check has a seeded defect that turns it red.
-- [ ] **T4.3 CI wiring.** Run checks on PR; keep the slow/property suite nightly.
+- [x] **T4.3 CI wiring.** Run checks on PR; keep the slow/property suite nightly.
   - Exit: a seeded defect fails CI; a clean tree passes.
-- [ ] **T4.4 Docs point to checks.** Each lesson/owner doc links to its check; no restatement.
+- [x] **T4.4 Docs point to checks.** Each lesson/owner doc links to its check; no restatement.
   - Exit: owner map has a check column with no empty cells except judgment.
 
 ## W5 — Docs-effectiveness eval
