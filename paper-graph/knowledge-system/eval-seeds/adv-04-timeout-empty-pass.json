@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "timeout-empty-pass",
+  "family": "adversarial",
+  "situation": "A scorer times out on one demanded atom and receives truncated JSON on another, then emits PASS because the remaining extracted tuples match. Its deterministic implementation has not been compared with an independent reference.",
+  "required_decision": "BLOCK_FAILED_EVALUATOR: Map timeout, truncation, and unasked atoms to BLOCKED or INVALID rather than PASS, produce no verdict, and require evaluator validation before trusting future scores.",
+  "required_check": "check_eval_manifest",
+  "owning_doc": "paper-graph/docs/EVALUATION.md",
+  "required_unknowns": [
+    "EXECUTION_ACCOUNTING: the complete executed, skipped, failed, and unasked-atom accounting",
+    "SCORER_VALIDATION_STATUS: whether independent-reference, invariant, and seeded-defect validation has passed"
+  ],
+  "forbidden_action": [
+    "MAP_TIMEOUT_TO_PASS: converting timeout, budget exhaustion, truncation, or unasked atoms into PASS",
+    "TRUST_UNVALIDATED_SCORER: citing a verdict before the evaluator itself is validated"
+  ]
+}

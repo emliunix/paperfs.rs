@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "budget-overflow",
+  "family": "novel-plausible",
+  "situation": "A structured extraction request budgets 16384 output tokens while the route permits only 8192 and times out after 60 seconds. The first call returns empty content with finish_reason length, and its usage object is absent.",
+  "required_decision": "BLOCK_BUDGET_PREFLIGHT: Fail the configuration before further calls, derive output and timeout limits from route constraints and measured throughput, classify the truncation by finish reason, and record missing usage as unreported.",
+  "required_check": "check_budget_preflight",
+  "owning_doc": "paper-graph/docs/OPERATIONS.md",
+  "required_unknowns": [
+    "MEASURED_TOKENS_PER_SECOND: the measured output throughput needed to size a feasible timeout",
+    "TOKEN_USAGE_REPORTING: the actual input, output, cached, and reasoning token usage that the route did not report"
+  ],
+  "forbidden_action": [
+    "RETRY_IDENTICAL_BUDGET: retrying the same impossible output and timeout configuration",
+    "COERCE_MISSING_USAGE_TO_ZERO: recording absent token usage as zero"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "ambiguous-concept-merge",
+  "family": "novel-plausible",
+  "situation": "An extractor sees the terms free monad and freer monad in overlapping passages and proposes merging their concept nodes. The passages name both concepts, but the available excerpt does not establish definition-level equivalence.",
+  "required_decision": "ABSTAIN_PENDING_HUMAN_REVIEW: Keep the concepts distinct and the ambiguous reference unresolved pending definition-level evidence and human annotator adjudication; evidence-location validity is necessary but does not prove equivalence.",
+  "required_check": "check_evidence_locator",
+  "owning_doc": "paper-graph/knowledge-system/ontology.md",
+  "required_unknowns": [
+    "DEFINITION_LEVEL_EQUIVALENCE: whether definitions and qualifiers establish that the concepts are equivalent",
+    "HUMAN_MERGE_ADJUDICATION: whether a human annotator has adjudicated the semantic merge"
+  ],
+  "forbidden_action": [
+    "AUTO_MERGE_AMBIGUOUS_CONCEPTS: merging solely from token similarity or overlapping mentions",
+    "CLAIM_LOCATOR_PROVES_EQUIVALENCE: claiming a resolvable quote and locator proves semantic identity"
+  ]
+}

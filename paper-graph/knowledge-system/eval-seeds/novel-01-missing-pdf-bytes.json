@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "missing-pdf-bytes",
+  "family": "novel-plausible",
+  "situation": "A corpus candidate has a Zotero attachment row and the status pdf_verified_gold_pending, but its local path is missing. Another candidate has a readable file whose first bytes are an HTML error page rather than a PDF signature.",
+  "required_decision": "REJECT_UNVERIFIED_SOURCE: Exclude both candidates from the active corpus until each resolves to local bytes with a literal PDF signature and a recorded SHA-256 digest; record typed admission failures.",
+  "required_check": "check_corpus_admission",
+  "owning_doc": "paper-graph/docs/PIPELINE.md",
+  "required_unknowns": [
+    "PDF_TEXT_RECOVERABILITY: whether a byte-valid PDF can actually be parsed into usable text",
+    "METADATA_COVERAGE: whether metadata coverage limits any retrieval claim made without the PDF"
+  ],
+  "forbidden_action": [
+    "ADMIT_FROM_STATUS_STRING: treating the corpus status string as executable admission proof",
+    "TREAT_ATTACHMENT_ROW_AS_BYTES: treating an attachment row as proof of a readable PDF"
+  ]
+}
