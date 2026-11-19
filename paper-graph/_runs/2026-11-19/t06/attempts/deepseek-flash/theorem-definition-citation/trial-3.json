@@ -1,0 +1,56 @@
+{
+  "schema_version": "t06-attempt-log-v1",
+  "route": "deepseek-flash",
+  "provider": "magpie",
+  "model": "deepseek/deepseek-flash",
+  "case_id": "theorem-definition-citation",
+  "case_file": "a-theorem-definition-citation.json",
+  "trial": 3,
+  "effort": "low",
+  "transport": "direct_gateway_not_subagent_depth_restricted",
+  "max_retries": 2,
+  "attempts": [
+    {
+      "started_at": "2026-11-19T12:09:48.987311+08:00",
+      "timeout_ms": 180000,
+      "latency_ms": 95556,
+      "http_status": 502,
+      "transport_ok": false,
+      "failure_type": "http_error",
+      "error_verbatim": "{\"error\":{\"code\":null,\"message\":\"DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 16384 tokens: raise max_tokens in the agent, or ask for less reasoning)\",\"param\":null,\"type\":\"api_error\"}}\n",
+      "finished_at": "2026-11-19T12:11:24.620040+08:00",
+      "attempt": 0,
+      "empty": false,
+      "truncated": false,
+      "retry_scheduled": true
+    },
+    {
+      "started_at": "2026-11-19T12:11:25.631116+08:00",
+      "timeout_ms": 180000,
+      "latency_ms": 92213,
+      "http_status": 502,
+      "transport_ok": false,
+      "failure_type": "http_error",
+      "error_verbatim": "{\"error\":{\"code\":null,\"message\":\"DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 16384 tokens: raise max_tokens in the agent, or ask for less reasoning)\",\"param\":null,\"type\":\"api_error\"}}\n",
+      "finished_at": "2026-11-19T12:12:57.843596+08:00",
+      "attempt": 1,
+      "empty": false,
+      "truncated": false,
+      "retry_scheduled": true
+    },
+    {
+      "started_at": "2026-11-19T12:12:59.848900+08:00",
+      "timeout_ms": 180000,
+      "latency_ms": 60199,
+      "http_status": 502,
+      "transport_ok": false,
+      "failure_type": "http_error",
+      "error_verbatim": "{\"error\":{\"code\":null,\"message\":\"DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 16384 tokens: raise max_tokens in the agent, or ask for less reasoning)\",\"param\":null,\"type\":\"api_error\"}}\n",
+      "finished_at": "2026-11-19T12:14:00.048813+08:00",
+      "attempt": 2,
+      "empty": false,
+      "truncated": false,
+      "retry_scheduled": false
+    }
+  ]
+}

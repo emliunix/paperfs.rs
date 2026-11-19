@@ -1,0 +1,53 @@
+{
+  "schema_version": "t06-attempt-log-v1",
+  "route": "glm-5.3",
+  "provider": "magpie-anthropic",
+  "model": "zcode/GLM-5.3",
+  "case_id": "ambiguous-mention-use",
+  "case_file": "c-ambiguous-mention-use.json",
+  "trial": 1,
+  "effort": "low",
+  "transport": "direct_gateway_not_subagent_depth_restricted",
+  "max_retries": 2,
+  "attempts": [
+    {
+      "started_at": "2026-11-19T12:02:48.235745+08:00",
+      "timeout_ms": 180000,
+      "latency_ms": 180022,
+      "transport_ok": false,
+      "failure_type": "timeout",
+      "error_verbatim": "TimeoutError: timed out",
+      "finished_at": "2026-11-19T12:05:48.255117+08:00",
+      "attempt": 0,
+      "empty": false,
+      "truncated": false,
+      "retry_scheduled": true
+    },
+    {
+      "started_at": "2026-11-19T12:05:49.263095+08:00",
+      "timeout_ms": 180000,
+      "latency_ms": 180004,
+      "transport_ok": false,
+      "failure_type": "timeout",
+      "error_verbatim": "TimeoutError: timed out",
+      "finished_at": "2026-11-19T12:08:49.263728+08:00",
+      "attempt": 1,
+      "empty": false,
+      "truncated": false,
+      "retry_scheduled": true
+    },
+    {
+      "started_at": "2026-11-19T12:08:51.275768+08:00",
+      "timeout_ms": 180000,
+      "latency_ms": 180004,
+      "transport_ok": false,
+      "failure_type": "timeout",
+      "error_verbatim": "TimeoutError: timed out",
+      "finished_at": "2026-11-19T12:11:51.277818+08:00",
+      "attempt": 2,
+      "empty": false,
+      "truncated": false,
+      "retry_scheduled": false
+    }
+  ]
+}

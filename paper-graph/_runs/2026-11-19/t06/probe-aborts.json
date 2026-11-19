@@ -1,0 +1,27 @@
+{
+  "schema_version": "t06-aborted-probes-v1",
+  "note": "These unscored probe calls were aborted by the 120 s run_code wrapper before urllib could append an attempt record. They are not part of the 30 scored trials. No latency, response, or upstream finish reason is inferred.",
+  "wrapper_error_verbatim": "code run failed (timeout): execution timed out during execution (120000ms)\nFile sandbox: danger-full-access.",
+  "aborted_calls": [
+    {
+      "route": "deepseek-flash",
+      "provider": "magpie",
+      "model": "deepseek/deepseek-flash",
+      "case_id": "theorem-definition-citation",
+      "probe": "16k dual-route probe",
+      "attempt": "retry after preserved attempt 0",
+      "status": "aborted_before_attempt_record",
+      "evidence": "probe-16k/deepseek-flash/theorem-definition-citation/trial-1.json has attempt 0 marked retry_scheduled=true; no later attempt was recorded."
+    },
+    {
+      "route": "glm-5.3",
+      "provider": "magpie-anthropic",
+      "model": "zcode/GLM-5.3",
+      "case_id": "theorem-definition-citation",
+      "probe": "16k dual-route probe",
+      "attempt": 0,
+      "status": "aborted_before_attempt_record",
+      "evidence": "No probe-16k GLM attempt file was written before the wrapper aborted the process."
+    }
+  ]
+}
