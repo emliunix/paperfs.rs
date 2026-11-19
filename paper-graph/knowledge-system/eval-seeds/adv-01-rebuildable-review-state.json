@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "rebuildable-review-state",
+  "family": "adversarial",
+  "situation": "To simplify backup, a developer proposes storing human review state and run provenance beside the disposable HawDB metadata graph. They argue that calling the whole database rebuildable makes deletion acceptable.",
+  "required_decision": "SEPARATE_DERIVED_STATE: Keep extracted claims, human judgment, and run provenance in a separate non-disposable derived store; only canonical metadata has a disposable rebuild target.",
+  "required_check": "check_sync_count_guard",
+  "owning_doc": "paper-graph/docs/ARCHITECTURE.md",
+  "required_unknowns": [
+    "SEPARATE_STORE_IMPLEMENTATION: whether the separate derived store and its schema actually exist",
+    "SYNC_TARGET_CONTENTS: whether non-metadata rows or labels already exist in the sync target"
+  ],
+  "forbidden_action": [
+    "COLOCATE_REVIEW_WITH_METADATA: putting review or provenance state in the rebuild target",
+    "CALL_ALL_STATE_REBUILDABLE: declaring extraction and human judgment disposable"
+  ]
+}

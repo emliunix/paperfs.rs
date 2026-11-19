@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "identity-reimport",
+  "family": "real-lesson",
+  "situation": "A Zotero restore assigns new numeric itemIDs to works that already have claims and evidence spans. The old local IDs no longer join reliably, and some works may lack DOIs.",
+  "required_decision": "REKEY_DURABLE_IDENTITY: Rejoin works through persisted zotero_key and DOI where available, keep itemID local, and preserve claim and evidence links through a verified old-to-new mapping.",
+  "required_check": "check_corpus_identity",
+  "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+  "required_unknowns": [
+    "DOI_AVAILABILITY: which affected works lack a DOI and need another verified durable join",
+    "REIMPORT_KEY_MAPPING: whether the old itemID to zotero_key and new itemID mapping has been verified"
+  ],
+  "forbidden_action": [
+    "USE_TITLE_AS_IDENTITY: joining papers by title",
+    "USE_CONTENT_HASH_AS_IDENTITY: treating a content hash as paper identity"
+  ]
+}

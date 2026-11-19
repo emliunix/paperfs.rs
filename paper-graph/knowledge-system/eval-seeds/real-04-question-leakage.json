@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "question-leakage",
+  "family": "real-lesson",
+  "situation": "A trap question is rewritten so that its wording presupposes the relation the extractor is supposed to discover. The expected answer file has not changed, and the team wants to keep the revised question.",
+  "required_decision": "REJECT_LEADING_QUESTION: Reject or rewrite the outcome-presupposing question before gold freeze and run the question lint; unchanged expected answers do not make a leaked question valid.",
+  "required_check": "check_question_lint",
+  "owning_doc": "paper-graph/docs/EVALUATION.md",
+  "required_unknowns": [
+    "QUESTION_PRIOR_USE: whether the revised question has already been used in any scored run",
+    "GOLD_CHANGE_STATUS: whether any accompanying question or schema change altered the effective oracle"
+  ],
+  "forbidden_action": [
+    "KEEP_OUTCOME_PRESUPPOSITION: retaining wording that supplies the outcome being tested",
+    "ASSUME_UNCHANGED_GOLD_IS_ENOUGH: accepting the question solely because expected answers did not move"
+  ]
+}
