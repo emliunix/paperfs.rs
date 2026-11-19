@@ -292,8 +292,9 @@ Each doc owns one subject and links to the constitution/method instead of restat
 - [x] **T3.6 EXPERIMENTS.md.** Current round, hypotheses, gate ledger, raw result paths.
 - [x] **T3.7 ROADMAP.md.** Now/next/later, each tied to a competency question or gate.
 - [x] **T3.8 REVIEW.md.** Definition of done, reviewer independence, what counts as evidence.
-- [ ] **T3.9 Docs lint.** Link check; owner-map check; grep for duplicated rules; stale command check (the pytest row in gates.md is the known example).
+- [x] **T3.9 Docs lint.** Link check; owner-map check; grep for duplicated rules; stale command check (the pytest row in gates.md is the known example).
   - Exit: 0 broken links, 0 duplicated rules, 0 stale commands.
+  - **Recorded 2026-11-20:** `paper-graph/scripts/docs_lint.sh` passes (15 files, 12 check ids); fixed the unknown praxis check id and stale completed pytest gate.
 
 ## W4 — Encode checks
 
@@ -361,8 +362,9 @@ flowchart LR
 - [x] **T6.2 Typed stage 2 - parse.** Native parser first; page mapping, two-column order, math, references. Emit pages.jsonl: one typed record per page (paper_id, page, text, order metadata, parser version), validated before chunking. Record failures; do not clean them away.
 - [x] **T6.3 Typed stage 3 - normalize and chunk.** Emit chunks.jsonl: attachment id, parser version, page range, section path, ordinal, content hash, raw text, start/end offsets. This file is the contract every downstream stage consumes and must validate against the chunk schema.
 - [x] **T6.4 Typed stage 4 - validate and index.** Per-boundary schema validation plus separate semantic checks: sample quotes per domain, exact substring recovery, locator validity; pre-register thresholds before measuring. Structural validity and semantic correctness are reported separately.
-- [ ] **T6.5 Gate ledger.** Update gates.md: PDF parse, admission, locator validity. A no row is not a pass.
+- [x] **T6.5 Gate ledger.** Update gates.md: PDF parse, admission, locator validity. A no row is not a pass.
   - Exit: 15/15 admission, 4/4 parse, chunk schema validates, locator validity at or above the pre-registered bar; failures recorded.
+  - **Recorded 2026-11-20:** gates record admission `yes` (15/15), PDF parse `yes` (4/4), and quote recovery/locator validity `no` (not measured); the `no` row remains blocking, with `_runs/2026-11-19/` evidence paths.
 
 ## W7 — Phase 1: development pilot
 

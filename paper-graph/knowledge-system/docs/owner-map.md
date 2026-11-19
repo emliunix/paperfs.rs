@@ -12,7 +12,7 @@
 | Subject | Owning document | Owner (W id or human role) | Check id (`check_*`) or `judgment (role)` | Status |
 |---|---|---|---|---|
 | Layer ownership — canonical, rebuildable, and derived separation ([Invariant 1](../CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate)) | `docs/ARCHITECTURE.md` | `W3.1` | `check_sync_count_guard` | planned |
-| Workbook / praxis schema — Episode, Lesson, Check entities ([Invariant 1](../CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate)) | `PRAXIS.md` | `W2.1` | `check_praxis_schema` | planned (W2) |
+| Workbook / praxis schema — Episode, Lesson, Check entities ([Invariant 1](../CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate)) | `PRAXIS.md` | `W2.1` | `judgment (human)` | planned (W2) |
 | Durable distillation — working context to durable memory ([Invariant 1](../CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate)) | `PRAXIS.md` | `human (curator)` | `judgment (human)` | specified (unexecuted) |
 | Durable work identity — `zotero_key` / DOI vs local `itemID` ([Invariant 2](../CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds)) | `docs/DATA_MODEL.md` | `W3.2` | `check_corpus_identity` | planned (durability untested) |
 | Evidence and provenance — atomic claims, verbatim quotes, locators, and visible `unknown` ([Invariant 2](../CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds), [Invariant 5](../CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible)) | `docs/DATA_MODEL.md` | `W3.2` | `check_evidence_locator` | planned (no parser/chunk table yet) |
