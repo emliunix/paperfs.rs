@@ -21,7 +21,7 @@
 | Next experiments and feature roadmap, including HawDB utilization | W6-W9 (parse, pilot, held-out, identity/rebuild/HawDB) and W10 (roadmap) |
 | Other recommendations: status as data, one statement per fact, pre-mortem, negative results, review queue, narrow paper claim | W0, W4, W10, and the guardrails |
 | Lessons as first-class knowledge entities | W2 (Episode/Lesson/Check praxis schema, normalized lessons.jsonl) and T9.8 (projection into the graph) |
-| nmem keys and pointers | T2.4 (five keys stay the index; lessons stay in the praxis file) |
+| (removed) nmem keys and pointers | Out of scope: Nowledge Mem is a separate product; its index is not a Paper Graph artifact. |
 
 ## Workstreams at a glance
 
@@ -141,7 +141,7 @@ See models.md for the full inventory. Three constraints drive the work:
 1. **Magpie is authorized for subagents (2026-11-19 ~03:45).** `list_subagent_models` now returns `magpie` and `magpie-anthropic`; `zcode/GLM-5.3`, `devin/glm-5-3` and `auto/glm-5.3` each answered a real call. Flash is still the bulk default, but it is no longer the only route. A reviewer is independent only if it uses a different *family*; GLM-5.3 (Zhipu) is the cheap second family, while Kimi and Opus remain the strong reviewers.
 2. **GLM-5.3 is the default second family, and zcode is the preferred route.** Use `magpie-anthropic/zcode/GLM-5.3` first, `magpie/devin/glm-5-3` when ZCode quota returns 429, `magpie/auto/glm-5.3` last (routing group: assert the served model). All three are the same weights and are not independent of each other. GLM-5.3 indexes at 32, the same tier as Flash: it buys family diversity, not design quality.
 3. **The local llama.cpp router is the privacy lane, not the second family.** It serves gemma4-12b (40K context, multimodal, reasoning off), gemma4-e4b, qwen3.5-4b, glm-ocr, and bge-m3. They are unloaded and cold-start on demand; use them when the human marks a paper sensitive, and measure structured-output reliability before use.
-4. **Nmem's active route is GLM-4.7 at 8192 max_tokens and 60 s.** That is the configuration that failed 16 of 17 KG extractions at a 16K budget. Fix it before any extraction backfill.
+4. **Nowledge Mem is a separate product, not a dependency.** Its extraction budget and timeouts (GLM-4.7 at 8192 max_tokens / 60 s) are for its maintainers; a separate nmem repair may use a larger budget and timeout outside this project. Paper Graph owns its own pipeline, timeouts, retries, and validation and must not wait on nmem.
 
 | Role | Primary | Second family | Gate |
 |---|---|---|---|
@@ -169,7 +169,6 @@ flowchart LR
   T0_1["T0.1 Branch"] --> T0_2["T0.2 Docs hash"] --> T0_3["T0.3 Templates"] --> T0_4["T0.4 Precedence"]
   T0_4 --> T0_5["T0.5 Model inventory"]
   T0_5 --> T0_6["T0.6 Structured-output smoke test"]
-  T0_4 --> T0_7["T0.7 nmem budget fix"]
   T0_5 --> T0_8["T0.8 Reviewer independence"]
 ~~~
 
@@ -190,18 +189,16 @@ flowchart LR
 - [x] **T0.5 Model inventory and freeze.** Write models.md from live endpoints; record provider, model, context, quantization, status, and role. Choose one extraction candidate and one second-family reviewer candidate.
   - Exit: models.md exists; every route is marked authorized, local, or unverified.
   - **Recorded:** `models.md` now carries a *Route status* table with the three buckets. Second-family reviewer chosen: **zcode/GLM-5.3** (Zhipu), fallbacks devin/glm-5-3 then auto/glm-5.3. Extraction candidate stays open until T0.6.
-- [ ] **T0.6 Structured-output smoke test.** Run deepseek-flash and gemma4-12b on the same three PL extraction cases: a theorem/definition/citation excerpt, a five-relation schema with evidence offsets, and an ambiguous mention-vs-use case.
-  - Measure: first-pass schema validity, empty/truncated rate, finish reason, exact quote recovery, TTFT, tokens/s, cold start, cost.
-  - Exit: model-smoke.json; one candidate frozen for the pilot, or the pilot is blocked.
+- [ ] **T0.6 Structured-output reliability test.** Run two candidate routes (deepseek-flash and one second candidate, default zcode/GLM-5.3) on the same three PL extraction cases: a theorem/definition/citation excerpt, a five-relation schema with evidence offsets, and an ambiguous mention-vs-use case.
+  - Measure, per route per case, over **N=5 trials**: structural validity (typed schema parses), semantic recovery (verbatim quote present and locator resolves), empty/truncated rate, finish reason, p50/p95 latency, tokens/s, cold start, cost. Report rates and spread; never a single run.
+  - Size timeouts from measured p95 plus margin; cap retries at 2; every failed trial is an explicit typed failure, never a silent success.
+  - Exit: model-smoke.json plus t06-reliability.json; one route + params + retry policy frozen for the pilot, or the pilot is blocked.
   - **Partial 2026-11-19:** route reachability recorded in `_runs/2026-11-19/model-smoke.json` (seven routes answered). The three structured-output cases are **not** run, so no extraction candidate is frozen yet.
-- [ ] **T0.7 nmem budget fix.** Read the provider config without exporting credentials; set max_tokens >= output_budget and timeout >= output_budget / measured tokens-per-second, or reduce the budget.
-  - Current risk: GLM-4.7 at 8192 max_tokens and 60 s, the configuration that failed 16 of 17 KG extractions.
-  - Exit: a preflight request with the intended budget succeeds, or the mismatch is recorded as a blocker.
-  - **BLOCKER recorded 2026-11-19:** nmem serves GLM-4.7 at 8192 max_tokens / 60 s; no output budget has been chosen yet, so no preflight can be written. Fix belongs with the extraction pipeline (W7), not with a blind config bump. Tracked in STATUS.md.
+- ~~**T0.7 nmem budget fix**~~ — **out of scope (2026-11-19).** Nowledge Mem is a separate product, not a Paper Graph dependency. Its extraction budget and timeouts belong to its maintainers; a separate repair may use a sufficiently large budget and timeout, but it is not tracked or gated here.
 - [x] **T0.8 Reviewer independence.** Pick a second model family for review: gemma4-12b locally, or a verified Claude/Codex route. If neither is callable, record the review as same-family and require human adjudication.
   - Exit: rule in method.md; no document calls a same-family review independent.
   - **Recorded:** second family = **GLM-5.3 (Zhipu)** via zcode, callable and verified; rule written into `method.md` (*Reviewer independence*). Same model behind zcode/devin/auto is explicitly one family.
-- [ ] **T0.8b Magpie smoke test.** Send one 16-token request through each of magpie, magpie-anthropic, and magpie-responses; record status, served model, latency, and cold start.
+- [x] **T0.8b Magpie smoke test.** Send one 16-token request through each authorized wire (magpie, magpie-anthropic); magpie-responses is not a child route, so it is excluded rather than treated as a missing check.
   - Exit: three route records in _runs/2026-11-19/model-smoke.json; any 429/quota is recorded as an upstream blocker, not an unknown model.
   - **Recorded 2026-11-19:** `magpie` and `magpie-anthropic` are authorized for subagents; **`magpie-responses` is not** (`list_subagent_models` does not list it), so the grok wire can be reached only by direct HTTP. Seven route records written. zcode/GLM-5.3 answered after the re-login; the earlier 429 was quota exhaustion, now cleared.
 
@@ -251,12 +248,11 @@ flowchart LR
 
 ## W2 — Praxis schema and lesson entities
 
-**Depends on:** T1.1 (constitution), T0.3 (template). **Unblocks:** W7, T5.1 via T2.5, W9 (soft). **Parallel note:** T2.4 and T2.5 can run together after T2.3; T2.1 is the schema gate for T2.2.
+**Depends on:** T1.1 (constitution), T0.3 (template). **Unblocks:** W7, T5.1 via T2.5, W9 (soft). **Parallel note:** T2.5 follows T2.3; T2.1 is the schema gate for T2.2. (T2.4 nmem mapping was removed: Nowledge Mem is a separate product.)
 
 ~~~mermaid
 flowchart LR
   T2_1["T2.1 Praxis schema"] --> T2_2["T2.2 Normalize 14 lessons"] --> T2_3["T2.3 Validate provenance"]
-  T2_3 --> T2_4["T2.4 nmem mapping"]
   T2_3 --> T2_5["T2.5 Eval seeds"]
 ~~~
 
@@ -266,8 +262,6 @@ flowchart LR
   - Exit: 14 records; JSONL parses; every record has at least one quote and one status tag.
 - [ ] **T2.3 Validate provenance.** Check every quote against the raw thread; dedupe; mark unresolved as unverifiable rather than deleting.
   - Exit: 0 unresolved quotes for the 14; any exception listed in _runs/2026-11-19/praxis-validation.md.
-- [ ] **T2.4 nmem mapping.** Keep the five compact keys as the recall index. Store lessons as learning/procedure only if they add recall value; otherwise keep them in lessons.jsonl and point from the index.
-  - Exit: no duplicate memories; index links to the praxis file.
 - [ ] **T2.5 Eval seeds.** Select five real lessons as docs-eval scenarios: destructive sync, zero-case eval, gold disagreement, question leakage, identity re-import.
   - Exit: five _templates/eval-case.json instances with expected decisions and forbidden actions.
 
@@ -362,12 +356,12 @@ flowchart LR
   T6_3 --> T6_4["T6.4 Quote recovery"] --> T6_5["T6.5 Gate ledger"]
 ~~~
 
-- [ ] **T6.1 Executable admission.** Run on all 15 corpus papers: attachment, file, signature, SHA-256. Fail on any missing file.
-- [ ] **T6.2 Parse the four development PDFs.** Native parser first; page mapping, two-column order, math, references, exact quote recovery. Record failures; do not clean them away.
-- [ ] **T6.3 Chunk table.** attachment id, parser version, page range, section path, ordinal, content hash, raw text, start/end offsets.
-- [ ] **T6.4 Quote recovery.** Sample quotes per domain; measure exact substring and locator validity; pre-register the threshold before measuring.
+- [ ] **T6.1 Typed stage 1 - admission.** Run on all 15 corpus papers: attachment, file, signature, SHA-256. Emit admission.json: one typed record per paper (item_id, path, bytes, signature_ok, sha256, status), schema-validated before stage 2. A missing file emits a typed failure record; it is never skipped silently.
+- [ ] **T6.2 Typed stage 2 - parse.** Native parser first; page mapping, two-column order, math, references. Emit pages.jsonl: one typed record per page (paper_id, page, text, order metadata, parser version), validated before chunking. Record failures; do not clean them away.
+- [ ] **T6.3 Typed stage 3 - normalize and chunk.** Emit chunks.jsonl: attachment id, parser version, page range, section path, ordinal, content hash, raw text, start/end offsets. This file is the contract every downstream stage consumes and must validate against the chunk schema.
+- [ ] **T6.4 Typed stage 4 - validate and index.** Per-boundary schema validation plus separate semantic checks: sample quotes per domain, exact substring recovery, locator validity; pre-register thresholds before measuring. Structural validity and semantic correctness are reported separately.
 - [ ] **T6.5 Gate ledger.** Update gates.md: PDF parse, admission, locator validity. A no row is not a pass.
-  - Exit: 15/15 admission, 4/4 parse, locator validity at or above the pre-registered bar; failures recorded.
+  - Exit: 15/15 admission, 4/4 parse, chunk schema validates, locator validity at or above the pre-registered bar; failures recorded.
 
 ## W7 — Phase 1: development pilot
 
@@ -552,17 +546,20 @@ Use workflow only where the work is a real fan-out with independent units. Do no
 6. **Budget.** Max 4 concurrent writers; max 15 workflow agents per phase; stop a phase after two consecutive failures and triage.
 7. **No silent cleanup.** Parse failures, missing files, and empty outputs are recorded, not deleted.
 8. **Keep the paper claim narrow.** Architecture + protocol + operational findings. Do not claim ontology or QA gains before the held-out run.
+9. **Models are nondeterministic.** Treat output as a distribution: run N trials, size timeouts from measured p95, cap retries at 2, and record every failed trial as an explicit typed failure. Never retry until a pass and call it success.
+10. **Typed stage boundaries.** Every pipeline stage emits a typed artifact that the next stage validates before consuming. A stage failure emits a typed failure record, not a partial object.
+11. **Structure and meaning are separate checks.** Schema validation proves shape; semantic checks (quote recovery, locator validity, relation licensing, abstention) prove meaning. Report them separately.
 
 ## First 48 hours
 
-1. **T0.1-T0.8** — branch, docs hash, templates, precedence, model inventory, structured-output smoke test, nmem budget fix, reviewer independence. (Day 1)
+1. **T0.1-T0.6, T0.8, T0.8b** — done in W0 except T0.6 (the reliability run). Nothing here waits on Nowledge Mem. (Day 1)
 2. **W1 drafts** — launch constitution-drafter, status-drafter, method-drafter with disjoint files; run spine-audit after they land. (Day 1)
 3. **W2** — fork praxis-drafter; normalize the 14 lessons; select five eval scenarios. (Day 2)
 4. **W5 design** — write the 15-case prompt and rubric while W1/W2 are in review; do not run until the docs hash is frozen. (Day 2)
 
 ## Next step
 
-Start with **T0.1-T0.8b**, then launch the three spine drafters. Do not start W3 project docs until the constitution and owner map pass the spine audit: writing project docs before the spine exists is how the same rule ends up in five places.
+Wave A is unblocked: W6 typed stages, W2 praxis and lessons, W3 project docs, and T0.6 reliability. W4 follows W3; W7 waits for W2/W4/W6 and the T0.6 freeze. Human decisions (ontology freeze, evaluation axis, pilot questions, gold capacity, spend, paper claim) are deferred until their freeze points and are not invented by agents.
 
 ## Model and worktree addendum
 
