@@ -1,0 +1,47 @@
+{
+  "schema_version": "stage-3-chunks-v1",
+  "chunker_version": "section-window-v1",
+  "max_chunk_chars": 2400,
+  "total_papers": 4,
+  "succeeded_papers": 4,
+  "failed_papers": 0,
+  "total_chunks": 226,
+  "papers": [
+    {
+      "paper_id": 6,
+      "attachment_id": 74,
+      "parser_version": "macos-pdfkit-1.0-swift-v1",
+      "chunked_ok": true,
+      "chunk_count": 16,
+      "document_chars": 29004,
+      "error": null
+    },
+    {
+      "paper_id": 49,
+      "attachment_id": 118,
+      "parser_version": "macos-pdfkit-1.0-swift-v1",
+      "chunked_ok": true,
+      "chunk_count": 45,
+      "document_chars": 71490,
+      "error": null
+    },
+    {
+      "paper_id": 713,
+      "attachment_id": 714,
+      "parser_version": "macos-pdfkit-1.0-swift-v1",
+      "chunked_ok": true,
+      "chunk_count": 58,
+      "document_chars": 97181,
+      "error": null
+    },
+    {
+      "paper_id": 3154,
+      "attachment_id": 3157,
+      "parser_version": "macos-pdfkit-1.0-swift-v1",
+      "chunked_ok": true,
+      "chunk_count": 107,
+      "document_chars": 214876,
+      "error": null
+    }
+  ]
+}
