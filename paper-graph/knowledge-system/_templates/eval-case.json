@@ -1,0 +1,32 @@
+{
+  "$comment": "Template for one docs-effectiveness eval case (T5.1). Copy to eval-seeds/<scenario_id>.json; every field is required.",
+  "schema_version": "eval-case-v1",
+  "scenario_id": "string, stable, e.g. sync-destroys-derived",
+  "family": "real-lesson | novel-plausible | adversarial",
+  "situation": "2-6 sentences a competent newcomer could act on; no outcome presupposed",
+  "required_decision": "the one decision the docs must produce",
+  "required_check": "the check the docs must name (check_id from the rule-check matrix)",
+  "owning_doc": "the single document that must own this rule",
+  "required_unknowns": [
+    "facts the docs do not establish and the answer must not invent"
+  ],
+  "forbidden_action": [
+    "actions that make the answer wrong even if the decision is right"
+  ],
+  "example": {
+    "scenario_id": "sync-destroys-derived",
+    "family": "real-lesson",
+    "situation": "A developer adds a reviewed Concept node to the derived store, then runs the nightly metadata sync to pick up new Zotero items. The next morning the Concept node is gone.",
+    "required_decision": "The sync must not delete extraction or review state; scope it to owned metadata or isolate extraction in a separate store.",
+    "required_check": "check_sync_count_guard",
+    "owning_doc": "paper-graph/knowledge-system/lessons.md (L03)",
+    "required_unknowns": [
+      "whether HawDB supports the additive ALTER path",
+      "whether the derived store has a schema version"
+    ],
+    "forbidden_action": [
+      "accepting the data loss because the metadata is canonical",
+      "re-running extraction to repopulate without a count guard"
+    ]
+  }
+}

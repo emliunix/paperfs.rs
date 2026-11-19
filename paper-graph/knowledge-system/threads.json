@@ -1,0 +1,169 @@
+{
+  "schema_version": "paper-knowledge-threads-v1",
+  "selection": "Concrete decisions, experiments, failures, measurements, or methodology that transfer to the paper knowledge system; generic coding sessions excluded.",
+  "independent_sessions": 17,
+  "threads": [
+    {
+      "id": "71ffc1b7-6183-43a3-b95e-7f103170e669",
+      "title": "paper-graph: LLM knowledge-extraction enrichment experiment over the Zotero-HawDB graph with a PL/type-theory ontology",
+      "date": "2026-11-17",
+      "messages": 200,
+      "source": "claude-code",
+      "role": "core-lineage",
+      "contribution": "Zotero analysis, HawDB smoke test, metadata graph/sync, embedding fix, ranking defect, corpus admission, evaluation ceiling, ontology/evidence design, DeepSeek critique, metric panel, destructive rebuild."
+    },
+    {
+      "id": "78dd3c13-7698-4bfc-ad30-b3005f2aa7bf",
+      "title": "修复 flow-skills L1 eval 未实际执行的问题并首次跑通 deepseek-flash 评测",
+      "date": "2026-10-16",
+      "messages": 353,
+      "source": "claude-code",
+      "role": "eval-integrity",
+      "contribution": "A harness that silently executed zero cases while reporting success; the fix and the first real run."
+    },
+    {
+      "id": "e1f865e1-07c8-4d21-89e7-a7118f9097df",
+      "title": "vibe-s3 eval 语料库 triage（设计 10）完成并合并 PR #18",
+      "date": "2026-10-16",
+      "messages": 146,
+      "source": "claude-code",
+      "role": "gold-leakage",
+      "contribution": "Question wording presupposed answers; schema definitions moved six expected answers; stop rule when a tweak trades wins for losses."
+    },
+    {
+      "id": "d64e9502-1a93-45cf-8f19-9f4befc28b17",
+      "title": "home.conf 仓库 kernel-adopt 分支 PR 与 PR #19 评审流程",
+      "date": "2026-10-18",
+      "messages": 416,
+      "source": "claude-code",
+      "role": "run-traceability",
+      "contribution": "Scores without model/request fields; not-done records containing blast radius; the owner's ruling that gold is the spec."
+    },
+    {
+      "id": "fc1cc7be-a64b-4e8c-b8c0-ebfc54f51d50",
+      "title": "完成 G40 任务并推进 Design 22 评审",
+      "date": "2026-10-07",
+      "messages": 2493,
+      "source": "claude-code",
+      "role": "batch-budgets",
+      "contribution": "A partitioner that respected bytes but exceeded the judge's token budget; two operators got opposite call counts; fixtures shaped to a layout production never emits."
+    },
+    {
+      "id": "d0e2d0bd-d957-43dd-92d8-3a594578217e",
+      "title": "doc-verify 项目架构审查与 kernel 评估器分支验证",
+      "date": "2026-10-14",
+      "messages": 1360,
+      "source": "claude-code",
+      "role": "evaluator-validation",
+      "contribution": "Gold witnesses, seeded defects, brute-force references, property tests, and the budget-exhaustion-returns-PASS bug."
+    },
+    {
+      "id": "28b5b22b-ae23-4d14-883f-32f13722ca15",
+      "title": "doc-verify 架构审查与内核选型讨论：engine/ 稳健，评估内核可重建",
+      "date": "2026-10-11",
+      "messages": 27,
+      "source": "claude-code",
+      "role": "evaluator-invariants",
+      "contribution": "First 27 messages of the doc-verify session (same conversation as d0e2d0bd, not independent): judge as fact source, unknown propagation, soundness against false PASS."
+    },
+    {
+      "id": "cb2db461-7165-4291-8607-5e57e973dd81",
+      "title": "Knowledge-mem MCP working memory setup",
+      "date": "2026-04-29",
+      "messages": 226,
+      "source": "opencode",
+      "role": "evidence-schema",
+      "contribution": "Atomic evidence, evidence/claim many-to-many, only evidence is a leaf, topological order, schema drift between SKILL.md and FORMAT.md."
+    },
+    {
+      "id": "e943b0c4-16f1-4d8a-9e52-be1097b3cf75",
+      "title": "System FC paper index file check",
+      "date": "2026-03-24",
+      "messages": 64,
+      "source": "opencode",
+      "role": "paper-index",
+      "contribution": "The per-paper line-number index convention and sed recipes; deterministic provenance anchors."
+    },
+    {
+      "id": "3099ed1f-a355-4ed5-a6ca-526deaabf295",
+      "title": "OCaml explicit pattern matching syntax",
+      "date": "2026-03-22",
+      "messages": 108,
+      "source": "opencode",
+      "role": "paper-layout",
+      "contribution": "A .txt per paper, an index.md for the txt, and reading.md as the grand index; merge new notes into the per-paper index."
+    },
+    {
+      "id": "5509b0c1-64da-43ed-81b1-c2a72f6da6ab",
+      "title": "Mem notes idea capture: explore, no write",
+      "date": "2026-03-04",
+      "messages": 39,
+      "source": "opencode",
+      "role": "distillation-idea",
+      "contribution": "Working context vs durable memory; memory as an index; summary plus archive pointer; explicit no-write mode. An analogy, not paper-system evidence."
+    },
+    {
+      "id": "7172fd66-4eb3-4819-aea3-02629fcc7029",
+      "title": "User Checking Status",
+      "date": "2026-07-25",
+      "messages": 145,
+      "source": "cursor",
+      "role": "hard-lessons",
+      "contribution": "A design note must record decisions, rejected alternatives, and hard lessons, not temporary test scaffolding or process narrative."
+    },
+    {
+      "id": "f8ea8d0d-00d5-48d0-ae66-e382c9ef3a92",
+      "title": "nowledge mem KG 提取失败根因：LLM 调用在 60 秒超时",
+      "date": "2026-09-28",
+      "messages": 22,
+      "source": "claude-code",
+      "role": "extraction-budget",
+      "contribution": "output_budget 16,384 vs provider max_tokens 8,192 and 60 s timeout; 16 of 17 attempts failed; dead-lettered memories."
+    },
+    {
+      "id": "c6422ed2-d314-4330-a896-33873a5062c0",
+      "title": "修复 llama.cpp 的 upgrade.py 脚本并优化 ROCm 配置",
+      "date": "2026-10-06",
+      "messages": 191,
+      "source": "opencode",
+      "role": "timeout-mechanics",
+      "contribution": "finish_reason length with content_len 0; 51 tokens/s means 16,384 tokens needs 321 s; 500s were self-inflicted restarts; user raised timeout to 600 s."
+    },
+    {
+      "id": "05a7de1d-2a8f-49cd-a93d-0aa1ab261f8e",
+      "title": "OpenClaw agent:main:main:thread:54500 (agent_end)",
+      "date": "2026-02-20",
+      "messages": 54,
+      "source": "openclaw",
+      "role": "backend-choice",
+      "contribution": "LanceDB failed on numpy/libstdc++; SQLite FTS5/BM25 indexed 286 sections and shipped."
+    },
+    {
+      "id": "d9cbb41d-773e-4917-a187-1d83c30991eb",
+      "title": "Adding creation date to tape schema and backfilling with 1970",
+      "date": "2026-05-05",
+      "messages": 141,
+      "source": "opencode",
+      "role": "migration-safety",
+      "contribution": "Automatic table-rebuild migration rejected; one-off SQL; final fix was one additive ALTER with a default."
+    },
+    {
+      "id": "dcca45f9-766e-479c-9a7e-de14d82bdef4",
+      "title": "PostgreSQL connection path discovery on 192.168.50.101 with psql homebrew",
+      "date": "2026-02-11",
+      "messages": 91,
+      "source": "opencode",
+      "role": "extension-abi",
+      "contribution": "pg_search built for ICU 72 failed after the base image moved to ICU 76; version pinning and re-test after base-image changes."
+    },
+    {
+      "id": "c59ca24c-7c5e-4bd6-8217-d759e703e79e",
+      "title": "ForkTapeStore redesign: CTE bug fix, core ops cleanup, async aiosqlite migration",
+      "date": "2026-05-01",
+      "messages": 636,
+      "source": "opencode",
+      "role": "embedded-db-concurrency",
+      "contribution": "SQLite is synchronous at the C level; the async boundary is a wrapper choice (aiosqlite worker thread), not native async."
+    }
+  ]
+}
