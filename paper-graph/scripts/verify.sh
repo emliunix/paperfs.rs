@@ -7,6 +7,11 @@ TESTS=(
   check_corpus_admission
   check_corpus_identity
   check_evidence_locator
+  check_eval_manifest
+  check_gold_diff
+  check_question_lint
+  check_budget_preflight
+  check_migration_oracle
 )
 
 for test_name in "${TESTS[@]}"; do
