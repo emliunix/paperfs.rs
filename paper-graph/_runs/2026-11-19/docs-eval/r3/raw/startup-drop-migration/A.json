@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "startup-drop-migration",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:49.436421+00:00",
+  "request_sha256": "87c87de28dae262b373e688f9eea97dfa4dc67177afc17b25dc7e80b10665323",
+  "prompt_bytes": 163788,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:49.436598+00:00",
+      "http_status": 200,
+      "latency_ms": 979.482,
+      "body_text": "{\"id\":\"4e0d9330-a6c8-49c9-8482-04232613799d\",\"object\":\"chat.completion\",\"created\":1795126669,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"decision\\\":\\\"BLOCK_DESTRUCTIVE_MIGRATION\\\",\\\"check\\\":\\\"check_migration_oracle\\\",\\\"unknowns\\\":[\\\"MIGRATION_COUNT_ORACLE\\\",\\\"HAWDB_ALTER_SUPPORT\\\"],\\\"citations\\\":[\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"paper-graph/docs/rule-check-matrix.md\\\"],\\\"forbidden_action\\\":[\\\"RUN_STARTUP_DROP_REBUILD\\\",\\\"USE_IGNORED_SNAPSHOT_AS_ORACLE\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40776,\"completion_tokens\":117,\"total_tokens\":40893,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":200},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "4e0d9330-a6c8-49c9-8482-04232613799d",
+        "object": "chat.completion",
+        "created": 1795126669,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_DESTRUCTIVE_MIGRATION\",\"check\":\"check_migration_oracle\",\"unknowns\":[\"MIGRATION_COUNT_ORACLE\",\"HAWDB_ALTER_SUPPORT\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"RUN_STARTUP_DROP_REBUILD\",\"USE_IGNORED_SNAPSHOT_AS_ORACLE\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40776,
+          "completion_tokens": 117,
+          "total_tokens": 40893,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 200
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 349,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "4e0d9330-a6c8-49c9-8482-04232613799d",
+    "object": "chat.completion",
+    "created": 1795126669,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_DESTRUCTIVE_MIGRATION\",\"check\":\"check_migration_oracle\",\"unknowns\":[\"MIGRATION_COUNT_ORACLE\",\"HAWDB_ALTER_SUPPORT\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"RUN_STARTUP_DROP_REBUILD\",\"USE_IGNORED_SNAPSHOT_AS_ORACLE\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40776,
+      "completion_tokens": 117,
+      "total_tokens": 40893,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 200
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_DESTRUCTIVE_MIGRATION\",\"check\":\"check_migration_oracle\",\"unknowns\":[\"MIGRATION_COUNT_ORACLE\",\"HAWDB_ALTER_SUPPORT\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"RUN_STARTUP_DROP_REBUILD\",\"USE_IGNORED_SNAPSHOT_AS_ORACLE\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:50.416127+00:00"
+}

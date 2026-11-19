@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "taxonomy-without-question",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:51.066530+00:00",
+  "request_sha256": "ab59609a803411f2658a4e31f68a1cd5a906585f8ba26eef7a1148a28dc9c895",
+  "prompt_bytes": 163781,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:51.066792+00:00",
+      "http_status": 200,
+      "latency_ms": 923.964,
+      "body_text": "{\"id\":\"ea8ded16-a41f-4f6d-9a25-57b1d3381361\",\"object\":\"chat.completion\",\"created\":1795126671,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/knowledge-system/ontology.md\\\",\\\"decision\\\":\\\"DEFER_ONTOLOGY_TO_QUESTIONS\\\",\\\"check\\\":\\\"check_question_lint\\\",\\\"unknowns\\\":[\\\"BLOCKING_COMPETENCY_QUESTION\\\",\\\"ONTOLOGY_VOCABULARY_DECISION\\\"],\\\"citations\\\":[\\\"paper-graph/knowledge-system/ontology.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\\\"],\\\"forbidden_action\\\":[\\\"ADD_CATALOGUE_WITHOUT_QUESTION\\\",\\\"HIDE_TAXONOMY_IN_KIND_ENUM\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40778,\"completion_tokens\":137,\"total_tokens\":40915,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":202},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "ea8ded16-a41f-4f6d-9a25-57b1d3381361",
+        "object": "chat.completion",
+        "created": 1795126671,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40778,
+          "completion_tokens": 137,
+          "total_tokens": 40915,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 202
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 437,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "ea8ded16-a41f-4f6d-9a25-57b1d3381361",
+    "object": "chat.completion",
+    "created": 1795126671,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40778,
+      "completion_tokens": 137,
+      "total_tokens": 40915,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 202
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:51.990826+00:00"
+}

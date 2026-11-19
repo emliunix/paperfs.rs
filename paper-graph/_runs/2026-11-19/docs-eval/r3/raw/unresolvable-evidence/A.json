@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "unresolvable-evidence",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:53.159078+00:00",
+  "request_sha256": "d94cac296a630500a44de302adb872a7d5b998560356c8d14cf4842e9736b468",
+  "prompt_bytes": 163805,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:53.159308+00:00",
+      "http_status": 200,
+      "latency_ms": 929.441,
+      "body_text": "{\"id\":\"8ef94b25-52f1-48a6-bb5d-a4eb17959324\",\"object\":\"chat.completion\",\"created\":1795126673,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/DATA_MODEL.md\\\",\\\"decision\\\":\\\"MARK_UNKNOWN_AND_BLOCK_CLAIM\\\",\\\"check\\\":\\\"check_evidence_locator\\\",\\\"unknowns\\\":[\\\"SOURCE_QUOTE_AVAILABILITY\\\",\\\"EVIDENCE_LOCATOR_RESOLUTION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/DATA_MODEL.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\\\"],\\\"forbidden_action\\\":[\\\"PROMOTE_UNKNOWN_CLAIM\\\",\\\"FABRICATE_QUOTE_OR_LOCATOR\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40780,\"completion_tokens\":130,\"total_tokens\":40910,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":204},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "8ef94b25-52f1-48a6-bb5d-a4eb17959324",
+        "object": "chat.completion",
+        "created": 1795126673,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"MARK_UNKNOWN_AND_BLOCK_CLAIM\",\"check\":\"check_evidence_locator\",\"unknowns\":[\"SOURCE_QUOTE_AVAILABILITY\",\"EVIDENCE_LOCATOR_RESOLUTION\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\"],\"forbidden_action\":[\"PROMOTE_UNKNOWN_CLAIM\",\"FABRICATE_QUOTE_OR_LOCATOR\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40780,
+          "completion_tokens": 130,
+          "total_tokens": 40910,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 204
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 408,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "8ef94b25-52f1-48a6-bb5d-a4eb17959324",
+    "object": "chat.completion",
+    "created": 1795126673,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"MARK_UNKNOWN_AND_BLOCK_CLAIM\",\"check\":\"check_evidence_locator\",\"unknowns\":[\"SOURCE_QUOTE_AVAILABILITY\",\"EVIDENCE_LOCATOR_RESOLUTION\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\"],\"forbidden_action\":[\"PROMOTE_UNKNOWN_CLAIM\",\"FABRICATE_QUOTE_OR_LOCATOR\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40780,
+      "completion_tokens": 130,
+      "total_tokens": 40910,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 204
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"MARK_UNKNOWN_AND_BLOCK_CLAIM\",\"check\":\"check_evidence_locator\",\"unknowns\":[\"SOURCE_QUOTE_AVAILABILITY\",\"EVIDENCE_LOCATOR_RESOLUTION\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible\"],\"forbidden_action\":[\"PROMOTE_UNKNOWN_CLAIM\",\"FABRICATE_QUOTE_OR_LOCATOR\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:54.088813+00:00"
+}

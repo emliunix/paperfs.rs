@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "zero-case-eval",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:56.425104+00:00",
+  "request_sha256": "7f81532c726de01d4585db7210643a40b207c060e7ebd3dfde8988bb7c820364",
+  "prompt_bytes": 163765,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:56.425387+00:00",
+      "http_status": 200,
+      "latency_ms": 1076.118,
+      "body_text": "{\"id\":\"4c33ad43-8a40-46a4-8e06-c7651bf15d40\",\"object\":\"chat.completion\",\"created\":1795126676,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"INVALIDATE_INCOMPLETE_RUN\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"ZERO_EXECUTION_CAUSE\\\",\\\"RAW_RUN_COMPLETENESS\\\",\\\"EXECUTION_ACCOUNTING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded\\\"],\\\"forbidden_action\\\":[\\\"REPORT_ZERO_CASE_PASS\\\",\\\"SCORE_EMPTY_GRAPH_AGREEMENT\\\",\\\"MAP_TIMEOUT_TO_PASS\\\",\\\"TRUST_UNVALIDATED_SCORER\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40771,\"completion_tokens\":153,\"total_tokens\":40924,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":195},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "4c33ad43-8a40-46a4-8e06-c7651bf15d40",
+        "object": "chat.completion",
+        "created": 1795126676,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40771,
+          "completion_tokens": 153,
+          "total_tokens": 40924,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 195
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 469,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "4c33ad43-8a40-46a4-8e06-c7651bf15d40",
+    "object": "chat.completion",
+    "created": 1795126676,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40771,
+      "completion_tokens": 153,
+      "total_tokens": 40924,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 195
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:57.501637+00:00"
+}

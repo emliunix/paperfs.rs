@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "timeout-empty-pass",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:48.715778+00:00",
+  "request_sha256": "578096a6a8fc20bb837f6c5c087343ad738fa98f4f277ddf60c97641ec1ecc2e",
+  "prompt_bytes": 28350,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:48.716398+00:00",
+      "http_status": 200,
+      "latency_ms": 654.572,
+      "body_text": "{\"id\":\"a58a6a99-8cc0-42bc-ae10-e2f70dc89e43\",\"object\":\"chat.completion\",\"created\":1795126668,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"BLOCK_FAILED_EVALUATOR\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"SCORER_VALIDATION_STATUS\\\",\\\"EXECUTION_ACCOUNTING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\"],\\\"forbidden_action\\\":[\\\"MAP_TIMEOUT_TO_PASS\\\",\\\"TRUST_UNVALIDATED_SCORER\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6351,\"completion_tokens\":95,\"total_tokens\":6446,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":207},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "a58a6a99-8cc0-42bc-ae10-e2f70dc89e43",
+        "object": "chat.completion",
+        "created": 1795126668,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6351,
+          "completion_tokens": 95,
+          "total_tokens": 6446,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 207
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 293,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "a58a6a99-8cc0-42bc-ae10-e2f70dc89e43",
+    "object": "chat.completion",
+    "created": 1795126668,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6351,
+      "completion_tokens": 95,
+      "total_tokens": 6446,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 207
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:49.371017+00:00"
+}

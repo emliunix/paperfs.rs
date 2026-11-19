@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "startup-drop-migration",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:50.097901+00:00",
+  "request_sha256": "1f694aa4be3fef0699a342cf15232df2ada55992c00e388c92842e26d0c33f18",
+  "prompt_bytes": 184246,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:50.098184+00:00",
+      "http_status": 200,
+      "latency_ms": 842.167,
+      "body_text": "{\"id\":\"b1a4cf66-efda-4861-a5e1-de3607da97a0\",\"object\":\"chat.completion\",\"created\":1795126670,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"decision\\\":\\\"BLOCK_DESTRUCTIVE_MIGRATION\\\",\\\"check\\\":\\\"check_migration_oracle\\\",\\\"unknowns\\\":[\\\"HAWDB_ALTER_SUPPORT\\\",\\\"MIGRATION_COUNT_ORACLE\\\"],\\\"citations\\\":[\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\\\"],\\\"forbidden_action\\\":[\\\"RUN_STARTUP_DROP_REBUILD\\\",\\\"USE_IGNORED_SNAPSHOT_AS_ORACLE\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45126,\"completion_tokens\":137,\"total_tokens\":45263,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":198},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "b1a4cf66-efda-4861-a5e1-de3607da97a0",
+        "object": "chat.completion",
+        "created": 1795126670,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_DESTRUCTIVE_MIGRATION\",\"check\":\"check_migration_oracle\",\"unknowns\":[\"HAWDB_ALTER_SUPPORT\",\"MIGRATION_COUNT_ORACLE\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\"],\"forbidden_action\":[\"RUN_STARTUP_DROP_REBUILD\",\"USE_IGNORED_SNAPSHOT_AS_ORACLE\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45126,
+          "completion_tokens": 137,
+          "total_tokens": 45263,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 198
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 415,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "b1a4cf66-efda-4861-a5e1-de3607da97a0",
+    "object": "chat.completion",
+    "created": 1795126670,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_DESTRUCTIVE_MIGRATION\",\"check\":\"check_migration_oracle\",\"unknowns\":[\"HAWDB_ALTER_SUPPORT\",\"MIGRATION_COUNT_ORACLE\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\"],\"forbidden_action\":[\"RUN_STARTUP_DROP_REBUILD\",\"USE_IGNORED_SNAPSHOT_AS_ORACLE\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45126,
+      "completion_tokens": 137,
+      "total_tokens": 45263,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 198
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_DESTRUCTIVE_MIGRATION\",\"check\":\"check_migration_oracle\",\"unknowns\":[\"HAWDB_ALTER_SUPPORT\",\"MIGRATION_COUNT_ORACLE\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\"],\"forbidden_action\":[\"RUN_STARTUP_DROP_REBUILD\",\"USE_IGNORED_SNAPSHOT_AS_ORACLE\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:50.940393+00:00"
+}

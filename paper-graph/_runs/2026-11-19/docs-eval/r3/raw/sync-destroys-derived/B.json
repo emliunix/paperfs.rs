@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "sync-destroys-derived",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:55.663119+00:00",
+  "request_sha256": "938f352dd8bd13dc4daa420840f37db703cc6d34ba5a45a968a0404976192d68",
+  "prompt_bytes": 28296,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:55.663188+00:00",
+      "http_status": 200,
+      "latency_ms": 1054.992,
+      "body_text": "{\"id\":\"16883b4e-c4fb-464e-aea4-908f33ead73e\",\"object\":\"chat.completion\",\"created\":1795126675,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"decision\\\":\\\"ISOLATE_AND_GUARD_SYNC\\\",\\\"check\\\":\\\"check_sync_count_guard\\\",\\\"unknowns\\\":[\\\"SYNC_TARGET_CONTENTS\\\",\\\"SEPARATE_STORE_IMPLEMENTATION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/OPERATIONS.md#L01\\\",\\\"paper-graph/docs/OPERATIONS.md#L03\\\"],\\\"forbidden_action\\\":[\\\"ALLOW_DERIVED_LOSS\\\",\\\"REEXTRACT_WITHOUT_GUARD\\\",\\\"COLOCATE_REVIEW_WITH_METADATA\\\",\\\"CALL_ALL_STATE_REBUILDABLE\\\",\\\"RUN_STARTUP_DROP_REBUILD\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6351,\"completion_tokens\":146,\"total_tokens\":6497,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":207},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "16883b4e-c4fb-464e-aea4-908f33ead73e",
+        "object": "chat.completion",
+        "created": 1795126675,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"ISOLATE_AND_GUARD_SYNC\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SYNC_TARGET_CONTENTS\",\"SEPARATE_STORE_IMPLEMENTATION\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md#L01\",\"paper-graph/docs/OPERATIONS.md#L03\"],\"forbidden_action\":[\"ALLOW_DERIVED_LOSS\",\"REEXTRACT_WITHOUT_GUARD\",\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\",\"RUN_STARTUP_DROP_REBUILD\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6351,
+          "completion_tokens": 146,
+          "total_tokens": 6497,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 207
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 428,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "16883b4e-c4fb-464e-aea4-908f33ead73e",
+    "object": "chat.completion",
+    "created": 1795126675,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"ISOLATE_AND_GUARD_SYNC\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SYNC_TARGET_CONTENTS\",\"SEPARATE_STORE_IMPLEMENTATION\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md#L01\",\"paper-graph/docs/OPERATIONS.md#L03\"],\"forbidden_action\":[\"ALLOW_DERIVED_LOSS\",\"REEXTRACT_WITHOUT_GUARD\",\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\",\"RUN_STARTUP_DROP_REBUILD\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6351,
+      "completion_tokens": 146,
+      "total_tokens": 6497,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 207
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"ISOLATE_AND_GUARD_SYNC\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SYNC_TARGET_CONTENTS\",\"SEPARATE_STORE_IMPLEMENTATION\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md#L01\",\"paper-graph/docs/OPERATIONS.md#L03\"],\"forbidden_action\":[\"ALLOW_DERIVED_LOSS\",\"REEXTRACT_WITHOUT_GUARD\",\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\",\"RUN_STARTUP_DROP_REBUILD\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:56.718226+00:00"
+}

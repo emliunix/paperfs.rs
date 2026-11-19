@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-11-19T22:17:45.458140+00:00",
+  "url": "http://127.0.0.1:3425/v1/models",
+  "http_status": 200,
+  "latency_ms": 39.206,
+  "requested_model_present": true,
+  "model_count": 81,
+  "requested_reasoning_effort": "none",
+  "supported_reasoning_efforts": [
+    "none",
+    "low",
+    "high",
+    "max"
+  ],
+  "reasoning_effort_supported": true,
+  "route_max_output_tokens": 393216,
+  "configured_max_tokens": 8192
+}

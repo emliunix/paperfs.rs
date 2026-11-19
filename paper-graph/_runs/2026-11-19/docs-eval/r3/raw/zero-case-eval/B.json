@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "zero-case-eval",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:56.720061+00:00",
+  "request_sha256": "6693153428c7b7d82f384c29bb259b888f32469a60bbe1a31938447d809de562",
+  "prompt_bytes": 28311,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:56.720194+00:00",
+      "http_status": 200,
+      "latency_ms": 890.687,
+      "body_text": "{\"id\":\"b2f98c54-334d-4565-b7de-8f222431996b\",\"object\":\"chat.completion\",\"created\":1795126676,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"INVALIDATE_INCOMPLETE_RUN\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"ZERO_EXECUTION_CAUSE\\\",\\\"RAW_RUN_COMPLETENESS\\\",\\\"EXECUTION_ACCOUNTING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\"],\\\"forbidden_action\\\":[\\\"REPORT_ZERO_CASE_PASS\\\",\\\"SCORE_EMPTY_GRAPH_AGREEMENT\\\",\\\"MAP_TIMEOUT_TO_PASS\\\",\\\"TRUST_UNVALIDATED_SCORER\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6347,\"completion_tokens\":126,\"total_tokens\":6473,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":203},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "b2f98c54-334d-4565-b7de-8f222431996b",
+        "object": "chat.completion",
+        "created": 1795126676,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6347,
+          "completion_tokens": 126,
+          "total_tokens": 6473,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 203
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 369,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "b2f98c54-334d-4565-b7de-8f222431996b",
+    "object": "chat.completion",
+    "created": 1795126676,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6347,
+      "completion_tokens": 126,
+      "total_tokens": 6473,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 203
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:57.611105+00:00"
+}

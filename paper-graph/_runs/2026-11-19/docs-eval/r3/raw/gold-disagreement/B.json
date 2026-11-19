@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "gold-disagreement",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:57.633421+00:00",
+  "request_sha256": "d15969a3e41e84f5bb134cea49cc9977238f896a25e56e7067f70f07104bb64b",
+  "prompt_bytes": 28322,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:57.633722+00:00",
+      "http_status": 200,
+      "latency_ms": 917.071,
+      "body_text": "{\"id\":\"44e4a333-eb9b-4608-9ded-6d49f3e1d9f1\",\"object\":\"chat.completion\",\"created\":1795126677,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"PRESERVE_GOLD_FOR_HUMAN\\\",\\\"check\\\":\\\"check_gold_diff\\\",\\\"unknowns\\\":[\\\"HUMAN_GOLD_DISPOSITION\\\",\\\"GOLD_REVIEW_STATUS\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\"],\\\"forbidden_action\\\":[\\\"EDIT_GOLD_TO_MODEL\\\",\\\"LET_MODEL_AUTHOR_GOLD\\\",\\\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6349,\"completion_tokens\":109,\"total_tokens\":6458,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":205},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "44e4a333-eb9b-4608-9ded-6d49f3e1d9f1",
+        "object": "chat.completion",
+        "created": 1795126677,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"PRESERVE_GOLD_FOR_HUMAN\",\"check\":\"check_gold_diff\",\"unknowns\":[\"HUMAN_GOLD_DISPOSITION\",\"GOLD_REVIEW_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"EDIT_GOLD_TO_MODEL\",\"LET_MODEL_AUTHOR_GOLD\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6349,
+          "completion_tokens": 109,
+          "total_tokens": 6458,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 205
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 316,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "44e4a333-eb9b-4608-9ded-6d49f3e1d9f1",
+    "object": "chat.completion",
+    "created": 1795126677,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"PRESERVE_GOLD_FOR_HUMAN\",\"check\":\"check_gold_diff\",\"unknowns\":[\"HUMAN_GOLD_DISPOSITION\",\"GOLD_REVIEW_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"EDIT_GOLD_TO_MODEL\",\"LET_MODEL_AUTHOR_GOLD\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6349,
+      "completion_tokens": 109,
+      "total_tokens": 6458,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 205
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"PRESERVE_GOLD_FOR_HUMAN\",\"check\":\"check_gold_diff\",\"unknowns\":[\"HUMAN_GOLD_DISPOSITION\",\"GOLD_REVIEW_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"EDIT_GOLD_TO_MODEL\",\"LET_MODEL_AUTHOR_GOLD\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:58.550847+00:00"
+}

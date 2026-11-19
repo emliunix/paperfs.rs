@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "question-leakage",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:58.611801+00:00",
+  "request_sha256": "59b2e599d0c891e886838420ad44adbce2482977f5b92fe94ccb278763747159",
+  "prompt_bytes": 163778,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:58.611993+00:00",
+      "http_status": 200,
+      "latency_ms": 1012.799,
+      "body_text": "{\"id\":\"276526ef-a896-449a-afc2-44ffd9038ee3\",\"object\":\"chat.completion\",\"created\":1795126678,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"REJECT_LEADING_QUESTION\\\",\\\"check\\\":\\\"check_question_lint\\\",\\\"unknowns\\\":[\\\"QUESTION_PRIOR_USE\\\",\\\"GOLD_CHANGE_STATUS\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\",\\\"paper-graph/knowledge-system/lessons.md#L10\\\"],\\\"forbidden_action\\\":[\\\"KEEP_OUTCOME_PRESUPPOSITION\\\",\\\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40777,\"completion_tokens\":115,\"total_tokens\":40892,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":201},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "276526ef-a896-449a-afc2-44ffd9038ee3",
+        "object": "chat.completion",
+        "created": 1795126678,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"REJECT_LEADING_QUESTION\",\"check\":\"check_question_lint\",\"unknowns\":[\"QUESTION_PRIOR_USE\",\"GOLD_CHANGE_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/lessons.md#L10\"],\"forbidden_action\":[\"KEEP_OUTCOME_PRESUPPOSITION\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40777,
+          "completion_tokens": 115,
+          "total_tokens": 40892,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 201
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 347,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "276526ef-a896-449a-afc2-44ffd9038ee3",
+    "object": "chat.completion",
+    "created": 1795126678,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"REJECT_LEADING_QUESTION\",\"check\":\"check_question_lint\",\"unknowns\":[\"QUESTION_PRIOR_USE\",\"GOLD_CHANGE_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/lessons.md#L10\"],\"forbidden_action\":[\"KEEP_OUTCOME_PRESUPPOSITION\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40777,
+      "completion_tokens": 115,
+      "total_tokens": 40892,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 201
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"REJECT_LEADING_QUESTION\",\"check\":\"check_question_lint\",\"unknowns\":[\"QUESTION_PRIOR_USE\",\"GOLD_CHANGE_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/lessons.md#L10\"],\"forbidden_action\":[\"KEEP_OUTCOME_PRESUPPOSITION\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:59.624950+00:00"
+}

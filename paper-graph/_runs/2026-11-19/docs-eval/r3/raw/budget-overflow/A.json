@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "budget-overflow",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:53.940100+00:00",
+  "request_sha256": "e9825fb015df114ff56f525d8420b0a48096ad898e116ef4e9972b354d95bb63",
+  "prompt_bytes": 163795,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:53.940287+00:00",
+      "http_status": 200,
+      "latency_ms": 1196.216,
+      "body_text": "{\"id\":\"5ca695e6-53d2-45db-8fb4-41aff61a6d31\",\"object\":\"chat.completion\",\"created\":1795126674,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"decision\\\":\\\"BLOCK_BUDGET_PREFLIGHT\\\",\\\"check\\\":\\\"check_budget_preflight\\\",\\\"unknowns\\\":[\\\"MEASURED_TOKENS_PER_SECOND\\\",\\\"TOKEN_USAGE_REPORTING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"paper-graph/knowledge-system/lessons.md#L12\\\"],\\\"forbidden_action\\\":[\\\"RETRY_IDENTICAL_BUDGET\\\",\\\"COERCE_MISSING_USAGE_TO_ZERO\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40783,\"completion_tokens\":115,\"total_tokens\":40898,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":207},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "5ca695e6-53d2-45db-8fb4-41aff61a6d31",
+        "object": "chat.completion",
+        "created": 1795126674,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_BUDGET_PREFLIGHT\",\"check\":\"check_budget_preflight\",\"unknowns\":[\"MEASURED_TOKENS_PER_SECOND\",\"TOKEN_USAGE_REPORTING\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/lessons.md#L12\"],\"forbidden_action\":[\"RETRY_IDENTICAL_BUDGET\",\"COERCE_MISSING_USAGE_TO_ZERO\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40783,
+          "completion_tokens": 115,
+          "total_tokens": 40898,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 207
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 352,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "5ca695e6-53d2-45db-8fb4-41aff61a6d31",
+    "object": "chat.completion",
+    "created": 1795126674,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_BUDGET_PREFLIGHT\",\"check\":\"check_budget_preflight\",\"unknowns\":[\"MEASURED_TOKENS_PER_SECOND\",\"TOKEN_USAGE_REPORTING\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/lessons.md#L12\"],\"forbidden_action\":[\"RETRY_IDENTICAL_BUDGET\",\"COERCE_MISSING_USAGE_TO_ZERO\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40783,
+      "completion_tokens": 115,
+      "total_tokens": 40898,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 207
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_BUDGET_PREFLIGHT\",\"check\":\"check_budget_preflight\",\"unknowns\":[\"MEASURED_TOKENS_PER_SECOND\",\"TOKEN_USAGE_REPORTING\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/lessons.md#L12\"],\"forbidden_action\":[\"RETRY_IDENTICAL_BUDGET\",\"COERCE_MISSING_USAGE_TO_ZERO\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:55.136539+00:00"
+}
