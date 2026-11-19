@@ -302,7 +302,7 @@ Each doc owns one subject and links to the constitution/method instead of restat
 ~~~mermaid
 flowchart LR
   T4_1["T4.1 Rule-to-check matrix"] --> T4_2["T4.2 Ten checks (parallel)"]
-  T4_2 --> T4_3["T4.3 CI wiring"] --> T4_4["T4.4 Docs point to checks"]
+  T4_2 --> T4_3["T4.3 Local gate"] --> T4_4["T4.4 Docs point to checks"]
 ~~~
 
 For each key, prefer a check over prose. principle-encode-lessons-in-structure: if the lesson needs judgment and cannot be encoded, make the instruction prominent and add a failure example.
@@ -321,8 +321,8 @@ For each key, prefer a check over prose. principle-encode-lessons-in-structure: 
   9. Budget preflight: context/max_tokens/timeout/batch inequalities.
   10. Migration lint: no DROP TABLE/VIEW in startup; count oracle on a copy.
   - Exit: 10 checks run locally; each check has a seeded defect that turns it red.
-- [x] **T4.3 CI wiring.** Run checks on PR; keep the slow/property suite nightly.
-  - Exit: a seeded defect fails CI; a clean tree passes.
+- [x] **T4.3 Local module-verification gate.** `paper-graph/scripts/verify.sh` runs every module check locally and is the authority; CI is an optional mirror that calls the same commands. Keep the slow/property suite as a local nightly target rather than a hosted prerequisite.
+  - Exit: a seeded defect fails `verify.sh` on a clean laptop; a green CI with a red local script is a defect in the mirror, not a pass.
 - [x] **T4.4 Docs point to checks.** Each lesson/owner doc links to its check; no restatement.
   - Exit: owner map has a check column with no empty cells except judgment.
 
@@ -549,7 +549,8 @@ Use workflow only where the work is a real fan-out with independent units. Do no
 8. **Keep the paper claim narrow.** Architecture + protocol + operational findings. Do not claim ontology or QA gains before the held-out run.
 9. **Models are nondeterministic.** Treat output as a distribution: run N trials, size timeouts from measured p95, cap retries at 2, and record every failed trial as an explicit typed failure. Never retry until a pass and call it success.
 10. **Typed stage boundaries.** Every pipeline stage emits a typed artifact that the next stage validates before consuming. A stage failure emits a typed failure record, not a partial object.
-11. **Structure and meaning are separate checks.** Schema validation proves shape; semantic checks (quote recovery, locator validity, relation licensing, abstention) prove meaning. Report them separately.
+11. **The repository is the verification authority.** `paper-graph/scripts/verify.sh` runs every module check locally; CI only mirrors it. A check that exists only in CI, or cannot turn red on a seeded defect, is not a check.
+12. **Structure and meaning are separate checks.** Schema validation proves shape; semantic checks (quote recovery, locator validity, relation licensing, abstention) prove meaning. Report them separately.
 
 ## First 48 hours
 

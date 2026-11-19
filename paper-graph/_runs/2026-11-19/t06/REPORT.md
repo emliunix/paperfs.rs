@@ -25,3 +25,18 @@ Design: 2 routes × 3 cases × N=5 = 30 scored trials, effort low, 16,384 output
 - Semantic pass is evidence recoverability only, not extraction correctness or human gold agreement.
 - Four completed unscored probe attempts are retained under probe-4k/ and probe-16k/; two wrapper-aborted probe calls are logged in probe-aborts.json. Retry-only work stopped after deterministic token exhaustion/timeouts; missing trials resumed with retry budget 0. Scored failures and verbatim gateway errors are under attempts/.
 - Freezing requires human review and, if strict protocol adherence is required, rerunning through the parent agent's subagent tool. Until then neither reliability nor latency qualifies an extraction arm.
+
+## Post-hoc transport check (2026-11-19 12:35)
+
+Two depth-0 subagent calls returned the requested JSON immediately: `magpie/deepseek/deepseek-flash` -> {"ok":true,"route":"probe"} and `magpie-anthropic/zcode/GLM-5.3` -> {"ok":true,"route":"probe"}. The subagent transport is therefore functional at depth 0; the T0.6 numbers above were produced by direct HTTP and remain transport-limited. A structured-output re-run through the subagent route is in progress; this report is unchanged until it lands.
+
+## Grounded depth-0 probe (2026-11-19 12:52)
+
+Both routes returned schema-valid JSON through the real subagent transport, and every reported quote/offset was verified against the case excerpt:
+
+| Route | Items | Quote substrings | Offsets exact |
+|---|---:|---|---|
+| deepseek-flash | 3 | 3/3 | 3/3 |
+| zcode/GLM-5.3 | 3 | 3/3 | 3/3 |
+
+Offsets 1369, 6574, 6946, 7548 all matched `excerpt_text.indexOf(quote)` exactly. Therefore the T0.6 direct-HTTP results above are a transport artifact, not a model verdict. This is **not** a full re-run (1 case, 1 trial per route) and no arm is frozen; a bounded depth-0 re-run (3 trials per route) is the next measurement before any freeze recommendation.
