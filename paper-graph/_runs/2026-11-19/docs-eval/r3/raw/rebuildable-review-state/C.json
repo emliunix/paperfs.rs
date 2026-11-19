@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "rebuildable-review-state",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:45.466376+00:00",
+  "request_sha256": "51ed4630438d0dab350c9d5e14d35b383fa0b7d83c53a39450db42a2f3100d39",
+  "prompt_bytes": 184253,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:45.466690+00:00",
+      "http_status": 200,
+      "latency_ms": 1176.948,
+      "body_text": "{\"id\":\"2e82642f-5f34-479c-b7e5-ec6f90bb3624\",\"object\":\"chat.completion\",\"created\":1795126665,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"decision\\\":\\\"SEPARATE_DERIVED_STATE\\\",\\\"check\\\":\\\"check_sync_count_guard\\\",\\\"unknowns\\\":[\\\"SEPARATE_STORE_IMPLEMENTATION\\\",\\\"SYNC_TARGET_CONTENTS\\\"],\\\"citations\\\":[\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate\\\"],\\\"forbidden_action\\\":[\\\"COLOCATE_REVIEW_WITH_METADATA\\\",\\\"CALL_ALL_STATE_REBUILDABLE\\\",\\\"ALLOW_DERIVED_LOSS\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45124,\"completion_tokens\":141,\"total_tokens\":45265,\"prompt_tokens_details\":{\"cached_tokens\":0},\"prompt_cache_hit_tokens\":0,\"prompt_cache_miss_tokens\":45124},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "2e82642f-5f34-479c-b7e5-ec6f90bb3624",
+        "object": "chat.completion",
+        "created": 1795126665,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"SEPARATE_DERIVED_STATE\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SEPARATE_STORE_IMPLEMENTATION\",\"SYNC_TARGET_CONTENTS\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate\"],\"forbidden_action\":[\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\",\"ALLOW_DERIVED_LOSS\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45124,
+          "completion_tokens": 141,
+          "total_tokens": 45265,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 45124
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 440,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "2e82642f-5f34-479c-b7e5-ec6f90bb3624",
+    "object": "chat.completion",
+    "created": 1795126665,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"SEPARATE_DERIVED_STATE\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SEPARATE_STORE_IMPLEMENTATION\",\"SYNC_TARGET_CONTENTS\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate\"],\"forbidden_action\":[\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\",\"ALLOW_DERIVED_LOSS\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45124,
+      "completion_tokens": 141,
+      "total_tokens": 45265,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 45124
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"SEPARATE_DERIVED_STATE\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SEPARATE_STORE_IMPLEMENTATION\",\"SYNC_TARGET_CONTENTS\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate\"],\"forbidden_action\":[\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\",\"ALLOW_DERIVED_LOSS\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:46.643819+00:00"
+}

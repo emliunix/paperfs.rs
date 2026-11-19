@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "confounded-axis-freeze",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:46.646134+00:00",
+  "request_sha256": "d7834ae955dcae12505a9186b8cc361b43ede35126c8d64d482345877d34b463",
+  "prompt_bytes": 28365,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:46.646688+00:00",
+      "http_status": 200,
+      "latency_ms": 1025.607,
+      "body_text": "{\"id\":\"f7d724f4-22cc-417e-96a0-d864c1fcf38c\",\"object\":\"chat.completion\",\"created\":1795126666,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"OPEN_HUMAN_DECISION\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"EVALUATION_AXIS_DECISION\\\",\\\"RESOLVER_DECISION\\\",\\\"DEFINITION_LEVEL_EQUIVALENCE\\\",\\\"HUMAN_MERGE_ADJUDICATION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\",\\\"paper-graph/knowledge-system/ontology.md\\\"],\\\"forbidden_action\\\":[\\\"AGENT_CHOOSE_EVALUATION_AXIS\\\",\\\"RUN_WITH_CONFOUNDED_RESOLVERS\\\",\\\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6359,\"completion_tokens\":149,\"total_tokens\":6508,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":215},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "f7d724f4-22cc-417e-96a0-d864c1fcf38c",
+        "object": "chat.completion",
+        "created": 1795126666,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/ontology.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6359,
+          "completion_tokens": 149,
+          "total_tokens": 6508,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 215
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 434,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "f7d724f4-22cc-417e-96a0-d864c1fcf38c",
+    "object": "chat.completion",
+    "created": 1795126666,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/ontology.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6359,
+      "completion_tokens": 149,
+      "total_tokens": 6508,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 215
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/ontology.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:47.672340+00:00"
+}

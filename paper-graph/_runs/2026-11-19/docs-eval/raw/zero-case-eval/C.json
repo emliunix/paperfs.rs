@@ -1,0 +1,78 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r2",
+  "scenario_id": "zero-case-eval",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:06:34.910836+00:00",
+  "request_sha256": "cba49b731b76528df4d91d685010cc6d97af11460af3f5f2ba56e9c8f69fa3a3",
+  "prompt_bytes": 184223,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:06:34.911532+00:00",
+      "http_status": 502,
+      "latency_ms": 10722.018,
+      "body_text": "{\"error\":{\"code\":null,\"message\":\"DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 2048 tokens: raise max_tokens in the agent, or ask for less reasoning)\",\"param\":null,\"type\":\"api_error\"}}\n",
+      "response": {
+        "error": {
+          "code": null,
+          "message": "DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 2048 tokens: raise max_tokens in the agent, or ask for less reasoning)",
+          "param": null,
+          "type": "api_error"
+        }
+      },
+      "error": {
+        "class": "http_error",
+        "message": "Magpie returned HTTP 502"
+      }
+    },
+    {
+      "attempt": 2,
+      "started_at": "2026-11-19T22:06:47.637353+00:00",
+      "http_status": 502,
+      "latency_ms": 9647.802,
+      "body_text": "{\"error\":{\"code\":null,\"message\":\"DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 2048 tokens: raise max_tokens in the agent, or ask for less reasoning)\",\"param\":null,\"type\":\"api_error\"}}\n",
+      "response": {
+        "error": {
+          "code": null,
+          "message": "DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 2048 tokens: raise max_tokens in the agent, or ask for less reasoning)",
+          "param": null,
+          "type": "api_error"
+        }
+      },
+      "error": {
+        "class": "http_error",
+        "message": "Magpie returned HTTP 502"
+      }
+    },
+    {
+      "attempt": 3,
+      "started_at": "2026-11-19T22:07:01.289738+00:00",
+      "http_status": 502,
+      "latency_ms": 10901.131,
+      "body_text": "{\"error\":{\"code\":null,\"message\":\"DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 2048 tokens: raise max_tokens in the agent, or ask for less reasoning)\",\"param\":null,\"type\":\"api_error\"}}\n",
+      "response": {
+        "error": {
+          "code": null,
+          "message": "DeepSeek: an empty reply (the model answered nothing; try again) — cut at its length, the whole output spent on reasoning (the request's limit was 2048 tokens: raise max_tokens in the agent, or ask for less reasoning)",
+          "param": null,
+          "type": "api_error"
+        }
+      },
+      "error": {
+        "class": "http_error",
+        "message": "Magpie returned HTTP 502"
+      }
+    }
+  ],
+  "status": "failed",
+  "response": null,
+  "content": null,
+  "error": {
+    "class": "http_error",
+    "message": "Magpie returned HTTP 502"
+  },
+  "completed_at": "2026-11-19T22:07:12.190656+00:00"
+}

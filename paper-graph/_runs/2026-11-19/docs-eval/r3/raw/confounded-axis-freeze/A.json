@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "confounded-axis-freeze",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:46.563735+00:00",
+  "request_sha256": "b37de98c3b9a0ce5947627cd4fb5125704149713e60eaba0ef9a6cb3e12c5d3b",
+  "prompt_bytes": 163819,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:46.570280+00:00",
+      "http_status": 200,
+      "latency_ms": 1025.621,
+      "body_text": "{\"id\":\"a19ec018-b844-4beb-aa18-b5c38b360042\",\"object\":\"chat.completion\",\"created\":1795126666,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"OPEN_HUMAN_DECISION\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"EVALUATION_AXIS_DECISION\\\",\\\"RESOLVER_DECISION\\\",\\\"HEADLINE_METRIC_DECISION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\\\",\\\"paper-graph/knowledge-system/docs/owner-map.md\\\"],\\\"forbidden_action\\\":[\\\"AGENT_CHOOSE_EVALUATION_AXIS\\\",\\\"RUN_WITH_CONFOUNDED_RESOLVERS\\\",\\\"AGENT_CHOOSE_HEADLINE_METRIC\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40783,\"completion_tokens\":149,\"total_tokens\":40932,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":207},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "a19ec018-b844-4beb-aa18-b5c38b360042",
+        "object": "chat.completion",
+        "created": 1795126666,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"HEADLINE_METRIC_DECISION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\",\"paper-graph/knowledge-system/docs/owner-map.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AGENT_CHOOSE_HEADLINE_METRIC\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40783,
+          "completion_tokens": 149,
+          "total_tokens": 40932,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 207
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 462,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "a19ec018-b844-4beb-aa18-b5c38b360042",
+    "object": "chat.completion",
+    "created": 1795126666,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"HEADLINE_METRIC_DECISION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\",\"paper-graph/knowledge-system/docs/owner-map.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AGENT_CHOOSE_HEADLINE_METRIC\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40783,
+      "completion_tokens": 149,
+      "total_tokens": 40932,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 207
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"HEADLINE_METRIC_DECISION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\",\"paper-graph/knowledge-system/docs/owner-map.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AGENT_CHOOSE_HEADLINE_METRIC\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:47.595975+00:00"
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "timeout-empty-pass",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:49.375015+00:00",
+  "request_sha256": "c7cea6abc9b13b1a0331e920ec9bc173f5bd1f01d3f0e2d19c5929e608b4a6c6",
+  "prompt_bytes": 184262,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:49.375239+00:00",
+      "http_status": 200,
+      "latency_ms": 718.935,
+      "body_text": "{\"id\":\"173fa33d-aad7-4dc9-8f68-53fb8faad3f7\",\"object\":\"chat.completion\",\"created\":1795126669,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"BLOCK_FAILED_EVALUATOR\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"SCORER_VALIDATION_STATUS\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\\\",\\\"paper-graph/docs/rule-check-matrix.md\\\"],\\\"forbidden_action\\\":[\\\"MAP_TIMEOUT_TO_PASS\\\",\\\"TRUST_UNVALIDATED_SCORER\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45125,\"completion_tokens\":109,\"total_tokens\":45234,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":197},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "173fa33d-aad7-4dc9-8f68-53fb8faad3f7",
+        "object": "chat.completion",
+        "created": 1795126669,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45125,
+          "completion_tokens": 109,
+          "total_tokens": 45234,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 197
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 353,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "173fa33d-aad7-4dc9-8f68-53fb8faad3f7",
+    "object": "chat.completion",
+    "created": 1795126669,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45125,
+      "completion_tokens": 109,
+      "total_tokens": 45234,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 197
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:50.094233+00:00"
+}

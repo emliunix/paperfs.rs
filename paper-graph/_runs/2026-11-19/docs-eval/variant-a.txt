@@ -1,0 +1,1252 @@
+===== BEGIN paper-graph/knowledge-system/CONSTITUTION.md =====
+# Constitution — Paper Knowledge System
+
+**Status:** Decided · Observed · Specified (baseline `paper-graph` at `f1e46d9`, 2026-11-19). This document governs design and implementation; no extraction experiment has run, no PDF has been parsed, and no gold annotations exist.
+
+## Precedence and Enforcement
+
+Document authority follows a strict order: **`CONSTITUTION.md` > `method.md` > owning project doc > `README.md` status**.
+
+1. `CONSTITUTION.md` — non-negotiable system invariants that every lower artifact must obey.
+2. [method.md](method.md) — evidence vocabulary (`Observed`, `Decided`, `Specified`, `Transferred`, `Contested`), adjudication rules, and reviewer independence.
+3. **Owning project doc** (`docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md`, `docs/PIPELINE.md`, `docs/EVALUATION.md`, `docs/OPERATIONS.md`, `docs/EXPERIMENTS.md`, `docs/ROADMAP.md`, `docs/REVIEW.md`, `PRAXIS.md`) — one subject per document.
+4. `README.md` — orientation and current status summary only.
+
+Lower documents link upward instead of restating invariants; a fact stated twice is a defect. A rule that can be structurally tested must not remain prose: [docs/owner-map.md](docs/owner-map.md) maps each subject to one owning document and one `check_*` ID or explicit `judgment (human)` gate. Lesson IDs (`L01`–`L14`) refer to [lessons.md](lessons.md); code paths resolve from the `paper-graph` crate root.
+
+---
+
+## The Seven Invariants
+
+### 1. Canonical, rebuildable, and distilled layers stay separate
+- **Status:** Decided · Observed · Specified | **Owning doc:** `docs/ARCHITECTURE.md` (distilled lessons in `PRAXIS.md`)
+- **Rule:** Zotero is the sole canonical store for bibliographic metadata; the HawDB metadata graph is disposable derived state, extracted claims and review state live in a separate derived store, and distilled notes record only explicitly promoted summaries with pointers to evidence.
+- **Why it holds:** `src/store.rs:108-109` runs `DELETE FROM works` and `MATCH (n) DETACH DELETE n` in one transaction on every sync, destroying any extracted or reviewed state stored beside metadata (`L01`), while uncurated writes pollute durable memory with temporary scaffolding (`L13`).
+- **Falsifier:** A metadata sync deletes or alters any extracted claim, review state, or run record; bibliographic fields are mutated outside Zotero; or durable memory copies raw text or process narrative without an explicit promotion decision and archive pointer.
+- **Check pointer:** `check_metadata_sync_guard` (planned); `judgment (human)` for durable promotion.
+
+### 2. Durable identity and evidence coordinates survive rebuilds
+- **Status:** Decided · Observed · Specified | **Owning doc:** `docs/DATA_MODEL.md`
+- **Rule:** Numeric Zotero `itemID` is a local join key only; every work persists `zotero_key` and DOI as its durable identity (never title or content hash), and every evidence span persists `attachment_item_id`, `chunk_id`, page, and verified character offsets.
+- **Why it holds:** `src/store.rs:11-12` keys `works` on local `item_id` without joining on `zotero_key` (`L02`); Zotero merges or restores can renumber `itemID`s and orphan assertions unless durable keys and exact document coordinates anchor them.
+- **Falsifier:** Renumbering `itemID`s during re-import orphans claims or evidence, a paper identity is derived from a title or content hash, or an accepted assertion lacks a resolvable attachment, page, and character span.
+- **Check pointer:** `check_corpus_identity` (planned); `check_evidence_locator` (planned).
+
+### 3. Rebuild safety and schema changes require a count oracle
+- **Status:** Decided · Observed · Specified | **Owning doc:** `docs/OPERATIONS.md`
+- **Rule:** Metadata sync is manual and fails closed when non-metadata rows or labels exist in its target, and schema migrations execute only as reviewed, additive one-off scripts on a database copy gated by an active count oracle.
+- **Why it holds:** `src/pipeline.rs` (`sync_library`) performs an unguarded full wipe without schema versioning (`L03`), automatic startup table-rebuilds risk silent object drops (`L14`), and `tests/existing_database.rs:9-21` is `#[ignore]`d rather than enforcing post-migration counts.
+- **Falsifier:** Sync runs on a background watcher or overwrites non-metadata labels, startup or migration code executes `DROP TABLE` or `DROP VIEW`, or a schema change lands without a non-ignored pre/post count oracle passing.
+- **Check pointer:** `check_sync_count_guard` (planned); `check_migration_oracle` (planned).
+
+### 4. Sources enter only by verified bytes and signature
+- **Status:** Observed · Specified | **Owning doc:** `docs/PIPELINE.md`
+- **Rule:** A work enters an active corpus only when an executable check resolves its local attachment file, stats its byte length, verifies a literal `%PDF-` header, and records its SHA-256 digest; metadata coverage caps metadata-only retrieval claims.
+- **Why it holds:** Four initial corpus candidates (`itemID`s `60`, `47`, `5`, `8`) had Zotero attachment rows with no local PDF, and `tests/experiment_corpus.rs:15` asserts only the status string `"pdf_verified_gold_pending"` (`L04`).
+- **Falsifier:** Any admitted corpus item lacks a local file, `%PDF-` signature, or recorded SHA-256; a static status string passes for admission; or retrieval results omit metadata-coverage limits.
+- **Check pointer:** `check_corpus_admission` (planned).
+
+### 5. Evidence is atomic and unknown stays visible
+- **Status:** Specified | **Owning doc:** `docs/DATA_MODEL.md` (ontology vocabulary in [ontology.md](ontology.md); evaluation use in `docs/EVALUATION.md`)
+- **Rule:** Ontology predicates grow only from frozen competency questions with evidence-graded roles (`MENTIONS`, `USES`, `INTRODUCES`), every claim binds one atomic proposition to a verbatim substring quote and resolvable locator, and missing or ambiguous inputs remain `unknown` or `unreviewed`.
+- **Why it holds:** Unchecked catalogues smuggle taxonomy through `IS_A` or closed `kind` enums (`L05`), ungraded mentions inflate into contributions or false merges (`L06`), and overlapping chunks or silent defaults fabricate support unless evidence is leaf-atomic and unknowns propagate (`L07`).
+- **Falsifier:** Schema types are added without a blocking competency question, a bare mention is scored as `USES`/`INTRODUCES`, a quote fails substring or locator checks, overlapping spans count twice, or missing data silently coerces to a value.
+- **Check pointer:** `check_evidence_locator` (planned); `check_question_lint` (planned).
+
+### 6. Evaluation is pre-registered, executed, and recorded
+- **Status:** Decided · Observed · Specified | **Owning doc:** `docs/EVALUATION.md` (call budgets in `docs/OPERATIONS.md`, gates in `docs/EXPERIMENTS.md`)
+- **Rule:** Evaluations freeze questions, single-axis resolvers, metric panels, and call-budget inequalities before opening test runs, require `executed == corpus_size`, validate scorers so timeouts or unasked atoms yield `BLOCKED`, and record per-call provenance with missing usage marked `unreported`.
+- **Why it holds:** Shifting resolvers or single-F1 headlines hide high-risk errors (`L08`, `L09`), unverified harnesses have silently executed zero cases (`L10`) or mapped budget exhaustion to `PASS` (`L11`), and `src/embeddings.rs:109-112` plus `src/pipeline.rs:20-29` coerce missing usage to `0` without run IDs (`L12`).
+- **Falsifier:** Test predictions run before input hashes freeze, `executed != corpus_size` or skipped cases exit zero, evaluator failures return `PASS`, call budgets violate context/max-token/timeout inequalities, or unreported usage is stored as `0`.
+- **Check pointer:** `check_eval_manifest` (planned); `check_budget_preflight` (planned).
+
+### 7. Human owns gold, verdict, spend, and the claim
+- **Status:** Decided · Specified | **Owning doc:** `docs/REVIEW.md` (reviewer independence procedure in [method.md](method.md#reviewer-independence); paper framing in `docs/ROADMAP.md`)
+- **Rule:** A human authors all gold annotations, adjudicates final verdicts and same-family reviews, approves hosted spend, and authorizes every paper claim; model output never moves an expected gold answer.
+- **Why it holds:** Editing expected answers or writing outcome-presupposing questions tunes the oracle to the model (`L10`), same-family model routes share correlated blind spots ([method.md](method.md)), and pre-verdict artifacts justify only architectural and protocol claims (`L08`, `L13`).
+- **Falsifier:** An agent or model authors, modifies, or moves any expected gold answer, regardless of approvals; a same-family review is marked independent; paid extraction runs without approval; or docs claim empirical extraction/QA gains before a held-out verdict.
+- **Check pointer:** `check_gold_diff` (planned); a cited human decision and second review remain required checks for human gold changes and never authorize agent/model authorship or movement; `judgment (human)` for gold, verdict, spend, and paper claim.
+===== END paper-graph/knowledge-system/CONSTITUTION.md =====
+
+===== BEGIN paper-graph/knowledge-system/method.md =====
+# Method: three rounds from threads to design knowledge
+
+The goal was not to summarize conversations. It was to turn them into rules that a paper knowledge system can be built and evaluated against, with enough provenance that a later reader can tell a measured finding from a proposal.
+
+Three rounds were run. Each round changed both the set of interesting points and the scan method.
+
+## Round 1 — collect and broaden
+
+**Scan method.** Nowledge Mem thread search over eight theme families, then four broader scouts. Each scout returned thread ids, dates, message counts, a relevance rationale, and key message indexes. A separate probe confirmed that workflow subagents can call the Nowledge Mem tools directly.
+
+**Output.** 19 candidate threads; 18 retained. Five evidence auditors then read the core thread and the most relevant adjacent threads and returned 50 candidate lessons with verbatim quotes and message indexes. Six quotes were spot-checked against the original messages; all six resolved.
+
+**What went wrong.** The first pass was generous. It treated assistant proposals as findings, counted a 27-message prefix and its 1,360-message continuation as two sources, and let one thread's caveat disqualify a thread that another lesson still cited.
+
+## Round 2 — make the points falsifiable
+
+**Point refinement.** The 50 candidates were clustered into 14 points, each stated as a question:
+
+1. Layer ownership
+2. Identity and paper addressability
+3. Manual sync and non-destructive rebuild
+4. Engine smoke test and source admission
+5. Small ontology without unearned taxonomy
+6. Relation strength, attribution, and resolution
+7. Evidence-bearing claims and unknown propagation
+8. Evaluation-first and pre-registration
+9. Metric panel and high-risk gates
+10. Evaluation integrity and gold authority
+11. Evaluator validation
+12. Extraction operations and run provenance
+13. Durable distillation
+14. Backend selection and migration safety
+
+**Scan method.** For each point: targeted message fetch around the relevant exchange, verbatim quote recovery, a code check where the repository could confirm or contradict the claim, and a fixed evidence rubric:
+
+- **R0 unsupported** — generic advice, no artifact or decision.
+- **R1 anecdotal** — one verbatim quote or one incident.
+- **R2 verified** — a user decision, or a quote plus code/file/measurement.
+- **R3 replicated** — two or more independent threads, or code/tests plus a negative case.
+
+**Output.** 14 lesson records with rule, mechanism, evidence, code check, boundary, operationalization, confidence, and verdict (confirmed / qualified / rejected). Raw records are in round-2-rescan.json.
+
+**What went wrong.** The rubric graded compound rules with one label. A rule could be half-implemented and still read "confirmed". Two lessons could cite the same artifact and split verdicts. R3 counted a second thread that never mentioned the system.
+
+## Round 3 — attack the synthesis
+
+**Scan method.** Three adversarial auditors, each given the 14 rules but not the earlier reasoning:
+
+1. **Contradiction and overclaim audit.** Find conflicting pairs, rules that claim more than their evidence, unstated dependencies, and caveats that invalidate a headline.
+2. **Code reconciliation.** Verify every code-facing claim against the current tree at f1e46d9: path, line, and observation. Status must be verified, contradicted, stale, or unverifiable.
+3. **Replication and gap audit.** For each lesson, decide whether the evidence is one thread/project, multiple independent threads/projects, or code plus a second source. List the six gaps the corpus cannot close.
+
+**Output.** 17 findings; 35 code claims (32 verified, 1 contradicted, 1 stale, 1 unverifiable); 14 replication judgments; 6 top gaps. Raw records are in round-3-audit.json.
+
+**What changed.** The audit forced a regrade and several rewordings:
+
+- **Disposability was scoped.** The metadata graph may be rebuilt; extraction, human judgment, and run provenance may not. The separate derived DB is a decision, not an implementation.
+- **The corpus test was demoted.** tests/experiment_corpus.rs:15 asserts a status string. It is a tripwire, not an admission gate and not gold protection.
+- **Two sources became one.** 28b5b22b is the first 27 messages of d0e2d0bd. The doc-verify lesson is strong, but it is one session.
+- **Two "confirmed" labels became "specified".** The ontology and relation rules exist only in markdown; no Concept or Claim node exists in src/.
+- **The identity rule lost its second source.** The OCaml/paper-notes thread never mentions Zotero or itemID; zotero_key is stored but never joined on.
+- **The evaluation axis was corrected.** U2/S2/P2 do not hold resolution constant: U2 uses exact normalized-name merge, S2 adds known aliases, P2 adds curated PL aliases. The axis is vocabulary plus curated aliases, or the arms need one resolver.
+- **The panel rule was softened.** The research report still calls strict F1 the headline; the rubric demotes it. The absolute "never a single F1" is too strong; the panel is the default, with named exceptions.
+- **The count oracle was exposed.** The only real-database test is #[ignore]d, asserts fixed counts, and never runs a migration. It is a snapshot assertion, not a migration gate.
+- **The budget rule was qualified.** The budget incidents are real, but the paper pipeline has no extraction call and no budget validator; its code evidence is the embedding path.
+- **Two kinds of unknown were split.** An unknown input demotes a claim and marks it unreviewed; an incomplete evaluation blocks the run and produces no score.
+
+## The final evidence vocabulary
+
+The R0-R3 rubric was useful for the rescan but misleading in the synthesis, because it implied a single confidence axis. The final lessons use five status tags instead:
+
+- **Observed** — seen in the current code or a measured incident.
+- **Decided** — an explicit user decision, not necessarily implemented.
+- **Specified** — written in a design document or rubric, not executed.
+- **Transferred** — a lesson from another project, not yet tested here.
+- **Contested** — a live counterargument or unresolved contradiction.
+
+A rule may carry several tags. The tags say what would have to change to strengthen the claim; they are not a score.
+
+## Adjudication rules
+
+1. A quote must be verbatim and tied to a message index. A paraphrase is not evidence.
+2. A user statement outranks an assistant proposal. An assistant proposal is not a decision.
+3. Code or a later message that contradicts a thread claim wins. Report the contradiction; do not smooth it.
+4. The same conversation captured twice counts once. Check the first user message and timestamps.
+5. A compound rule must be split before grading. "Manual sync and additive migration" is two claims.
+6. A rule that depends on an unbuilt component is conditional, not confirmed. Say what must exist first.
+7. Every path must resolve from the paper-graph repository root. A locator that only works from another directory is not a locator.
+8. A gate row that cites a command which no longer exists is stale, not green. Re-run it or mark it "no".
+
+## Precedence and ownership
+
+When two documents could answer the same question, the order is:
+
+1. `CONSTITUTION.md` — the invariants; it wins over everything below.
+2. `method.md` — the procedure and evidence vocabulary.
+3. The owning project doc (`docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md`, `docs/EVALUATION.md`, ...).
+4. `README.md` — orientation and status only.
+
+A fact stated twice is a defect: the lower document links up instead of restating. The [owner map](docs/owner-map.md) names the single owner for each subject and the check that enforces it; a subject with two owners is a defect, and a check with no owner is a wish. Paths resolve from the `paper-graph` crate root, and run artefacts live under `paper-graph/_runs/<date>/` — including the docs hash manifest that freezes an eval input.
+
+## Reviewer independence
+
+A review counts as independent only when the reviewer is a different model family from the writer: Gemini cannot review Gemini, Gemma counts as Google, and zcode/GLM-5.3, devin/glm-5-3 and auto/glm-5.3 are one model behind three gateways. A same-family review is allowed but must be labelled *same-family* in the artifact, and a human adjudicates it. No document may describe a same-family review as independent. The authorizing routes and the evidence for them live in `models.md`.
+
+Case note: this file is `method.md` (lowercase) on a case-insensitive filesystem. A write to `METHOD.md` edits this file silently on APFS and creates a second file on Linux; the docs lint rejects case-only twins.
+
+## Reproducing the corpus
+
+The thread ids and message indexes are in corpus.md and in the two JSON files. The code baseline is paper-graph at f1e46d9. The retrieval queries are listed in corpus.md. A rerun should expect the same 18 threads, but message counts and summaries can change if Nowledge Mem re-syncs a source.
+
+## Governance
+
+### Status vocabulary
+
+A status applies to one atomic statement in the current context; statuses may coexist and are not a confidence score.
+
+- **Observed** — Directly seen in current code, an artifact, or a recorded incident; strengthen it with a reproducible observation, a resolvable run or source locator, and a relevant negative case.
+- **Decided** — Explicitly chosen by the human, without implying implementation; strengthen it with a cited decision followed by an executed check of the implementation.
+- **Specified** — Written as intended behavior but not executed; strengthen it with an executable check or run whose inputs and result are recorded.
+- **Transferred** — Supported by experience outside this project but not established here; strengthen it with a local reproduction, incident, or test.
+- **Contested** — Facing a live counterargument or unresolved contradiction; strengthen the underlying statement with evidence that addresses both sides and, where a decision or verdict is involved, recorded human adjudication.
+- **Untested** — Not yet exercised by an executed test in this context; strengthen it with a recorded test run, its input and code versions, and its unedited result.
+
+### Review rounds and stop rules
+
+A review round starts from frozen inputs and a named scope, records the reviewer family, and produces findings tied to an atomic statement, evidence, and an owning document. The author must resolve or explicitly dispose of every finding; another round is warranted only when those dispositions change the artifact or new evidence arrives.
+
+Stop iterating when all findings are resolved or have an explicit human-owned disposition, no contradiction remains hidden, required checks and gates are either passing or recorded as blocking, and further edits would be polish rather than new evidence. An unexecuted required check or a failed gate blocks promotion or completion; it does not prohibit drafting or recording the blocker.
+
+A contradiction marks the affected statement **Contested** and blocks that statement's promotion, every dependent gate or merge, and any paper claim that relies on it; unrelated statements may proceed. Resolve it against current artifacts and verbatim sources, with human adjudication for decisions and verdicts, rather than averaging incompatible accounts.
+
+A same-family review is allowed for preliminary or mechanical feedback, or when no different-family reviewer is available, but it must be labelled *same-family*, must not count as independent, and requires human adjudication. Additional same-family rounds cannot substitute for the missing independent review.
+
+### One-statement-per-fact enforcement
+
+Each atomic rule, status, and decision has exactly one owning document; every other document links to that owner instead of restating it. The owner map binds each subject to one owner and either an executable check or an explicit human-judgment gate.
+
+The docs lint is specified to reject a subject with zero or multiple owners, an unresolved owner or check reference, a broken relative link, a repeated normative rule outside its owner, and case-only filename twins. It also rejects a check with no owning subject; editorial summaries may describe status, but may not create a second normative copy of a rule.
+
+===== END paper-graph/knowledge-system/method.md =====
+
+===== BEGIN paper-graph/knowledge-system/lessons.md =====
+# Lessons for the paper knowledge system
+
+Fourteen rules distilled from 18 Nowledge Mem threads, the paper-graph repository at commit f1e46d9, and three audit rounds. This is **design knowledge**, not an experimental result: the ontology-extraction round has not run, no PDF has been parsed, and no gold annotations exist.
+
+Each lesson is tagged by what kind of evidence supports it:
+
+- **Observed** — seen in the current code or a measured incident.
+- **Decided** — an explicit user decision, not necessarily implemented.
+- **Specified** — written in a design document or rubric, not executed.
+- **Transferred** — a lesson from another project, not yet tested here.
+- **Contested** — a live counterargument or unresolved contradiction.
+
+A lesson can carry several tags. The tag is not a confidence score; it says what would have to change to make the claim stronger.
+
+## The fourteen rules at a glance
+
+| # | Rule | Status |
+|---|---|---|
+| L01 | Separate canonical, rebuildable, and distilled layers; make the rebuild boundary explicit | Decided · Observed · Specified |
+| L02 | Use Zotero IDs as local keys; persist a durable key and evidence coordinates | Decided · Observed · Untested |
+| L03 | Manual sync; never let a metadata rebuild delete derived knowledge | Decided · Observed · Specified · Transferred |
+| L04 | Admit sources by bytes and signature; metadata is a retrieval ceiling | Observed · Specified |
+| L05 | Start ontology from competency questions, not a relation catalogue | Specified · Contested |
+| L06 | Grade relation strength and attribution; resolve identity conservatively | Specified · Contested |
+| L07 | Make evidence atomic and keep unknown visible | Specified · Transferred |
+| L08 | Evaluate first, pre-register one axis, ask questions before building the scorer | Decided · Specified · Unexecuted |
+| L09 | Score with a pre-registered panel; strict F1 is one diagnostic | Specified · Contested |
+| L10 | An eval is evidence only if it proves execution, records the run, and leaves gold intact | Observed · Transferred · Specified |
+| L11 | Validate the evaluator before trusting any verdict | Transferred · Observed (doc-verify) |
+| L12 | Derive the extraction budget chain and record per-call provenance | Observed · Transferred · Unexercised |
+| L13 | Distil on an explicit decision; record hard lessons, not process narrative | Decided · Observed · Prescribed |
+| L14 | Choose a dependency-light backend; migrate by reviewed one-off scripts | Transferred · Contested |
+
+## How the rules fit together
+
+The system has five layers and one lifecycle. L01-L04 define the layers, identity, synchronization, and source admission. L05-L07 define what may enter the graph and how it is evidenced. L08-L11 define how the result is evaluated. L12-L14 define the operational envelope and how the work is remembered.
+
+~~~
+Zotero (canonical metadata, PDFs, annotations)
+  -> parsed text + line index + chunk/page/offset coordinates
+  -> HawDB derived index (SQL rows, graph, BM25, vectors)
+  -> reviewed Concept/Claim/Evidence graph (separate derived store)
+  -> distilled reading notes and lessons (pointers, not copies)
+~~~
+
+The lifecycle is: admit -> parse -> chunk -> extract -> validate -> review -> project -> retrieve -> distil. Each arrow is a place where a status can be lost; the lessons are mostly about not losing it.
+
+## L01 — Separate canonical, rebuildable, and distilled layers — and make the rebuild boundary explicit
+
+**Status:** Decided · Observed · Specified
+
+**Rule.** Zotero is the only canonical home of bibliographic metadata. The HawDB metadata graph is rebuildable derived state. Extraction, human judgment, and run provenance must live in a separate derived store; distilled notes point back to evidence, they do not duplicate it.
+
+**Why it holds.** Store rebuild deletes every work row and then every graph node in one transaction before reinserting from a read-only Zotero snapshot. Anything stored beside the metadata — concepts, claims, annotations, review state — disappears on the next sync. The project already decided that round 1 uses a separate derived HawDB, but no such database or schema exists yet.
+
+**Evidence.**
+
+- thread 71ffc1b7#44: 'Zotero stays the source of truth; hawdb becomes a rebuildable graph + search engine; Nowledge Mem keeps only distilled insights and pointers.'
+- src/store.rs:108-109: DELETE FROM works, then MATCH (n) DETACH DELETE n, inside one transaction.
+- experiments/ontology-extraction/decisions.md:5 records the separate-derived-database mitigation; data/ still contains only library.hawdb.
+- No code links a Nowledge Mem note to a Zotero itemID; the Mem save in this thread was blocked and unconfirmed.
+
+**Boundary.** The third layer is procedural, not implemented. 'Disposable' applies to the metadata graph only; extraction and review state are not disposable. Until the separate DB exists, the rule is an unmet precondition, not a property of the system.
+
+**Operational check.** Before sync, count non-metadata labels/rows in the target DB and fail closed if any exist. Record in every SyncReport the model, URL, token count, elapsed time, run id, and a hash of the source snapshot.
+
+---
+
+## L02 — Use Zotero IDs as local keys, but persist a durable key and explicit evidence coordinates
+
+**Status:** Decided · Observed · Durability untested
+
+**Rule.** Use Zotero numeric itemID as the local join key inside one library, persist zotero_key and DOI as the durable address, and give every evidence span attachment/page/character coordinates. Never use a title or a content hash as paper identity.
+
+**Why it holds.** itemID is the SQL primary key and zotero_key is a non-key column, so search rows, UI URLs, and rebuild joins all depend on a local SQLite row id. A Zotero merge or restore can renumber itemIDs, which would orphan claims and evidence links. Storing the key without ever joining on it gives the appearance of a durable address without the guarantee.
+
+**Evidence.**
+
+- thread 71ffc1b7#49 (user): 'We can reuse the ID in the Zotero library for the identities, so that is fast and we don't need to consider the ID things from, say, Content Hash or whatever.'
+- src/store.rs:11-12: item_id BIGINT PRIMARY KEY; zotero_key TEXT NOT NULL, never used in a WHERE clause.
+- README.md:12 states itemID identities and no content-hash identity; no test exercises re-import or itemID reassignment.
+- No chunk, page, or offset table exists in src/; the paper-index convention in thread 3099ed1f is a reading workflow, not an implemented evidence store.
+
+**Boundary.** itemID is stable only while the Zotero library is unchanged. The line-index convention and character-offset EvidenceSpan are two different address spaces; neither is implemented in paper-graph. The OCaml/paper-notes thread does not corroborate this rule and is not counted as independent evidence.
+
+**Operational check.** Add a key-to-itemID mapping table or make zotero_key the durable join. Add a re-import test that changes itemIDs and asserts evidence/claim survival. Reject evidence lacking attachment id, page, and verified character offsets.
+
+---
+
+## L03 — Make sync manual, and never let a metadata rebuild delete derived knowledge
+
+**Status:** Decided · Observed · Specified · Transferred
+
+**Rule.** Make synchronization a manual, explicit replacement of derived metadata. Never let it delete extraction or human judgment: scope the rebuild to owned metadata labels, or isolate extraction in a separate database, and prove it with a count oracle. No startup table rebuild that drops views or tables.
+
+**Why it holds.** The current sync is a full destructive replace in one transaction; there is no upsert or partial path. The only mitigation is a decision to use a separate DB, not a code guard. In a different SQLite project, an automatic table-rebuild migration was rejected as dangerous and replaced by a reviewed one-off additive statement.
+
+**Evidence.**
+
+- thread 71ffc1b7#45 (user): 'we can make it just one-off synchronization for a proactive cause only, or some menu triggers only.'
+- src/store.rs:108-109 and src/pipeline.rs sync_library: every sync runs the full delete-and-reinsert path.
+- thread d9cbb41d#62 (user): 'this is dangerous, provide the one off migration sql to me and remove that logic'; #86: 'you have drops in schema? how dare you say it's a migration.'
+- experiments/ontology-extraction/decisions.md:5: 'Domain extraction cannot be erased by a metadata sync' — recorded as a requirement, not tested.
+
+**Boundary.** The additive ALTER remedy is proven only on SQLite/bub_sf. HawDB ALTER support is unverified, initialize() only creates the table when absent, INSERT_WORK hardcodes 13 columns, and there is no schema version. A 'table rebuild' and a 'data wipe' are different failures; the current code commits the second.
+
+**Operational check.** Populate a derived DB, run a metadata sync, and assert extraction/claim/evidence counts unchanged; fail closed if derived data is present. Keep a schema version and reconcile columns instead of only creating the table. Forbid DROP TABLE/VIEW in startup paths.
+
+---
+
+## L04 — Admit sources by bytes and signature; treat metadata as a retrieval ceiling
+
+**Status:** Observed · Specified
+
+**Rule.** Admit a paper only after resolving a local file and checking its signature. Treat metadata coverage as a ceiling on retrieval claims. A status string in a corpus file is a tripwire, not an executable admission gate.
+
+**Why it holds.** Corpus planning assumed attachment rows; a filesystem check found 11 of 15 readable PDFs and four dangling attachment records (itemIDs 60, 47, 5, 8). A literal %PDF- check became a separate admission condition. Metadata is thin (117 of 324 works have abstracts; one work is titled only 'PDF' and wins semantic search), so simple topic queries saturate.
+
+**Evidence.**
+
+- thread 71ffc1b7#160: 'So “has an attachment row” is not sufficient for corpus admission.'
+- thread 71ffc1b7#133: semantic search ranks itemID 2315, titled 'PDF', first for 'fixed points and recursion schemes'; metadata cleanup or title-aware ranking is required.
+- tests/experiment_corpus.rs:15 asserts only the status string pdf_verified_gold_pending; it never stats a PDF, checks %PDF-, or protects gold.
+- README.md:10-11: the pipeline indexes metadata and abstracts only; no PDF parser exists.
+
+**Boundary.** Admission is established only to file and signature level, not text recoverability. The corpus JSON stores no attachment id, path, or hash, so admission cannot be re-executed from the artifact. The 15/15 claim is a one-time manual record.
+
+**Operational check.** Executable admission script: resolve attachment, stat file, check %PDF-, record SHA-256; fail on any missing file. Add a parser smoke test on the four development PDFs before annotation. Attach a metadata coverage report to every retrieval result set.
+
+---
+
+## L05 — Start ontology from competency questions, not from a relation catalogue
+
+**Status:** Specified · Contested
+
+**Rule.** Start from pre-registered competency questions. Add a node, relation, or kind only when a question cannot be answered without it. Banning a named IS_A edge is not enough: a closed, single-valued kind enum can relocate the same taxonomy.
+
+**Why it holds.** The v0 design says there is no generic IS_A and makes Concept.kind a presentation field. But the design already carries 9 node types and 17 relations before any downstream question has been frozen, and the DeepSeek critique points out that the closed kind enum still encodes subsumption. The design grew past the recommended five-relation start.
+
+**Evidence.**
+
+- thread 71ffc1b7#137: 'I'd build a small, query-driven property-graph ontology, not a large OWL ontology up front.'
+- thread 71ffc1b7#154: keep curated domain concepts separate from paper-derived assertions.
+- analysis/llm-document-graph-research.md:162,183 and the 17-row relation table at 199-215.
+- analysis/deepseek-ontology-critique.md:36 argues the IS_A ban relocated subsumption into the closed kind enum.
+- gates.md:20: 'Downstream gold questions | no'; no questions.json exists.
+
+**Boundary.** Design-only: src/ builds only Work, Person, Collection, Tag, Venue, Attachment; no Concept or Claim node exists. The rule is a target for the pilot, not a description of the current schema. A disputed categorization must stay needs_review rather than earn a new class or edge.
+
+**Operational check.** Freeze the competency questions before freezing the vocabulary. Cut v0 to the relations the questions need (start with five). Grep emitted schema/manual for IS_A, subClassOf, BROADER_THAN; require an explicit cue span for every GENERALIZES. Make kind faceted, multi-valued, and attributed until tested.
+
+---
+
+## L06 — Grade relation strength and attribution; resolve identity conservatively
+
+**Status:** Specified · Contested
+
+**Rule.** Grade every Work→Concept link by the evidence that licenses it: MENTIONS for a bare naming, USES only for the work's own method, and INTRODUCES only for a work-scoped claim of contribution — not priority. Aliases are reversible links; ambiguous references stay unresolved; a merge needs definition-level justification.
+
+**Why it holds.** A passing mention must not become a use or an invention. Automatic MENTIONS are kept separate from reviewed ABOUT/USES/INTRODUCES, and cue-constrained validation blocks role inflation. Aliases carry their own evidence rather than merging nodes, so free monads and freer monads survive as distinct concepts. Pairwise merge precision is gated at .98 and one false merge is reported as a cluster-level incident.
+
+**Evidence.**
+
+- thread 71ffc1b7#138: 'The distinction between MENTIONS, ABOUT, USES, and INTRODUCES is crucial. An extractor should not turn every occurrence of “fixed point” into a claim that the paper introduces fixed-point theory.'
+- experiments/ontology-extraction/round-001-rubric.md:30-35 scores roles separately and reports one false merge as one cluster-level incident; line 145 sets precision ≥ .95 and merge precision ≥ .98.
+- analysis/deepseek-ontology-critique.md:24 warns that Work INTRODUCES smuggles priority and will be read as 'first'; cue-gating alone does not fix the arity.
+
+**Boundary.** Specification only: MENTIONS/USES/INTRODUCES exist in markdown, not code; no extraction arm has run. The INTRODUCES predicate may need renaming or a non-priority qualifier before it is safe. A qualified alias of two partly overlapping notions still needs a human decision.
+
+**Operational check.** Define INTRODUCES as 'this work claims the contribution' and add a non-priority qualifier. Test the 'Dunfield and Krishnaswami introduce X' case. Demote any USES/INTRODUCES supported only by a token match. Report pairwise merge precision and each false merge's downstream edge count.
+
+---
+
+## L07 — Make evidence atomic and keep unknown visible
+
+**Status:** Specified · Transferred
+
+**Rule.** Admit a claim only as one atomic, independently evaluable proposition bound to a verbatim quote and a resolvable locator. Evidence is a leaf; claim–evidence is many-to-many; overlapping spans dedupe to one support. Missing or unresolved input stays unknown and blocks or demotes — it is never silently filled.
+
+**Why it holds.** Claims are reified and projected as Work ASSERTS Claim, Claim ABOUT Concept, Claim HAS_EVIDENCE EvidenceSpan, with Chunk as a locator. Deterministic checks require the quote to be a substring of the cited raw page and dedupe overlapping spans so one sentence cannot count as independent corroboration. The doc-verify precedent keeps pessimistic and optimistic bounds so PASS holds only if it survives every way the unknowns could resolve.
+
+**Evidence.**
+
+- thread cb2db461#82 (user): 'the evidence should be atomic, and evidence and claims are not 1-1 correspondence.'
+- thread cb2db461#86 (user): 'only evidence is leaf, the whole thing is directed graph flattened by reverse dependency order.'
+- thread 28b5b22b#26: 'Unknown propagates and never resolves on its own. A verdict is PASS only when it would hold under every way the unknown atoms could be answered.'
+- analysis/llm-document-graph-research.md:544,555 defines the EvidenceSpan table and Claim HAS_EVIDENCE projection; rubric lines 82-88 add quote/locator checks and dedup.
+
+**Boundary.** Conditional on a parser and a chunk/page/offset table that do not exist. Today evidence can only be quote-checked against Zotero metadata or abstracts; locators must be marked unavailable rather than assumed. Split vocabulary: an unknown input demotes the affected claim and marks it unreviewed; an incomplete evaluation blocks the run and produces no score.
+
+**Operational check.** Validate every claim's quote as an exact substring of the cited raw page/chunk and its locator to attachment/chunk/page/offset; a fabricated locator is a hard failure. Dedupe overlapping spans. Pre-register abstention for unanswerable questions.
+
+---
+
+## L08 — Evaluate first, pre-register one axis, and ask the questions before building the scorer
+
+**Status:** Decided · Specified · Unexecuted
+
+**Rule.** Build the smallest end-to-end artifact over the real corpus, then pre-register one comparison with frozen inputs and a non-regression baseline. Ask and lint the competency questions before building claim scoring.
+
+**Why it holds.** The first deliverable was search over the real Zotero library (324 works; BM25, exact vector, weighted-RRF hybrid, loopback UI), so the first experiment measures search rather than extraction depth. Round 1 manipulates ontology constraint only (U2/S2/P2), holding parsed text, chunk ids, model snapshot, decoding, order, call budget, JSON envelope, evidence rules, retry, and quote/page validation constant. Because four simple topic probes already return a sensible rank-1 work, they become non-regression controls; the primary downstream metric moves to evidence-supported compositional answers.
+
+**Evidence.**
+
+- thread 71ffc1b7#47: 'I'd make search evaluation the first product, with synchronization reduced to a manual, repeatable command.'
+- thread 71ffc1b7#48 (user): 'Sure, it's a good idea to have a proof of work first.'
+- experiments/ontology-extraction/round-001-plan.md:18-21,56-59 freezes inputs and requires the manual/prompts/schemas/chunker/model/gates to be frozen before test predictions.
+- README.md:150 still calls 12-20 preselected questions 'a useful next evaluation'; no questions.json exists, while plan sections 4-6 and rubric 4-5 already define claim/evidence scoring.
+
+**Boundary.** The plan is pre-registered but unexecuted: gates.md marks plan review, PDF parsing, gold, seeds, extraction, scorer and verdict all 'no'. It also inverts the rule by investing in claim scoring before the retrieval baseline questions are asked. The four simple probes have no headroom and cannot justify the extraction layer.
+
+**Operational check.** Write and lint the competency questions first; freeze hashes for manual, prompts, schemas, chunker, model snapshot and gates before opening test outputs. Record every post-freeze change as a protocol deviation. Keep a gate ledger where an unrun row is 'no', never a pass.
+
+---
+
+## L09 — Score with a pre-registered panel; keep strict F1 as one diagnostic
+
+**Status:** Specified · Contested
+
+**Rule.** Use a pre-registered panel by default: per-relation quality, high-risk violation rate, coverage, evidence validity, downstream QA, cost, and review burden. Keep strict evidenced relation F1 as one diagnostic; allow it as headline only when gold is complete, one relation type dominates, and abstention cannot be rewarded.
+
+**Why it holds.** Strict fully-evidenced relation F1 can hide selective abstention, rare direction errors on GENERALIZES/EXTENDS, and the blast radius of one bad concept merge. The rubric therefore keeps existence, semantic, and strict F1 as factorized diagnostics, adds per-predicate macro-F1, direction confusion matrices, a risk–coverage curve with matched-coverage F1, and a per-merge cluster incident count. A single aggregate driven by common MENTIONS or CITES is not a win.
+
+**Evidence.**
+
+- thread 71ffc1b7#178: 'strict fully-evidenced relation F1 should not stand alone: it can hide abstention, rare high-risk relation errors, direction mistakes, and clustered damage from one bad concept merge.'
+- experiments/ontology-extraction/round-001-rubric.md:3-6,140-151 defines the panel and the engineering gates.
+- analysis/llm-document-graph-research.md:23 and :643 still say strict evidenced relation F1 is the headline — the report was never amended after the rubric demoted it.
+
+**Boundary.** The panel is an argument, not a measurement: no arm, scorer, or gold exists. The thresholds (.95 precision, .05 margin, US$25, 20 min/paper) are project choices, not community benchmarks. The absolute 'never a single F1' is too strong and is retracted by the rule's own conditions.
+
+**Operational check.** Publish numerator, denominator, and stop threshold per metric before any arm runs. Reject any report whose headline is one aggregate F1. Amend the research report so the primary design document and the rubric do not contradict each other. Re-run every 'complete: yes' gate row from a clean checkout.
+
+---
+
+## L10 — An eval is evidence only if it proves execution, records the run, and leaves gold intact
+
+**Status:** Observed · Transferred · Specified
+
+**Rule.** Treat an eval as evidence only when the run proves it executed every case, records the configuration and raw per-case output that produced the score, and leaves gold untouched. When a model disagrees with gold, gold wins unless a cited skill or decision sentence changes the case. Lint questions and the answer schema as hard as the expected answers.
+
+**Why it holds.** A harness silently skipped any project that declared no model, so every historical eval ran zero cases while appearing to work. A run record that stores only scores cannot be traced to the model or request fields that produced it. A review found that rewording questions to presuppose the answer made trap cases unable to catch the failure they were written for, even though no expected answer moved. A batch partitioner respected a byte cap but exceeded the judge's token budget, so the first sub-batch failed before any semantic call and two operators got opposite call counts.
+
+**Evidence.**
+
+- thread 78dd3c13#352: 'vieval silently skips any project that declares no model, and this one declared none. So every past eval:full run executed 0 cases while appearing to work.'
+- thread d64e9502#330: 'A run's results don't record the model or the extra fields used, so a score like “64/126 on deepseek-flash” can't be traced to its configuration.'
+- thread e1f865e1#139: reworded questions presupposed the answer; 'That is the same bending your rule forbids, done through the question instead of the expected answer.'
+- thread fc1cc7be#849 (user, relaying review): 'partitionBatches packs to maxEvidenceBytes (36000) and the JEV stateTokenBudget is 32000, so the first sub-batch throws the judge state budget before complete.'; #850: opencode reported 4 semantic calls, grok reproduced 0 with exit 3.
+
+**Boundary.** Two independent eval projects plus a third project's status tripwire; not the paper ontology experiment itself. The gold-wins half has no instance in paper-graph: there are no gold files, and tests/experiment_corpus.rs:15 only asserts a status string — it does not protect gold or verify PDF admission. Only one model family was available, so skill findings stay single-family.
+
+**Operational check.** Fail the run when executed != corpus size; any skip exits non-zero; a zero-case run is a harness failure, not a score. Commit one run record per execution with commit, model id, extra body/config, repeat index, per-case expected vs actual, and raw output. Diff expected lines on every case edit; require a cited deciding sentence and a second reviewer. Lint questions for outcome-presupposing wording.
+
+---
+
+## L11 — Validate the evaluator before trusting any verdict
+
+**Status:** Transferred · Observed (doc-verify) · Not independent
+
+**Rule.** Before trusting a verdict, validate the evaluator itself against invariants and an independent reference that shares no code with it. Map timeouts, budget exhaustion, parse or backend failures, and unasked atoms to BLOCKED or unknown, never to PASS.
+
+**Why it holds.** Three layers, cheapest first: invariants over generated programs (certain ⊆ possible; answering another atom never grows the gap; answering every demanded atom collapses the bounds; order independence; PASS implies every error constraint has a certain goal); a naive reference for the deterministic subset; and a three-valued reference for the rest, differentially tested. In doc-verify this found a real false-PASS in count literals and a blocking bug where kernel budget exhaustion returned PASS instead of BLOCKED.
+
+**Evidence.**
+
+- thread 28b5b22b#24: 'The way to get confidence that your own evaluator has not broken the logic is to pin the semantics with an independent second implementation and test the two against each other.'
+- thread d0e2d0bd#884: 'Blocking: when the kernel runs out of its time budget, the overall verdict comes out PASS instead of BLOCKED.'
+- thread d0e2d0bd#1359: on 24 real documents, swapping the evaluator changes no verdict and no finding.
+- doc-verify/src/engine/index.ts:196-201 maps incomplete coverage to BLOCKED; diagnostics.ts:151 says a budget failure must never be treated as satisfied.
+
+**Boundary.** doc-verify semantics, not evaluators in general. 28b5b22b is the first 27 messages of d0e2d0bd, so this is one session captured twice, not two independent sources. The reference covers the deterministic subset; 24 documents do not exercise prefix demand or the refusals; the property suite is nightly (~1,006 s). Invariants catch evaluator bugs but not a wrong specification.
+
+**Operational check.** Run the invariant/property suite on generated programs and require zero refuting before citing any verdict. Differential-test against a naive reference and a three-valued derivation. Seed every failure path — tiny budget, absent key, truncated/unparseable output, unasked atom — and assert BLOCKED or NEEDS_REVIEW, never PASS.
+
+---
+
+## L12 — Derive the extraction budget chain and record per-call provenance
+
+**Status:** Observed · Transferred · Unexercised in paper-graph
+
+**Rule.** Derive every extraction call's budget from one inequality: context window ≥ prompt + output budget; max_tokens ≥ output budget; timeout ≥ output budget divided by measured tokens per second; batch limit ≥ largest record. Classify empty/truncated output by finish reason and the content/reasoning split before calling it a model error. Log per call: run id, model snapshot, input/output/cached tokens, attempt, finish reason, latency, error class. Missing usage is 'unreported', not 0.
+
+**Why it holds.** A 16,384-token structured budget exceeded the provider's 8,192 max_tokens and 60 s timeout; the reasoning model spent its output in reasoning_content, returning finish_reason length, content_len 0, 2,836 reasoning tokens, and 1,024 completion tokens on 121 prompt tokens. At the measured ~51 tokens/s, a 16K generation alone needs ~321 s, so the timeout could never be met. Server restarts produced 500s that were misread as extraction failures. The paper pipeline's embedding client coerces missing usage to 0 and its SyncReport has no run id, timestamp, attempt, or finish reason.
+
+**Evidence.**
+
+- thread f8ea8d0d#21: 'Failures all request output_budget=16384 — but your zai provider has max_tokens: 8192 and timeout: 60.0.'
+- thread c6422ed2#20: 'finish_reason: length, content_len=0, reasoning_len=2836 (but capped at 1024 tokens). The model put everything into reasoning_content and never emitted content.'; #54: at 51 t/s, 16384 tokens = 321 s > 60 s; #69: the 500s were self-inflicted llama-server restarts.
+- src/embeddings.rs:109-112 sums usage with unwrap_or(0); src/pipeline.rs:20-29 records only database, model, URL, tokens, elapsed, counts.
+- experiments/ontology-extraction/round-001-rubric.md:118-121 specifies the fuller manifest; no code emits it.
+
+**Boundary.** The concrete numbers are deployment-specific; the invariant is the budget inequality. paper-graph has no extraction call and no budget validator, so the budget rule is a pre-flight checklist, not an exercised result. The per-call manifest is rubric text.
+
+**Operational check.** Pre-flight validator: assert the four inequalities and fail the configuration before the job. Log the per-call manifest; store missing usage as unreported. On empty output, read finish_reason and content/reasoning split before retrying. After a restart, re-issue the same request id and compare outcomes.
+
+---
+
+## L13 — Distil on an explicit decision; record hard lessons, not process narrative
+
+**Status:** Decided · Observed · Prescribed
+
+**Rule.** Keep working context separate from durable memory; write durably on an explicit decision. When a topic closes or outgrows its context, replace the detailed span with a summary and a pointer to the archived detail. A durable record carries the decision, why, evidence, and the rejected alternative — not temporary test scaffolding or process narrative.
+
+**Why it holds.** Working context is cheap and reversible; durable storage is curated and hard to retract, so promotion is a deliberate act, not an inference from interestingness. The working layer behaves as an index: summaries and pointers, with detail archived once a topic closes. The design record is a decision/lesson log, not a diary.
+
+**Evidence.**
+
+- thread 5509b0c1#15 (user): 'Not that keep in mem (calling nowledge memory add) I mean you just remember.'
+- thread 5509b0c1#31 (user): 'memory works more like an index ... after a topic finish or has grown larger, we can replace that detailed part into summarization records pointing to the archived details.'
+- thread 7172fd66#50 (user): 'some are just temporary test like the flip, that's not what we need to record. the design is to record the hard lessons we learnt.'
+- experiments/ontology-extraction/decisions.md:3 uses Timestamp | Decision | Why | Evidence | Result; gates.md:3 defines 'complete: no' as not a pass.
+
+**Boundary.** 5509b0c1 is an idea-capture conversation about agent memory, not evidence about the paper system, and it was explicitly disqualified in L01; do not count it as independent corroboration. No outcome is measured. The archive-pointer and rejected-alternative columns are prescriptions: the decision log has no archive pointer and no rejected-alternative column, though row 7 embeds one in Why.
+
+**Operational check.** Require an explicit promotion decision before any durable write. On topic close, write a summary plus pointer and stop carrying the detail. Require decision + why + evidence + rejected alternative + open issues; reject temporary scaffolding and unexecuted results.
+
+---
+
+## L14 — Choose a dependency-light backend and migrate by reviewed one-off scripts
+
+**Status:** Transferred · Contested
+
+**Rule.** Choose the backend with the fewest native moving parts that is already pinned by the runtime, and prove its version and capabilities before adopting it. Execute every schema change as a reviewed one-off script against a copy — additive wherever possible, never a table rebuild that application code runs at startup — and publish only after a count oracle passes.
+
+**Why it holds.** At a few hundred works, exact scan plus an in-process full-text index is sufficient, so the decisive variable is how many native layers can drift, not search quality. A LanceDB attempt died on a numpy/libstdc++ ABI conflict and the workable prototype was SQLite FTS5/BM25. A PostgreSQL extension failed after a base-image ICU change because it was built against ICU 72's versioned symbols. An automatic table-rebuild migration was rejected in favor of a single additive ALTER with a default.
+
+**Evidence.**
+
+- thread 05a7de1d#45: 'hit a dependency issue with numpy/libstdc++.so.6. This is a known issue with PyTorch environments.' The fallback indexed 286 sections with SQLite FTS5/BM25.
+- thread d9cbb41d#62 (user): 'this is dangerous, provide the one off migration sql to me and remove that logic'; #86: 'you have drops in schema? how dare you say it's a migration.'
+- thread dcca45f9#30: pg_search failed to load after the base image moved to ICU 76 (undefined symbol uloc_canonicalize_72).
+- tests/existing_database.rs:9-21 is an #[ignore]d snapshot assertion of seven counts; it never calls rebuild or applies a migration.
+
+**Boundary.** Backend and migration clauses are transferred from other projects and untested on HawDB. paper-graph still rebuilds destructively; HawDB ALTER support is unverified; the count oracle is skipped by cargo test and asserts fixed 2026-11-17 counts, not a migration. No system in the evidence published after a rebuilding migration passed a count oracle.
+
+**Operational check.** Record engine version, compiled features, and toolchain floor before adoption. Apply migrations as a reviewed one-off script on a copy inside a transaction, additive first; forbid startup/rebuild code that drops tables or views. Gate publish on a CI-run count/content oracle, not an ignored snapshot test.
+
+---
+===== END paper-graph/knowledge-system/lessons.md =====
+
+===== BEGIN paper-graph/knowledge-system/ontology.md =====
+# Paper knowledge ontology v0
+
+**Status:** design draft, not implemented. The Rust crate builds only Work, Person, Collection, Tag, Venue, and Attachment nodes. There is no Concept or Claim node, no chunk/page/offset table, and no extraction arm. This document is a specification to cut down and test, not a description of a running graph.
+
+## Purpose
+
+Represent the user's PL/type-theory papers so that a question can be answered with a claim, an exact source span, and a direction — not just a list of topically similar PDFs. The ontology is deliberately a property graph, not RDF/OWL: provenance, retrieval, and review matter more than logical inference over class definitions.
+
+## Design principles
+
+1. **No unearned taxonomy.** There is no generic IS_A/subclass edge in v0. Algebraic effects, delimited control, free monads, and continuations are related concepts, not subclasses of one another without an explicit formal statement.
+2. **Identity is not similarity.** Encoding, generalization, dependence, and comparison are different relations.
+3. **Attribution is explicit.** A survey's description of a technique is not the survey's introduction of it.
+4. **Evidence is part of the assertion.** No bare triples.
+5. **Claims are not concepts.** A theorem, empirical result, or design claim gets a Claim node with its own evidence and qualifiers.
+6. **Keep the first version small.** Extend only when a pre-registered competency question cannot be answered.
+
+Principle 1 has a known loophole: a closed, single-valued Concept.kind enum can encode the same subsumption that a named IS_A edge would. The current draft has both a 17-relation catalogue and a closed kind enum, written before any competency question was frozen. Cut first, then test.
+
+## Node types
+
+| Type | Purpose | Identity |
+|---|---|---|
+| Work | A paper in the Zotero library | Zotero numeric itemID locally; zotero_key/DOI as durable address |
+| Attachment | Source PDF/HTML | Zotero attachment itemID |
+| Chunk | Stable parser-derived text unit | attachment id + parser version + ordinal + content hash |
+| Concept | Canonical formal notion | reviewed concept id; aliases are separate links |
+| Tool | Concrete implementation or system | reviewed tool id |
+| Claim | Atomic theorem, definition, empirical result, or design claim | claim id; run id; review state |
+| EvidenceSpan | Exact source quote and location | attachment/chunk/page/offset + quote hash |
+| Experiment | A described evaluation, not a related-work comparison | local id; review state |
+| BenchmarkSuite | Named corpus or suite | local id; review state |
+
+For the first pilot, the research report recommends only Work, Concept, Tool, Claim, EvidenceSpan, and Chunk. Experiment and BenchmarkSuite are added only when a competency question needs them. The current design has nine node types; that is a catalogue, not a pilot schema.
+
+## Concept.kind
+
+| Kind | Examples |
+|---|---|
+| technique | bidirectional typechecking, normalization by evaluation, recursion schemes |
+| formal_system | System F, MLF, a specific dependent type theory |
+| language_feature | higher-rank polymorphism, algebraic effects, delimited control, instance parameters |
+| mathematical_object | fixed point, initial algebra, free monad, continuation |
+| property | soundness, completeness, decidability, confluence, principal typing |
+| proof_method | logical relations, induction, coinduction, translation |
+| representation | elaboration representation, syntax representation, handler representation |
+| needs_review | a difficult categorization that should not invent a class |
+
+The kind is a coarse presentation field, not a subclass graph. A disputed categorization stays needs_review. The DeepSeek critique's warning stands: a single-valued closed enum can still imply subsumption. Before the pilot, make kind faceted, multi-valued, and attributed (who assigned it, on what evidence), or drop it from scoring.
+
+## Relations
+
+| Relation | Domain -> range | Required evidence and exclusion |
+|---|---|---|
+| INTRODUCES | Work -> Concept or Tool | Explicit own-contribution/definition/novelty evidence; not "X introduced" in related work; not a priority claim |
+| USES | Work -> Concept or Tool | The work's method/proof/implementation actually uses it; not a passing mention |
+| MENTIONS | Work -> Concept | Explicit occurrence without enough evidence for USES; low-information, never promoted automatically |
+| EXTENDS_WORK | Work -> Work | Explicit statement that the citing work builds on/extends the cited work |
+| EXTENDS_CONCEPT | Work -> Concept | Explicit own extension of a named formalism/technique |
+| GENERALIZES | Concept -> Concept | Explicit formal generalization, direction general -> special; not transitive in the query layer unless separately proven |
+| DEPENDS_ON | Concept -> Concept | Explicit prerequisite/dependency, not co-occurrence |
+| RELATED_TO | Concept <-> Concept | Weak curated association; symmetric display hint only, non-transitive, never a subclass |
+| ASSERTS | Work -> Claim | The work itself advances the claim; background claims carry attribution |
+| ABOUT | Claim -> Concept/Tool/Experiment | Claim subject linkage; evidence is still mandatory |
+| HAS_EVIDENCE | Claim/Assertion -> EvidenceSpan | stance = supports / refutes / qualifies; exact quote and locator |
+| REPORTS | Work -> Experiment | The paper reports the evaluation |
+| EVALUATES | Experiment -> Concept/Tool | Object of the reported evaluation |
+| ON_SUITE | Experiment -> BenchmarkSuite | Explicit suite identification; unnamed suite remains provisional |
+| IMPLEMENTS | Tool -> Concept | Explicit implementation evidence |
+| CITES | Work -> Work | Bibliographic citation plus context; citation_function is separate and may be unknown |
+| ALIAS_OF | Surface form -> Concept | Reversible alias decision, not an assertion that two concepts are equal |
+
+Seventeen relations is too many for an unrun pilot. Start with the five that the first competency questions need: MENTIONS, USES, INTRODUCES, ASSERTS, HAS_EVIDENCE. Add EXTENDS/CITES/GENERALIZES only when a question cannot be answered without them.
+
+## Required negative distinctions
+
+| Text situation | Correct output | Incorrect output |
+|---|---|---|
+| "Unlike bidirectional typechecking, our algorithm uses unification." | MENTIONS bidirectional typechecking; USES unification if it is the method | USES bidirectional typechecking |
+| "Dunfield and Krishnaswami introduce X." in another paper | CITES with context; attribution to the original work if linked | Current survey INTRODUCES X |
+| "We introduce a bidirectional algorithm for S." | Current Work INTRODUCES the named algorithm, not every concept in the sentence | Current Work INTRODUCES bidirectional typing as a whole |
+| "Effects can be expressed using delimited continuations." | Explicit encoding/DEPENDS_ON only if defined in the manual; otherwise RELATED_TO plus claim | Delimited control GENERALIZES algebraic effects |
+| "Following Reynolds [12], we ..." | CITES; possibly USES with exact context | EXTENDS_WORK automatically |
+| "We extend MLF ..." | EXTENDS_CONCEPT MLF; CITES if a specific work is cited | RELATED_TO, or extension of an unrelated cited paper |
+| Theorem conclusion quoted without a positivity/termination premise | needs_revision, incomplete evidence | Approved unconditional claim |
+| "X is not decidable" / "If R holds, X is complete" | Negative/conditional claim with qualifier | Positive unconditional claim |
+| "Free monads" and "freer monads" | Separate concepts unless the text explicitly establishes identity/generalization | Merge because names are similar |
+| "effect" as ordinary side effect vs "algebraic effect" | Separate surface meanings; provisional if ambiguous | Merge by token overlap |
+
+## Evidence model
+
+A Claim is atomic: one independently evaluable proposition, with its necessary condition kept attached. It carries:
+
+- normalized statement, claim type, polarity, qualifiers, attribution;
+- review state (unreviewed / needs_revision / approved / rejected);
+- run id and schema/prompt version.
+
+An EvidenceSpan carries:
+
+- attachment_item_id, chunk_id, page, quote, start_char, end_char;
+- stance (supports / refutes / qualifies);
+- quote-validation state and locator-validation state.
+
+Claims and evidence are many-to-many. Evidence is the only leaf; claims may reference notes and earlier claims, so the document is a directed acyclic graph flattened in reverse dependency order. One sentence copied into two overlapping chunks is one support, not two. A fabricated locator is a hard failure, not a low score.
+
+Until a parser and a chunk/page/offset table exist, evidence can only be quote-checked against Zotero metadata or abstracts. Locators must be marked unavailable, not assumed.
+
+## Identity and resolution
+
+- Work identity: Zotero itemID locally; zotero_key and DOI as the durable address. No content-hash identity. A merge/restore that renumbers itemIDs must not orphan claims.
+- Concept identity: reviewed canonical id; aliases are reversible ALIAS_OF links with their own evidence. A merge is a reviewed union decision, not a destructive node rewrite; all source mentions and evidence links survive.
+- Ambiguous references stay unresolved (ExternalWork with a null cited_work_item_id), never a nearest-title guess.
+- Candidate-generation recall is reported separately from adjudication precision. Pairwise merge precision is gated at .98; one false merge is reported as a cluster-level incident with its downstream edge count.
+- Free monads vs freer monads, graded vs coeffects, and ordinary effects vs algebraic effects are the canonical negative cases.
+
+## What this ontology is not
+
+- It is not a generic scholarly ontology. The domain vocabulary is PL/type theory.
+- It is not a large OWL ontology. There is no reasoner and no class hierarchy.
+- It is not a GraphRAG clone. Community summaries are deferred; the first deliverable is a browsable list of approved claims with exact PDF quotes.
+- It is not implemented. No Concept or Claim node exists in src/; the 17 relations are markdown.
+
+## Open issues before the pilot
+
+1. Freeze the 20 competency questions and cut the vocabulary to what they need.
+2. Decide whether Concept.kind is faceted/multi-valued/attributed or removed from scoring.
+3. Rename or qualify INTRODUCES so it cannot be read as "first".
+4. Implement EvidenceSpan with page/offset validation against parsed text.
+5. Add a re-import test that changes itemIDs and asserts claim/evidence survival.
+6. Resolve the parser and chunking policy on the four development PDFs before annotating.
+===== END paper-graph/knowledge-system/ontology.md =====
+
+===== BEGIN paper-graph/knowledge-system/PRAXIS.md =====
+# Praxis Schema — Episode, Lesson, and Check Namespace
+
+**Status:** Specified · Observed (baseline `paper-graph` at `f1e46d9`, 2026-11-19). Normalized records in [`lessons.jsonl`](lessons.jsonl) are `Observed` against `round-2-rescan.json` and on-disk repository files; raw conversation thread transcripts are not stored on disk, so thread quotes are audited against the mining snapshot in [`_runs/2026-11-19/praxis-validation.md`](../_runs/2026-11-19/praxis-validation.md). No check binary executes yet (`check_praxis_schema` is planned).
+
+## 1. Namespace Boundary and Ownership
+
+This document owns two rows in [`docs/owner-map.md`](docs/owner-map.md):
+- **Workbook / praxis schema** — `Episode`, `Lesson`, and `Check` entities and their relations, enforced by `check_praxis_schema`.
+- **Durable distillation** — procedural mechanics for promoting working context into durable praxis records (`judgment (human)`).
+
+Layer separation, precedence, status tags, and reviewer independence are governed upward by [`CONSTITUTION.md`](CONSTITUTION.md) (Invariants 1 and 7) and [`method.md`](method.md) (§Governance) and are linked rather than restated here.
+
+**Separate namespace (`praxis:` vs `paper:`).** The praxis graph records *how the engineering and evaluation system is built, broken, and guarded*; the paper graph ([`ontology.md`](ontology.md)) records *what scholarly works assert about PL and type theory*.
+1. `Episode`, `Lesson`, and `Check` live exclusively in the `praxis` namespace (`knowledge-system/lessons.jsonl` and check manifests). They never share tables, node labels, or the rebuild target with bibliographic metadata (`src/store.rs:108-109`) or extracted paper claims.
+2. Cross-namespace links are unidirectional governance edges (`APPLIES_TO`, `ENFORCED_BY`): a `Lesson` or `Check` may target a paper-graph stage, schema subject, or code path, while no `Work`, `Concept`, or `Claim` in the paper graph depends on a `Lesson` for scholarly truth.
+3. Optional graph projection (planned in W9 `T9.8`) projects reviewed praxis records into a read-only `praxis` label space without mutating canonical Zotero data or paper-claim tables.
+
+---
+
+## 2. Core Entities and Typed Fields
+
+Every praxis entity uses stable, never-reused identifiers and closed status vocabularies from [`method.md`](method.md#status-vocabulary) (`Observed`, `Decided`, `Specified`, `Transferred`, `Contested`, `Untested`). Missing required fields or empty status arrays are schema defects.
+
+### 2.1 `Episode` — provenance unit
+
+An `Episode` is one bounded historical occurrence (a recorded conversation session, an audited commit/incident, or a dated experiment run) from which lessons are distilled; see [`GLOSSARY.md`](GLOSSARY.md). Currently catalogued episodes are the 18 thread records (17 independent sessions; `28b5b22b` is the 27-message prefix of `d0e2d0bd`) in [`threads.json`](threads.json) plus repository/experiment snapshots.
+
+| Field | Type | Constraints |
+|---|---|---|
+| `id` | `string` | `ep:<8-hex-thread-prefix>` (e.g., `ep:71ffc1b7`), `ep:repo:<commit>`, or `ep:run:<date>:<slug>`. Stable; never reused. |
+| `kind` | `"thread" \| "incident" \| "audit" \| "experiment_run"` | Closed discriminator of the occurrence source. |
+| `source_ref` | `string` | Full UUID in `threads.json`, commit SHA, or `paper-graph`-relative artifact path. |
+| `date` | `string` | ISO-8601 date (`YYYY-MM-DD`) recorded in the source manifest. |
+| `independent_of` | `string \| null` | `null` when independent; canonical `Episode.id` when a session was captured twice (e.g., `ep:28b5b22b` aliases prefix of `ep:d0e2d0bd`). |
+| `role` | `string` | Role tag from `threads.json` (e.g., `core-lineage`, `migration-safety`, `eval-integrity`). |
+| `summary` | `string` | Concise summary replacing raw transcript detail, paired with `source_ref` as archive pointer. |
+| `raw_on_disk` | `boolean` | `true` only if the raw transcript/artifact bytes resolve inside the checked-out repository; `false` for external thread captures. |
+
+### 2.2 `Lesson` — normalized rule (`lessons.jsonl`)
+
+A `Lesson` is one reusable operational or architectural rule distilled from one or more `Episode`s and reconciled against repository evidence ([`_templates/lesson.md`](_templates/lesson.md)). [`lessons.jsonl`](lessons.jsonl) stores one JSON object per line with the exact 13-field contract below:
+
+| Field | JSON Type | Constraints |
+|---|---|---|
+| `id` | `string` | `^L[0-9]{2}$` for the 14 baseline lessons (`L01`–`L14`) or `^P[0-9]{2,}$` for subsequent praxis lessons. Unique, immutable. |
+| `title` | `string` | Single-line imperative or declarative headline; no `"we should"` hedging. |
+| `rule` | `string` | Actionable normative rule statement; no silent defaults. |
+| `mechanism` | `string` | Causal explanation naming concrete code paths, symbols, measurements, or failure mechanics. |
+| `scope` | `string` | Exact boundary of components, stages, or artifacts governed by `rule`. |
+| `boundary` | `string` | What remains unproven, conditional, unexecuted, or out of scope, plus residual failure modes; carries `QUALIFIES`/ `CONTRADICTS` context where applicable. |
+| `status` | `string[]` | Non-empty array (`len >= 1`) drawn from `["Observed", "Decided", "Specified", "Transferred", "Contested", "Untested"]`. |
+| `derived_from` | `string[]` | Non-empty array (`len >= 1`) of `Episode` identifiers (e.g., `"ep:71ffc1b7"`) encoding `DERIVED_FROM`. Duplicate session captures must be disclosed in `boundary`. |
+| `evidence` | `EvidenceItem[]` | Non-empty array (`len >= 1`) encoding `EVIDENCED_BY`; **every lesson must include at least one `kind: "thread_quote"` item** with a verbatim quote. |
+| `applies_to` | `AppliesTo` | Structured target object encoding `APPLIES_TO` (owner-map subjects, lifecycle stages, and `paper-graph`-relative paths). |
+| `enforcement` | `Enforcement` | Structured operational check pointer encoding `ENFORCED_BY` (`check_id` or `judgment (role)`, check type, operational specification, and implementation state). |
+| `rejected_alternative` | `string` | Concrete option considered and rejected, with the failure reason. Never empty. |
+| `supersedes` | `string[]` | Array of prior lesson or Round-2 draft IDs (e.g., `["R2:P03"]`) encoding `SUPERSEDES`; `[]` when none. |
+
+#### Nested types inside `Lesson`
+
+- **`EvidenceItem`**:
+  - `kind`: `"thread_quote" | "code_fact" | "doc_fact"`
+  - `locator`: `"thread <8-hex>#<msg_index>"` for `thread_quote`; `"<repo-or-crate-path>:<line[-end]>"` for `code_fact` and `doc_fact`.
+  - `role`: `"user" | "assistant" | null` (required non-null for `thread_quote`; `null` for file facts).
+  - `quote`: `string | null` — exact verbatim substring for `thread_quote` (or exact file excerpt when quoted); `null` only when `fact` records a structural observation.
+  - `fact`: `string | null` — concise verified observation for `code_fact`/`doc_fact`, or context note.
+  - `verification`: `"verified_on_disk" | "verified_in_r2_snapshot_raw_thread_off_disk" | "unverifiable_raw_thread_off_disk" | "verified_external_audit_off_worktree"` — explicit provenance state recorded by `T2.3`.
+- **`AppliesTo`**:
+  - `subjects`: `string[]` (`len >= 1`) — exact subject names from [`docs/owner-map.md`](docs/owner-map.md).
+  - `stages`: `string[]` (`len >= 1`) — subset of `["admit", "parse", "chunk", "extract", "validate", "review", "project", "retrieve", "distil", "sync", "migrate", "evaluate"]`.
+  - `paths`: `string[]` — `paper-graph`-relative code, test, or doc paths touched by the rule.
+- **`Enforcement`**:
+  - `check_id`: `string` — registered `check_*` identifier from [`docs/owner-map.md`](docs/owner-map.md) (or `"judgment (human)"` where human-gated).
+  - `secondary_checks`: `string[]` — additional `check_*` or `judgment (human)` gates participating in enforcement.
+  - `kind`: `"lint" | "fixture" | "preflight" | "gate" | "review"` (matching [`_templates/check.md`](_templates/check.md)).
+  - `status`: `"planned" | "implemented" | "human_gate"`.
+  - `spec`: `string` — concrete pass/fail predicate and seeded-defect target; `"review carefully"` is invalid.
+
+### 2.3 `Check` — structural enforcement unit
+
+A `Check` is an executable test, lint, preflight validator, or explicit human rubric gate registered in [`docs/owner-map.md`](docs/owner-map.md) and shaped by [`_templates/check.md`](_templates/check.md) (schema note in [`ADR 0004`](ADR/0004-atomic-claim-evidence-with-quote-and-locator.md)).
+
+| Field | Type | Constraints |
+|---|---|---|
+| `check_id` | `string` | `^check_[a-z0-9_]+$` or `^judgment \([a-z_]+\)$`. Registered in `docs/owner-map.md`. |
+| `lessons` | `string[]` | Non-empty list of `Lesson.id` values enforced by this check. |
+| `type` | `"lint" \| "fixture" \| "preflight" \| "gate" \| "review"` | Execution class (`review` requires a written rubric and human role). |
+| `owning_subject` | `string` | Exact Subject row in `docs/owner-map.md`. |
+| `path` | `string` | `paper-graph`-relative implementation or rubric path (`planned:<target>` until W4 lands). |
+| `command` | `string` | Non-interactive CLI command (e.g., `cargo test -p paper-graph --test ...`) or rubric invocation. |
+| `pass_condition` | `string` | Deterministic predicate over exit code and structured output. |
+| `seeded_defect` | `string` | Deliberate mutation/fixture that must turn the check red, with expected failure output. |
+| `owner` | `string` | Accountable workstream or human role from `docs/owner-map.md`. |
+
+---
+
+## 3. The Seven Praxis Relations
+
+Praxis edges are typed, directional, and closed to the seven relations below. No generic `RELATED_TO` or `IS_A` edge exists in `praxis`.
+
+| Relation | Domain -> Range | Cardinality | JSONL / Manifest Carrier | Required Warrant and Semantics |
+|---|---|---|---|---|
+| `DERIVED_FROM` | `Lesson -> Episode` | `1..*` per `Lesson` | `Lesson.derived_from[]` | Names every historical episode from which the lesson was distilled. Prefix/continuation captures (`ep:28b5b22b` / `ep:d0e2d0bd`) count as one independent session. |
+| `EVIDENCED_BY` | `Lesson \| Episode -> EvidenceItem` | `1..*` per `Lesson` (`>=1` `thread_quote`) | `Lesson.evidence[]` | Binds the rule to verbatim quotes (`thread <id>#<msg>`) and verified `path:line` code/doc observations, each carrying an explicit `verification` state. |
+| `APPLIES_TO` | `Lesson \| Check -> Subject \| Stage \| Path` | `1..*` | `Lesson.applies_to`, `Check.owning_subject` | Scopes where the lesson or check governs across `docs/owner-map.md` subjects, pipeline lifecycle stages, and repository paths. |
+| `ENFORCED_BY` | `Lesson -> Check` | `1..*` per `Lesson` | `Lesson.enforcement`, `Check.lessons[]` | Links a normative lesson to the structural `check_*` or `judgment (human)` gate that turns red on violation. |
+| `QUALIFIES` | `Lesson \| EvidenceItem -> Lesson` | `0..*` | `Lesson.boundary` + inline `qualifies` refs | Records scope narrowing, unmet preconditions, or environmental bounds (e.g., `L03` and `L14` qualify `L01`'s disposability claim so only metadata — never derived claims — may be wiped). |
+| `CONTRADICTS` | `EvidenceItem \| Lesson -> Lesson \| DocClaim` | `0..*` | `Lesson.boundary` + `status: ["Contested"]` | Preserves live counterarguments or artifact disagreements without smoothing them away (e.g., `deepseek-ontology-critique.md:36` vs `L05` closed `kind` enum; `llm-document-graph-research.md:23,643` vs `L09` panel headline). Marks affected claims `Contested`. |
+| `SUPERSEDES` | `Lesson -> DraftLesson \| Lesson` | `0..*` | `Lesson.supersedes[]` | Records lineage when a refined or regraded lesson replaces an earlier formulation (e.g., `L01`–`L14` superseding Round-2 `R2:P01`–`R2:P14` after Round-3 audit corrections in `rescan.md`). Retired records stay in history and drop from active enforcement. |
+
+---
+
+## 4. Distillation Mechanics and Validation Rules
+
+Per [`CONSTITUTION.md`](CONSTITUTION.md) Invariant 1 and [`GUIDELINES.md`](GUIDELINES.md) GP-08, working context becomes a `praxis` entity only on an explicit promotion trigger (an adjudicated failure, a closed mining round, or a recorded human design decision):
+
+1. **Archive pointer over transcript copy.** `Episode.summary` and `Lesson.mechanism` state the compressed causal finding and point to `source_ref` / `locator`; temporary debugging spikes and process narrative are excluded (`L13`).
+2. **Verbatim quote check (`T2.3`).** `check_praxis_schema` parses `lessons.jsonl`, asserts all 13 required keys, non-empty `status` and `derived_from`, `>=1` `thread_quote` per record, valid `docs/owner-map.md` `check_id` references, and cross-checks every quote and file line against on-disk sources. Where raw thread transcripts are absent from the repository checkout, quotes that match `round-2-rescan.json` are marked `verified_in_r2_snapshot_raw_thread_off_disk`, and quotes appearing only in `lessons.md` prose without raw message logs on disk are marked `unverifiable_raw_thread_off_disk` — never silently deleted or fabricated.
+
+---
+
+## 5. Worked Example — `L03` Across `Episode`, `Lesson`, and `Check`
+
+### 5.1 `Episode` records (referenced)
+
+```json
+{"id":"ep:71ffc1b7","kind":"thread","source_ref":"71ffc1b7-6183-43a3-b95e-7f103170e669","date":"2026-11-17","independent_of":null,"role":"core-lineage","summary":"Designed Zotero-to-HawDB sync, discovered store::rebuild wipes all graph nodes via MATCH (n) DETACH DELETE n, and chose manual sync plus a separate derived DB for round 1.","raw_on_disk":false}
+{"id":"ep:d9cbb41d","kind":"thread","source_ref":"d9cbb41d-773e-4917-a187-1d83c30991eb","date":"2026-05-05","independent_of":null,"role":"migration-safety","summary":"User rejected automatic startup table-rebuild migration containing DROP statements in favor of a reviewed one-off additive ALTER TABLE script.","raw_on_disk":false}
+```
+
+### 5.2 `Lesson` record (line 3 of `lessons.jsonl`)
+
+```json
+{"id":"L03","title":"Make sync manual, and never let a metadata rebuild delete derived knowledge","rule":"Run metadata synchronization only on an explicit manual trigger, isolate extracted claims and human review state outside the destructive rebuild target (or scope deletion strictly to owned metadata labels), forbid DROP TABLE or DROP VIEW in startup paths, and gate every rebuild or schema change with a count oracle.","mechanism":"src/store.rs:108-109 and src/pipeline.rs (sync_library) execute DELETE FROM works WHERE item_id IS NOT NULL followed by MATCH (n) DETACH DELETE n in one transaction with no partial or upsert path, wiping any non-metadata node stored alongside works; in a sibling SQLite store (ep:d9cbb41d), automatic table-rebuild migrations with DROP statements risked silent object loss and were replaced by a reviewed additive ALTER statement.","scope":"All CLI and HTTP sync entry points (src/pipeline.rs, src/store.rs, src/ui.rs) and any schema initialization or migration routine touching metadata or derived stores.","boundary":"Isolation via a separate derived HawDB is a recorded requirement (experiments/ontology-extraction/decisions.md:5), not yet implemented. The additive ALTER remedy is transferred from SQLite/bub_sf; HawDB ALTER TABLE support is unverified, store::initialize (src/store.rs:50-58) only creates works when absent, INSERT_WORK (src/store.rs:26-31) hardcodes 13 columns, and no schema version table exists. Qualifies L01 so 'disposable' applies only to metadata.","status":["Decided","Observed","Specified","Transferred"],"derived_from":["ep:71ffc1b7","ep:d9cbb41d"],"evidence":[{"kind":"thread_quote","locator":"thread 71ffc1b7#45","role":"user","quote":"we can make it just one-off synchronization for a proactive cause only, or some menu triggers only","fact":null,"verification":"verified_in_r2_snapshot_raw_thread_off_disk"},{"kind":"thread_quote","locator":"thread d9cbb41d#62","role":"user","quote":"this is dangerous, provide the one off migration sql to me and remove that logic","fact":null,"verification":"verified_in_r2_snapshot_raw_thread_off_disk"},{"kind":"thread_quote","locator":"thread d9cbb41d#86","role":"user","quote":"you have drops in schema? how dare you say it's a migration","fact":null,"verification":"verified_in_r2_snapshot_raw_thread_off_disk"},{"kind":"thread_quote","locator":"thread 71ffc1b7#175","role":"assistant","quote":"`store.rebuild()` currently runs `MATCH (n) DETACH DELETE n`, so a normal metadata sync would erase any extracted domain graph.","fact":null,"verification":"verified_in_r2_snapshot_raw_thread_off_disk"},{"kind":"code_fact","locator":"src/store.rs:108-109","role":null,"quote":"transaction.query_sql(\"DELETE FROM works WHERE item_id IS NOT NULL\")?;\n    transaction.query(\"MATCH (n) DETACH DELETE n\")?;","fact":"Every sync wipes all SQL work rows and detaches/deletes every graph node in one transaction.","verification":"verified_on_disk"},{"kind":"doc_fact","locator":"experiments/ontology-extraction/decisions.md:5","role":null,"quote":"Domain extraction cannot be erased by a metadata sync","fact":"Records the separate-derived-HawDB decision as an unexecuted round-1 requirement.","verification":"verified_on_disk"}],"applies_to":{"subjects":["Rebuild safety and manual metadata sync","Operations, backend selection, and additive schema migration"],"stages":["sync","migrate"],"paths":["src/store.rs","src/pipeline.rs","src/ui.rs","experiments/ontology-extraction/decisions.md"]},"enforcement":{"check_id":"check_sync_count_guard","secondary_checks":["check_migration_oracle"],"kind":"fixture","status":"planned","spec":"Populate a derived store with non-metadata nodes/claims, invoke metadata sync, and assert derived row/edge counts remain unchanged while failing closed if non-metadata labels exist in the sync target; reject DROP TABLE/VIEW in startup/migration lint."},"rejected_alternative":"Upsert-in-place or automatic startup table-rebuild inside the single metadata database — rejected because unguarded rebuild transactions wipe co-located non-metadata nodes and startup DROP statements risk silent schema/data loss without a count oracle.","supersedes":["R2:P03"]}
+```
+
+### 5.3 `Check` record (planned target for W4)
+
+```json
+{"check_id":"check_sync_count_guard","lessons":["L03","L01"],"type":"fixture","owning_subject":"Rebuild safety and manual metadata sync","path":"planned:tests/check_sync_count_guard.rs","command":"cargo test -p paper-graph --test check_sync_count_guard","pass_condition":"exit 0; non-metadata target triggers fail-closed error and separate derived DB preserves 3/3 claim and evidence counts across sync_library","seeded_defect":"disable pre-sync non-metadata label count guard in store::rebuild; test must fail with 'derived rows changed: 3 -> 0'","owner":"W3.5"}
+```
+
+### 5.4 Relation trace on `L03`
+
+- `L03 --[DERIVED_FROM]--> ep:71ffc1b7`, `ep:d9cbb41d`
+- `L03 --[EVIDENCED_BY]--> thread 71ffc1b7#45`, `thread d9cbb41d#62`, `thread d9cbb41d#86`, `thread 71ffc1b7#175`, `src/store.rs:108-109`, `experiments/ontology-extraction/decisions.md:5`
+- `L03 --[APPLIES_TO]--> "Rebuild safety and manual metadata sync"`, `"Operations, backend selection, and additive schema migration"`
+- `L03 --[ENFORCED_BY]--> check_sync_count_guard` (secondary: `check_migration_oracle`)
+- `L03 --[QUALIFIES]--> L01` (scopes disposability strictly to bibliographic metadata, never derived extraction or review state)
+- `L03 --[SUPERSEDES]--> R2:P03` (splits data-wipe sync from SQLite schema-migration evidence after Round-3 audit)
+===== END paper-graph/knowledge-system/PRAXIS.md =====
+
+===== BEGIN paper-graph/knowledge-system/docs/owner-map.md =====
+# Owner Map — Paper Knowledge System
+
+**Status:** Specified · Unexecuted (baseline `paper-graph` at `f1e46d9`, 2026-11-19). No `check_*` binary or `paper-graph/docs/*` file exists yet; structural checks land in W4 after W3 project docs merge.
+
+**Rules:**
+- Exactly one owning document and one owner per subject.
+- Every row names one `check_*` ID or `judgment (human)`; no empty check cells.
+- Every row links to the [`CONSTITUTION.md`](../CONSTITUTION.md) invariant it serves. `docs/*` paths resolve from `paper-graph/`; bare spine/praxis filenames resolve from `paper-graph/knowledge-system/`.
+
+## Subject Ownership
+
+| Subject | Owning document | Owner (W id or human role) | Check id (`check_*`) or `judgment (role)` | Status |
+|---|---|---|---|---|
+| Layer ownership — canonical, rebuildable, and derived separation ([Invariant 1](../CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate)) | `docs/ARCHITECTURE.md` | `W3.1` | `check_sync_count_guard` | planned |
+| Workbook / praxis schema — Episode, Lesson, Check entities ([Invariant 1](../CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate)) | `PRAXIS.md` | `W2.1` | `judgment (human)` | planned (W2) |
+| Durable distillation — working context to durable memory ([Invariant 1](../CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate)) | `PRAXIS.md` | `human (curator)` | `judgment (human)` | specified (unexecuted) |
+| Durable work identity — `zotero_key` / DOI vs local `itemID` ([Invariant 2](../CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds)) | `docs/DATA_MODEL.md` | `W3.2` | `check_corpus_identity` | planned (durability untested) |
+| Evidence and provenance — atomic claims, verbatim quotes, locators, and visible `unknown` ([Invariant 2](../CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds), [Invariant 5](../CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible)) | `docs/DATA_MODEL.md` | `W3.2` | `check_evidence_locator` | planned (no parser/chunk table yet) |
+| Rebuild safety and manual metadata sync ([Invariant 3](../CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle)) | `docs/OPERATIONS.md` | `W3.5` | `check_sync_count_guard` | planned |
+| Operations, backend selection, and additive schema migration ([Invariant 3](../CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle)) | `docs/OPERATIONS.md` | `W3.5` | `check_migration_oracle` | planned (untested on HawDB) |
+| Source admission — local bytes, `%PDF-` signature, SHA-256, and metadata ceiling ([Invariant 4](../CONSTITUTION.md#4-sources-enter-only-by-verified-bytes-and-signature)) | `docs/PIPELINE.md` | `W3.3` | `check_corpus_admission` | planned (manual 15/15 only) |
+| Ontology scope and competency-question budget ([Invariant 5](../CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible)) | [`ontology.md`](../ontology.md) | `W7.1` | `check_question_lint` | specified (contested; unexecuted) |
+| Relation strength, attribution, and conservative concept resolution ([Invariant 5](../CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible)) | [`ontology.md`](../ontology.md) | `human (annotator)` | `judgment (human)` | specified (unexecuted; markdown only) |
+| Evaluation protocol — frozen axis, single resolver, and metric panel ([Invariant 6](../CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded)) | `docs/EVALUATION.md` | `W3.4` | `check_eval_manifest` | planned (unexecuted; axis/headline contested) |
+| Evaluation integrity and evaluator validation — `executed == corpus_size` and failure-to-`BLOCKED` ([Invariant 6](../CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded)) | `docs/EVALUATION.md` | `W3.4` | `check_eval_manifest` | planned (transferred; unexecuted) |
+| Extraction budget — call-budget inequalities and `unreported` per-call provenance ([Invariant 6](../CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded)) | `docs/OPERATIONS.md` | `W3.5` | `check_budget_preflight` | planned (nmem blocker T0.7) |
+| Experiment round hypotheses and gate ledger ([Invariant 6](../CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded)) | `docs/EXPERIMENTS.md` | `W3.6` | `check_eval_manifest` | planned (all parse/gold/verdict gates `no`) |
+| Gold authority and expected-answer immutability ([Invariant 7](../CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim)) | `docs/REVIEW.md` | `human (annotator)` | `check_gold_diff` | planned (no gold files exist) |
+| Review verdicts and hosted spend ([Invariant 7](../CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim)) | `docs/REVIEW.md` | `human (adjudicator)` | `judgment (human)` | specified (unexecuted) |
+| Reviewer independence — no self-review and a different model family ([Invariant 7](../CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim); [procedure](../method.md#reviewer-independence)) | [`method.md`](../method.md) | `human (adjudicator)` | `judgment (human)` | specified (unexecuted) |
+| Model routing — provider, model, family, and route provenance ([Invariant 6](../CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded), [Invariant 7](../CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim)) | [`models.md`](../models.md) | `human (operator)` | `judgment (human)` | specified (unexecuted) |
+| Paper claim and feature roadmap ([Invariant 7](../CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim)) | `docs/ROADMAP.md` | `human (author)` | `judgment (human)` | planned (pre-verdict claim restricted to architecture/protocol/ops) |
+
+---
+
+## Conflict Dispositions
+
+The 14 former multi-document conflicts now resolve to the single Subject Ownership rows named below. Non-owner documents are evidence, history, or navigation mentions only: they link to the named owning document rather than carry a second normative statement.
+
+| Former entry | Owning subject row(s) | Non-owner mentions (links only) |
+|---|---|---|
+| 1. Layer ownership and destructive sync guard | **Layer ownership** → `docs/ARCHITECTURE.md`; **Rebuild safety and manual metadata sync** → `docs/OPERATIONS.md` | [`CONSTITUTION.md`](../CONSTITUTION.md) Invariants 1 and 3, [`STATUS.md`](../STATUS.md), [`lessons.md`](../lessons.md), [`engineering.md`](../engineering.md), [`README.md`](../README.md), [`experiments/ontology-extraction/decisions.md`](../../experiments/ontology-extraction/decisions.md) |
+| 2. Durable work identity | **Durable work identity** → `docs/DATA_MODEL.md` | [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 2, [`lessons.md`](../lessons.md), [`ontology.md`](../ontology.md), [`engineering.md`](../engineering.md), [`open-questions.md`](../open-questions.md), [`README.md`](../README.md) |
+| 3. Rebuild safety, manual sync, and schema migration | **Rebuild safety and manual metadata sync** and **Operations, backend selection, and additive schema migration** → `docs/OPERATIONS.md` | [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 3, [`lessons.md`](../lessons.md), [`engineering.md`](../engineering.md), [`README.md`](../README.md), [`experiments/ontology-extraction/round-001-plan.md`](../../experiments/ontology-extraction/round-001-plan.md) |
+| 4. Source admission | **Source admission** → `docs/PIPELINE.md` | [`STATUS.md`](../STATUS.md), [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 4, [`lessons.md`](../lessons.md), [`engineering.md`](../engineering.md), [`experiments/ontology-extraction/gates.md`](../../experiments/ontology-extraction/gates.md), [`experiments/ontology-extraction/grounding.md`](../../experiments/ontology-extraction/grounding.md) |
+| 5. Evidence coordinates, atomic claims, and unknown propagation | **Evidence and provenance** → `docs/DATA_MODEL.md` | [`STATUS.md`](../STATUS.md), [`CONSTITUTION.md`](../CONSTITUTION.md) Invariants 2 and 5, [`lessons.md`](../lessons.md), [`ontology.md`](../ontology.md), [`experiments/ontology-extraction/round-001-rubric.md`](../../experiments/ontology-extraction/round-001-rubric.md), [`analysis/llm-document-graph-research.md`](../../analysis/llm-document-graph-research.md) |
+| 6. Ontology scope and taxonomy risk | **Ontology scope and competency-question budget** → [`ontology.md`](../ontology.md) | [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 5, [`lessons.md`](../lessons.md), [`analysis/llm-document-graph-research.md`](../../analysis/llm-document-graph-research.md), [`analysis/deepseek-ontology-critique.md`](../../analysis/deepseek-ontology-critique.md); substantive scope conflict remains below |
+| 7. Relation strength and concept resolution | **Relation strength, attribution, and conservative concept resolution** → [`ontology.md`](../ontology.md) | [`lessons.md`](../lessons.md), [`methodology.md`](../methodology.md), [`experiments/ontology-extraction/round-001-plan.md`](../../experiments/ontology-extraction/round-001-plan.md), [`experiments/ontology-extraction/round-001-rubric.md`](../../experiments/ontology-extraction/round-001-rubric.md); resolver conflict is assigned to evaluation below |
+| 8. Evaluation protocol, frozen axis, and headline metric | **Evaluation protocol** → `docs/EVALUATION.md`; **Experiment round hypotheses and gate ledger** → `docs/EXPERIMENTS.md` | [`STATUS.md`](../STATUS.md), [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 6, [`lessons.md`](../lessons.md), [`methodology.md`](../methodology.md), [`experiments/ontology-extraction/round-001-plan.md`](../../experiments/ontology-extraction/round-001-plan.md), [`experiments/ontology-extraction/round-001-rubric.md`](../../experiments/ontology-extraction/round-001-rubric.md), [`analysis/llm-document-graph-research.md`](../../analysis/llm-document-graph-research.md); substantive conflict remains below |
+| 9. Evaluation integrity, gold authority, and evaluator validation | **Evaluation integrity and evaluator validation** → `docs/EVALUATION.md`; **Gold authority and expected-answer immutability** → `docs/REVIEW.md` | [`CONSTITUTION.md`](../CONSTITUTION.md) Invariants 6 and 7, [`lessons.md`](../lessons.md), [`methodology.md`](../methodology.md), [`experiments/ontology-extraction/round-001-rubric.md`](../../experiments/ontology-extraction/round-001-rubric.md) |
+| 10. Reviewer independence and model routing | **Reviewer independence** → [`method.md`](../method.md); **Model routing** → [`models.md`](../models.md); **Review verdicts and hosted spend** → `docs/REVIEW.md` | [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 7, [`GUIDELINES.md`](../GUIDELINES.md), [`worklog/2026-11-19/todo.md`](../../../worklog/2026-11-19/todo.md), [`worklog/2026-11-19/todo-model-worktree.md`](../../../worklog/2026-11-19/todo-model-worktree.md), [`ADR 0006`](../ADR/0006-model-routing-by-task-with-family-based-independence.md) |
+| 11. Extraction budget and per-call provenance | **Extraction budget** → `docs/OPERATIONS.md` | [`STATUS.md`](../STATUS.md), [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 6, [`lessons.md`](../lessons.md), [`engineering.md`](../engineering.md), [`models.md`](../models.md), [`experiments/ontology-extraction/round-001-rubric.md`](../../experiments/ontology-extraction/round-001-rubric.md) |
+| 12. Gate ledger and completion status | **Experiment round hypotheses and gate ledger** → `docs/EXPERIMENTS.md` | [`STATUS.md`](../STATUS.md) (observed status), [`experiments/ontology-extraction/gates.md`](../../experiments/ontology-extraction/gates.md) (experiment record), [`README.md`](../README.md), [`methodology.md`](../methodology.md) |
+| 13. Workbook / praxis schema and durable distillation | **Workbook / praxis schema** and **Durable distillation** → `PRAXIS.md` | [`STATUS.md`](../STATUS.md), [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 1, [`lessons.md`](../lessons.md), [`extraction-plan.md`](../extraction-plan.md), [`experiments/ontology-extraction/decisions.md`](../../experiments/ontology-extraction/decisions.md) |
+| 14. Paper claim owner and scope boundaries | **Paper claim and feature roadmap** → `docs/ROADMAP.md`, with `human (author)` authorization | [`STATUS.md`](../STATUS.md) (historical note), [`CONSTITUTION.md`](../CONSTITUTION.md) Invariant 7, [`README.md`](../README.md), [`methodology.md`](../methodology.md), [`open-questions.md`](../open-questions.md) |
+
+## Unresolved Content Conflicts
+
+Ownership is resolved for every row above. Only these substantive conflicts remain open; each names the human role that must decide before the affected freeze or promotion:
+
+1. **Ontology scope and relation vocabulary** — the 17-relation draft and five-relation pilot target still disagree. Owning row: **Ontology scope and competency-question budget** in [`ontology.md`](../ontology.md). **Must decide:** `human (ontology owner)` before the W7.1 vocabulary freeze.
+2. **Evaluation axis, resolver, and headline metric** — the confounded `U2`/`S2`/`P2` resolver rules and strict-F1-versus-panel statements still disagree. Owning row: **Evaluation protocol** in `docs/EVALUATION.md`. **Must decide:** `human (evaluation owner)` before the evaluation manifest freezes.
+===== END paper-graph/knowledge-system/docs/owner-map.md =====
+
+===== BEGIN paper-graph/docs/rule-check-matrix.md =====
+# Rule-to-Check Matrix
+
+**Scope:** W4 checks for the fourteen lessons in [lessons.md](../knowledge-system/lessons.md). Paths are relative to `paper-graph/`. **Judgment (human)** means no deterministic check currently proves the lesson; it is not a silent waiver.
+
+| Lesson | Rule covered | Check type | Owner | Check or explicit judgment | Path |
+|---|---|---|---|---|---|
+| L01 | Canonical, rebuildable, and distilled layers stay separate | gate | `W3.5` operations | `check_sync_count_guard` blocks sync when non-metadata state exists | [test](../tests/check_sync_count_guard.rs); [OPERATIONS.md](OPERATIONS.md) |
+| L02 | Local item IDs have durable keys and evidence coordinates | fixture | `W3.2` data model | `check_corpus_identity`; `check_evidence_locator` | [identity](../tests/check_corpus_identity.rs); [locator](../tests/check_evidence_locator.rs); [DATA_MODEL.md](DATA_MODEL.md) |
+| L03 | Manual metadata sync never deletes derived knowledge | gate | `W3.5` operations | `check_sync_count_guard`; `check_migration_oracle` | [sync](../tests/check_sync_count_guard.rs); [migration](../tests/check_migration_oracle.rs); [OPERATIONS.md](OPERATIONS.md) |
+| L04 | Sources enter by verified bytes and signature | fixture | `W3.3` pipeline | `check_corpus_admission` checks stat, `%PDF-`, and SHA-256 | [test](../tests/check_corpus_admission.rs); [PIPELINE.md](PIPELINE.md) |
+| L05 | Ontology starts from competency questions, not a catalogue | lint + review | `W7.1` ontology owner | `check_question_lint`; the contested vocabulary cut still requires `human (ontology owner)` | [test](../tests/check_question_lint.rs); [ontology.md](../knowledge-system/ontology.md) |
+| L06 | Relation strength, attribution, and identity resolution stay conservative | review | `human (annotator)` | **Judgment (human):** semantic role and definition-level merge adjudication; no current deterministic check | [ontology.md](../knowledge-system/ontology.md); [REVIEW.md](REVIEW.md) |
+| L07 | Claims are atomic, evidenced, and keep unknown visible | fixture | `W3.2` data model | `check_evidence_locator` requires exact quotes and resolvable Unicode character ranges | [test](../tests/check_evidence_locator.rs); [DATA_MODEL.md](DATA_MODEL.md) |
+| L08 | Evaluation freezes questions, inputs, and one axis before scoring | lint + gate | `W3.4` evaluation | `check_question_lint`; `check_eval_manifest` | [questions](../tests/check_question_lint.rs); [manifest](../tests/check_eval_manifest.rs); [EVALUATION.md](EVALUATION.md) |
+| L09 | Metric panel and any strict-F1 exception are pre-registered | review | `human (evaluation owner)` | **Judgment (human):** choose the panel/headline and resolve the open axis conflict; no check may make that contested choice | [EVALUATION.md](EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric) |
+| L10 | Evals prove execution, record raw runs, and leave gold intact | gate + lint | `W3.4` evaluation; `human (annotator)` gold | `check_eval_manifest`; `check_gold_diff`; `check_question_lint` | [runner](../tests/check_eval_manifest.rs); [gold](../tests/check_gold_diff.rs); [questions](../tests/check_question_lint.rs) |
+| L11 | Evaluator failures never become PASS; independent semantics are reviewed | gate + review | `W3.4` evaluation; `human (evaluator owner)` | `check_eval_manifest` rejects failed/skipped accounting; differential/reference correctness remains explicit human review until the W7 scorer exists | [test](../tests/check_eval_manifest.rs); [EVALUATION.md](EVALUATION.md#evaluation-integrity-and-scorer-validation) |
+| L12 | Budgets derive from measured limits and calls retain provenance | preflight | `W3.5` operations | `check_budget_preflight` enforces context/output, timeout, batch, and `attempts <= 3` | [test](../tests/check_budget_preflight.rs); [OPERATIONS.md](OPERATIONS.md) |
+| L13 | Durable distillation requires an explicit promotion decision | review | `human (curator)` | **Judgment (human):** decide whether a record is durable knowledge rather than process narrative | [lessons.md](../knowledge-system/lessons.md) |
+| L14 | Backend/schema changes use reviewed additive migrations on copies | lint + fixture | `W3.5` operations | `check_migration_oracle` rejects startup DROP TABLE/VIEW and compares counts on a real copy | [test](../tests/check_migration_oracle.rs); [OPERATIONS.md](OPERATIONS.md) |
+
+Judgment-only lessons are **L06, L09, and L13**. L11 has an executable failure-accounting gate, but its independent-reference review is deliberately not claimed as automated coverage. Every `check_*.rs` file named above contains passing fixtures plus seeded-defect tests; `scripts/verify.sh` runs all ten W4 checks (nine test targets, because the sync target contains checks 1 and 2).
+===== END paper-graph/docs/rule-check-matrix.md =====
+
+===== BEGIN paper-graph/docs/ARCHITECTURE.md =====
+# Architecture — Paper Knowledge System
+
+**Status:** Decided · Observed · Specified (baseline `paper-graph` at `f1e46d9`, 2026-11-19; status vocabulary in [method.md](../knowledge-system/method.md#status-vocabulary)).
+**Owns:** Layer ownership (`Canonical` vs `Derived`), trust boundaries, runtime vs target component topology, and the paper/praxis pipeline split ([owner-map.md](../knowledge-system/docs/owner-map.md)).
+**Governed by:** [CONSTITUTION.md Invariant 1](../knowledge-system/CONSTITUTION.md#1-canonical-rebuildable-and-distilled-layers-stay-separate) and [ADR 0003](../knowledge-system/ADR/0003-separate-derived-store-for-extraction-and-review.md).
+**Check pointer:** `check_metadata_sync_guard` (`Specified`, planned in W4); durable promotion uses `judgment (human)` (`knowledge-system/PRAXIS.md`).
+
+## Storage Layers and Ownership
+
+**Canonical** state is the authoritative source from which downstream indexes can be reconstructed; **Derived** state is computed from canonical inputs and remains disposable only within its declared rebuild boundary ([GLOSSARY.md](../knowledge-system/GLOSSARY.md)).
+
+1. **Canonical bibliographic store (`Observed`):** The user's local Zotero SQLite database (`~/Zotero/zotero.sqlite`) and attachment directory (`~/Zotero/storage`). [`src/zotero.rs`](../src/zotero.rs) opens Zotero with `SQLITE_OPEN_READ_ONLY` and copies a consistent snapshot into a temporary directory via `rusqlite::backup::Backup` (`read_library`, lines 148–173). `paper-graph` never mutates Zotero.
+2. **Rebuildable metadata index (`Observed`):** An embedded HawDB 0.34 database at `data/library.hawdb` ([`src/cli.rs`](../src/cli.rs) lines 194–208) storing the SQL `works` table, BM25 index `works_search`, 1024-dimensional `bge-m3` vectors, and six bibliographic graph labels ([DATA_MODEL.md](DATA_MODEL.md)). This store is disposable by design: `store::rebuild` deletes all `works` rows and executes `MATCH (n) DETACH DELETE n` in one transaction ([`src/store.rs`](../src/store.rs) lines 107–109).
+3. **Derived extraction and review store (`Decided · Specified`, unbuilt):** A separate derived HawDB store ([ADR 0003](../knowledge-system/ADR/0003-separate-derived-store-for-extraction-and-review.md)) isolating parsed page/chunk coordinates, extracted concepts/claims/evidence spans, human review verdicts, and per-run provenance outside the metadata wipe target. Today `data/` contains only `library.hawdb` ([engineering.md](../knowledge-system/engineering.md)). Cross-store queries join through durable identifiers owned by [DATA_MODEL.md](DATA_MODEL.md); fail-closed sync guards, single-writer recovery, and additive migrations belong to `docs/OPERATIONS.md`.
+4. **Distilled layer (`Specified`):** Promoted reading notes and reusable engineering lessons carrying pointers back to verified evidence rather than automatic copies of working context; owned by `knowledge-system/PRAXIS.md`.
+
+## Trust Boundaries and Current Runtime (`Observed`)
+
+At `f1e46d9`, [`src/lib.rs`](../src/lib.rs) exposes six modules: `cli`, `zotero`, `embeddings`, `store`, `pipeline`, and `ui`.
+
+- **Process and database boundary:** `ui::serve` binds an `axum` HTTP server to loopback (`127.0.0.1:8765` default, [`src/cli.rs`](../src/cli.rs) lines 99–103) and serializes embedded HawDB access through a single `Mutex<hawdb::Database>` handle ([`src/ui.rs`](../src/ui.rs) lines 33–55), respecting HawDB's single-writer lease. To avoid blocking queries on network I/O, `prepare_sync` snapshots Zotero and computes embeddings before locking `db` for `rebuild` ([`src/pipeline.rs`](../src/pipeline.rs) lines 54–78; [`src/ui.rs`](../src/ui.rs) lines 229–240). Search requests append audit entries to `search-history.jsonl` alongside the database ([`src/ui.rs`](../src/ui.rs) lines 249–282).
+- **Model and network boundary:** [`src/embeddings.rs`](../src/embeddings.rs) (lines 7–10) posts metadata batches to an OpenAI-compatible `llama.cpp` `/v1/embeddings` endpoint (`https://llama.gw.emliunix.cc/v1` default; LAN `http://192.168.50.18:8080/v1` keeps metadata on the local network). Target extraction, OCR fallback, privacy-lane routing, and cross-family review routes follow [models.md](../knowledge-system/models.md) and [method.md](../knowledge-system/method.md#reviewer-independence). Nowledge Mem is a separate external application, not a runtime or pipeline dependency.
+
+## Current vs Target: The Two Pipelines
+
+| Pipeline | Current state (`Observed`) | Target topology (`Specified`) |
+|---|---|---|
+| **Paper pipeline** | Manual metadata/abstract sync only: `zotero::read_library -> EmbeddingClient::embed -> store::rebuild`, plus BM25/vector/RRF search over `library.hawdb`. No PDF parser, chunker, or derived claim store exists. | Metadata sync continues to refresh `library.hawdb`, while admitted PDFs traverse the staged document chain ([PIPELINE.md](PIPELINE.md)) into the separate derived store, scored under `docs/EVALUATION.md` and adjudicated under `docs/REVIEW.md` before approved assertions project into the query graph. |
+| **Praxis pipeline** | 18 mined threads and 14 prose/JSON audit records in [`knowledge-system/threads.json`](../knowledge-system/threads.json), [`round-2-rescan.json`](../knowledge-system/round-2-rescan.json), and [lessons.md](../knowledge-system/lessons.md). | Normalized `Episode -> Lesson -> Check` entities in `knowledge-system/PRAXIS.md` (`lessons.jsonl`), kept in a distinct namespace from scholarly `Claim` nodes and wired into executable `check_*` enforcement. |
+===== END paper-graph/docs/ARCHITECTURE.md =====
+
+===== BEGIN paper-graph/docs/DATA_MODEL.md =====
+# Data Model — Paper Knowledge System
+
+**Status:** Decided · Observed · Specified (baseline `paper-graph` at `f1e46d9`, 2026-11-19; status vocabulary in [method.md](../knowledge-system/method.md#status-vocabulary)).
+**Owns:** Physical SQL/Cypher schemas, durable `Work` identity, `Assertion` / `Claim` / `Evidence` / `EvidenceSpan` structures, review state values, and visible `unknown` representation ([owner-map.md](../knowledge-system/docs/owner-map.md)).
+**Governed by:** [CONSTITUTION.md Invariant 2](../knowledge-system/CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds), [Invariant 5](../knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible), and [ADR 0004](../knowledge-system/ADR/0004-atomic-claim-evidence-with-quote-and-locator.md).
+**Check pointers:** `check_corpus_identity` (`Specified`, planned in W4; re-import durability `Untested`) and `check_evidence_locator` (`Specified`, planned in W4).
+
+## Current Metadata Schema — Generated from Code (`Observed`)
+
+Derived directly from [`src/store.rs`](../src/store.rs) and [`src/zotero.rs`](../src/zotero.rs) in `library.hawdb` ([ARCHITECTURE.md](ARCHITECTURE.md)):
+
+- **SQL table `works`** (`src/store.rs:10-24, 50-58`):
+  `item_id BIGINT PRIMARY KEY`, `zotero_key TEXT NOT NULL`, `item_type TEXT NOT NULL`, `title TEXT NOT NULL`, `date TEXT`, `year BIGINT` (first `19xx`/`20xx` parsed in `src/zotero.rs:133-145`), `venue TEXT`, `abstract TEXT`, `authors TEXT` (`"; "`-joined), `collections TEXT` (`" | "`-joined), `tags TEXT` (`" | "`-joined), `search_text TEXT` (newline-joined title, authors, venue, abstract, tags; `src/zotero.rs:99-112`), and `embedding VECTOR(1024)`.
+- **Indexes and retrieval queries:** BM25 index `works_search ON works (search_text)` queried via `text_search('works_search', $1, top_k => $2)` (`src/store.rs:33-38, 56`); exact cosine scan `cosine_distance(embedding, $1)` (`src/store.rs:356-363`); hybrid reciprocal-rank fusion `weight / (60.0 + rank)` (`src/store.rs:369-406`).
+- **Cypher nodes** (`src/store.rs:114-186, 256-272`): `:Work {id, zoteroKey, title, year}`, `:Person {id, name}`, `:Collection {id, name}`, `:Tag {id, name}`, `:Venue {name}`, `:Attachment {id, zoteroKey, path, contentType}`.
+- **Cypher edges** (`src/store.rs:231-289`): `(:Person)-[:AUTHORED {authorOrder}]->(:Work)`, `(:Work)-[:IN_COLLECTION]->(:Collection)`, `(:Work)-[:TAGGED]->(:Tag)`, `(:Work)-[:PUBLISHED_IN]->(:Venue)`, `(:Work)-[:HAS_ATTACHMENT]->(:Attachment)`.
+
+No `Concept`, `Claim`, `Chunk`, or `EvidenceSpan` table or label exists in `src/` today.
+
+## Durable Identity vs Local Join Keys (`Observed · Decided · Specified`)
+
+- **Observed gap:** `src/zotero.rs:180-236` reads Zotero `itemID`, `key`, `title`, `date`, `publicationTitle`, and `abstractNote` (DOI is not imported yet). `src/store.rs` keys SQL rows (`item_id`) and Cypher matches (`w.id`) on numeric `itemID`; `zotero_key` (`zoteroKey`) is stored passively without a join index.
+- **Specified contract (`check_corpus_identity`):** A **Work** is durably identified by `(zotero_key, doi)`—never by title or content hash ([GLOSSARY.md](../knowledge-system/GLOSSARY.md)). Numeric `itemID` remains a local join key to a single Zotero snapshot only. Derived extraction tables bind to `zotero_key` (plus `doi` when present) and maintain an explicit `item_id <-> zotero_key` mapping so Zotero merges or restores cannot orphan claims. Unresolved citations remain `ExternalWork` records with `cited_work_item_id = null` rather than nearest-title guesses ([ontology.md](../knowledge-system/ontology.md)).
+
+## Target Derived Schema: Claims, Evidence, Review States, and `Unknown` (`Specified`)
+
+Domain concept kinds and relation predicates (`MENTIONS`, `USES`, `INTRODUCES`, etc.) belong to [ontology.md](../knowledge-system/ontology.md). The separate derived store ([ADR 0004](../knowledge-system/ADR/0004-atomic-claim-evidence-with-quote-and-locator.md)) specifies:
+
+- **`Chunk`:** `chunk_id` derived from `(attachment_id, parser_version, ordinal, content_hash)`, plus `page_range`, `section_path`, `raw_text`, `start_char`, and `end_char` ([PIPELINE.md](PIPELINE.md)).
+- **`Assertion` and `Claim`:** An **Assertion** is a candidate statement pending evidence and review; a **Claim** binds one atomic proposition (keeping necessary premises attached) with `claim_id`, `work_zotero_key`, `normalized_statement`, `claim_type`, `polarity`, `qualifiers`, `attribution`, `run_id`, `schema_version`, and `review_state`.
+- **`Evidence` and `EvidenceSpan` (`check_evidence_locator`):** **Evidence** is a supporting or challenging source observation; **EvidenceSpan** is its leaf record persisting `attachment_item_id`, attachment `zotero_key`/`sha256`, `chunk_id`, `page`, verbatim `quote`, `start_char`, `end_char`, `quote_hash`, `stance` (`supports` | `refutes` | `qualifies`), `quote_validation_state`, and `locator_validation_state`. `HAS_EVIDENCE` links claims and spans many-to-many in a DAG with spans at the leaves; identical text across overlapping chunks deduplicates to one support.
+- **Review states** (adjudication rules in `docs/REVIEW.md`): `unreviewed` (initial state for all model outputs), `needs_revision`, `approved`, and `rejected`.
+- **Visible `unknown`:** Ambiguous or absent values (such as `citation_function`, unavailable pre-parser locators, or unreported API token usage currently coerced to `0` at [`src/embeddings.rs`](../src/embeddings.rs) lines 109–112) persist explicit `unknown` / `unreported` markers and keep dependent claims `unreviewed` rather than coercing defaults.
+===== END paper-graph/docs/DATA_MODEL.md =====
+
+===== BEGIN paper-graph/docs/PIPELINE.md =====
+# Pipeline — Paper Knowledge System
+
+**Status:** Observed · Specified (baseline `paper-graph` at `f1e46d9`, 2026-11-19; status vocabulary in [method.md](../knowledge-system/method.md#status-vocabulary)).
+**Owns:** Source admission (`Ingestion` vs `Admission`), the typed document stage chain, structural-vs-semantic validation boundaries, stage failure states, and provenance fields ([owner-map.md](../knowledge-system/docs/owner-map.md)).
+**Governed by:** [CONSTITUTION.md Invariant 4](../knowledge-system/CONSTITUTION.md#4-sources-enter-only-by-verified-bytes-and-signature), [Invariant 5](../knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible), and [Invariant 6](../knowledge-system/CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded).
+**Check pointers:** `check_corpus_admission` and `check_evidence_locator` (`Specified`, planned in W4).
+
+## Current Metadata Ingestion (`Observed`)
+
+**Ingestion** imports metadata or bytes without granting active-corpus standing; **Admission** accepts a source only after executable byte, signature, and digest checks ([GLOSSARY.md](../knowledge-system/GLOSSARY.md)).
+
+Today, [`src/pipeline.rs`](../src/pipeline.rs) implements metadata ingestion only: `prepare_sync` snapshots Zotero via [`src/zotero.rs`](../src/zotero.rs), embeds `Work::search_text()` batches via [`src/embeddings.rs`](../src/embeddings.rs) (3 attempts with exponential backoff), and `sync_library` calls `store::rebuild` ([ARCHITECTURE.md](ARCHITECTURE.md)). No PDF parser, chunker, or executable admission check exists in `src/`. `zotero::read_library` (`src/zotero.rs:325-350`) imports `itemAttachments` rows without checking local files: four initial Round-1 candidates (`60`, `47`, `5`, `8`) had dangling attachment rows ([decisions.md](../experiments/ontology-extraction/decisions.md)), and [`tests/experiment_corpus.rs`](../tests/experiment_corpus.rs) line 15 checks only the static string `"pdf_verified_gold_pending"`. In the observed 2026-11-17 sync (`324` works, `161` attachments; [engineering.md](../knowledge-system/engineering.md)), only `117/324` works carried abstracts and `235` lacked years, bounding what metadata-only search can retrieve.
+
+## Typed Stage Chain: `admit -> parse -> chunk -> validate -> index` (`Specified`)
+
+Each stage emits a schema-typed artifact gated before the next stage executes. **Types constrain structure; semantic checks are separate**: type and schema validators guarantee well-formed records and coordinates, whereas semantic validators independently check reading order, quote fidelity, and domain meaning so structurally valid defects remain visible.
+
+1. **`admit` -> `admission.json` (`check_corpus_admission`):** Resolves each candidate's Zotero attachment path, `stat`s byte length, checks a literal five-byte `%PDF-` header, and computes `sha256`.
+   - *Typed output:* `AdmissionRecord { item_id, zotero_key, attachment_id, path, bytes, signature_ok, sha256, status }`.
+   - *Structural boundary:* Required fields present; `bytes > 0`, `signature_ok == true`, and 64-hex `sha256` on admitted items; missing or non-PDF files emit a typed `AdmissionFailure` record rather than being skipped.
+   - *Separate semantic check:* Attachment matches the target `Work` (not supplemental/wrong PDF), and corpus metadata completeness is recorded alongside retrieval scope.
+2. **`parse` -> `pages.jsonl`:** Runs a native PDF text parser first, reserving `glm-ocr` for pages where native extraction fails after PL notation verification ([models.md](../knowledge-system/models.md)).
+   - *Typed output:* `PageRecord { paper_id, attachment_id, page, text, order_metadata, parser_version, empty_page, replacement_char_count, status }`.
+   - *Structural boundary:* Contiguous 1-based `page` numbers, pinned `parser_version`, and explicit `empty_page` / failure records preserved in-stream rather than cleaned away.
+   - *Separate semantic check:* Two-column reading order, mathematical notation survival, and bibliography boundary accuracy.
+3. **`chunk` -> `chunks.jsonl`:** Normalizes page text into deterministic units consumed by indexing and extraction ([DATA_MODEL.md](DATA_MODEL.md)).
+   - *Typed output:* `ChunkRecord { chunk_id, attachment_id, parser_version, chunker_version, page_range, section_path, ordinal, content_hash, raw_text, start_char, end_char }`.
+   - *Structural boundary:* `0 <= start_char < end_char`, deterministic `chunk_id` and `content_hash`, valid `page_range`, non-empty `raw_text`.
+   - *Separate semantic check:* Theorem premises stay attached to conclusions; overlapping windows are tracked so shared sentences deduplicate during evidence counting.
+4. **`validate` -> `validation-report.json` (`check_evidence_locator`):** Runs boundary validators and pre-registered corpus quality checks across `admission.json`, `pages.jsonl`, and `chunks.jsonl`.
+   - *Typed output:* `ValidationReport { run_id, structural_pass_rate, locator_resolution_rate, quote_recovery_rate, domain_samples, failures[] }`.
+   - *Structural boundary:* 100% schema conformance, hash integrity, and exact `pages.jsonl` slice equality for every `(page_range, start_char, end_char)`.
+   - *Separate semantic check:* Sampled verbatim quote recovery per PL domain and locator usability against pre-registered gates (`docs/EVALUATION.md`), reported separately from structural pass rates.
+5. **`index` -> Derived HawDB index:** Inserts validated `ChunkRecord` rows, BM25 entries, and `1024`-d `bge-m3` embeddings into the derived store ([ARCHITECTURE.md](ARCHITECTURE.md)).
+   - *Typed output:* `IndexManifest { run_id, snapshot_id, indexed_chunks, embedding_model, token_usage }`.
+   - *Structural boundary:* Finite `f32[1024]` vectors and exact post-commit count parity with validated chunks.
+   - *Separate semantic check:* Non-regression retrieval probes ([EXPERIMENTS.md](EXPERIMENTS.md)).
+
+## Downstream Extraction Handoff and Provenance (`Specified`)
+
+Indexed chunks feed `extract -> validate -> review -> project`: frozen-arm LLM extraction ([ontology.md](../knowledge-system/ontology.md), `docs/EVALUATION.md`) emits `unreviewed` claims/spans -> deterministic quote/locator/ontology checks -> human adjudication (`docs/REVIEW.md`) -> transactional projection of `approved` assertions keyed by `run_id`.
+
+Unlike `SyncReport` ([`src/pipeline.rs`](../src/pipeline.rs) lines 21–29), every stage and model call must record `run_id`, `commit`, input/prompt/schema hashes, `parser_version`, `chunker_version`, `executed/skipped/failed` counts, `finish_reason`, content vs reasoning lengths, latency, and token usage with absent usage stored as `"unreported"` rather than `0` (budget preflight inequalities owned by `docs/OPERATIONS.md`).
+===== END paper-graph/docs/PIPELINE.md =====
+
+===== BEGIN paper-graph/docs/EVALUATION.md =====
+# Evaluation — Paper Knowledge System
+
+**Status:** Specified · Contested · Transferred · Unexecuted (baseline `paper-graph` at `f1e46d9`, 2026-11-19).
+**Owns:** Evaluation protocol and evaluation integrity ([owner-map.md](../knowledge-system/docs/owner-map.md) rows 24–25; [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 6; [ADR 0005](../knowledge-system/ADR/0005-evaluation-first-with-one-preregistered-axis.md)).
+**Checks:** `check_eval_manifest` (planned, W4); `check_question_lint` (planned, W4).
+
+Higher invariants live in [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) and status tags in [method.md](../knowledge-system/method.md#governance). Round-specific hypotheses and the active gate ledger belong to [EXPERIMENTS.md](EXPERIMENTS.md); call budgets belong to [OPERATIONS.md](OPERATIONS.md); gold authority and review verdicts belong to [REVIEW.md](REVIEW.md); historical design discussion lives in [methodology.md](../knowledge-system/methodology.md).
+
+## Current State: Observed vs Specified
+
+- **Observed:** Zero extraction or downstream QA evaluations have run ([gates.md](../experiments/ontology-extraction/gates.md) lines 16–26). `tests/experiment_corpus.rs` (lines 6–68) verifies only the static corpus layout (4 development, 11 held-out test across four PL domains in [round-001-corpus.json](../experiments/ontology-extraction/round-001-corpus.json)) and the literal string `"pdf_verified_gold_pending"`. Four exploratory hybrid search queries ran manually as non-regression baselines ([gates.md](../experiments/ontology-extraction/gates.md) lines 28–39).
+- **Specified (unexecuted):** Pre-registered manifests, pilot arms `U2`/`S2`/`P2`, structural-versus-semantic scorer split, 19-category seeded-defect suite, and metric panel ([round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md), [round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md)).
+- **Transferred (unexecuted here):** Three-layer evaluator differential validation from `doc-verify` ([methodology.md](../knowledge-system/methodology.md) lines 95–106; [lessons.md](../knowledge-system/lessons.md) `L10`, `L11`).
+
+## Pilot Arms and Frozen Protocol
+
+Per [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 6, every evaluation freezes an immutable manifest (`manifest.json`) before opening predictions: corpus and chunk hashes, competency questions, prompt and schema hashes, single extraction model route ([models.md](../knowledge-system/models.md)), decoding parameters, call-budget preflight proof ([OPERATIONS.md](OPERATIONS.md)), and scorer version.
+
+The specified pilot compares three unreviewed extraction arms on identical parsed chunks and call budgets ([round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md) lines 23–35):
+
+- **`U2`** — unconstrained free-form concept categories and relation labels inside the shared outer JSON envelope.
+- **`S2`** — generic scholarly concept kinds and predicates (`MENTIONS`, `USES`, own-contribution, extension, generalization, dependency) with no PL vocabulary.
+- **`P2`** — `S2` extended with the versioned PL concept dictionary, definitions, domain/range rules ([ontology.md](../knowledge-system/ontology.md)), negative examples, and curated aliases.
+
+All model outputs remain `unreviewed`; a separate `P2-reviewed` condition evaluates the human-in-the-loop workflow and is never compared against unreviewed arms to claim raw model superiority ([round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md) lines 31–34). Development (4 papers) permits at most one logged prompt revision and one logged chunk revision before the 11 held-out papers are opened once ([round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md) lines 56–60, 78–81).
+
+## Structural vs Semantic Check Split
+
+Evaluation separates shape verification from meaning verification and reports them on distinct tracks ([round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) lines 8–22, 77–99):
+
+1. **Structural checks (deterministic, pre-unblinding):** JSON outer-envelope parse rate on first pass and after bounded retry, schema field completeness, allowed ontology predicate and endpoint kind conformance ([ontology.md](../knowledge-system/ontology.md)), exact verbatim substring presence in the cited raw chunk/page, attachment/chunk/page/offset locator resolution ([DATA_MODEL.md](DATA_MODEL.md)), and overlapping-span deduplication. Passing structural checks proves well-formedness and coordinate resolution only, never factual support.
+2. **Semantic checks (blinded gold and human rubric):** Canonical concept linking and pairwise/B-cubed clustering, graded role accuracy (`MENTIONS` vs `USES` vs non-priority `INTRODUCES`), relation direction confusion matrices, atomic claim correctness (`0`/`1`/`2`) with premise and qualifier preservation, whole-evidence-set sufficiency (`0`/`1`/`2`, where canonical acceptance requires `2`), downstream compositional QA answer/citation scores, and abstention on the four unanswerable questions ([round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) lines 23–114; human authority in [REVIEW.md](REVIEW.md)).
+
+## OPEN HUMAN DECISION: Axis, Resolver, and Headline Metric
+
+**Status:** Contested — **OPEN HUMAN DECISION** ([owner-map.md](../knowledge-system/docs/owner-map.md) line 62; [methodology.md](../knowledge-system/methodology.md) lines 38–48, 62; [lessons.md](../knowledge-system/lessons.md) `L08`, `L09`). **Decider:** `human (evaluation owner)` before the evaluation manifest freezes. Agents must not choose among these options:
+
+1. **Manipulated axis and resolver:** [round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md) (lines 18–30) declares ontology constraint the sole axis while assigning three different merge rules (`U2` exact normalized-name merge, `S2` generic known-alias rules, `P2` curated PL aliases). The human owner must decide whether to share one resolver across `U2`/`S2`/`P2` where only the alias table varies, or redefine the axis as *vocabulary plus curated aliases* and add an arm isolating resolution.
+2. **Headline criterion:** [round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) (lines 3–6, 55–57) specifies a co-headline metric panel (canonical concept F1, per-relation macro-F1, high-risk violation rate, coverage, evidence validity, downstream QA, and review burden) with strict evidenced relation F1 as diagnostic, whereas [llm-document-graph-research.md](../analysis/llm-document-graph-research.md) (lines 23, 643) retains strict evidenced relation F1 as the primary headline. The human owner must ratify the panel or state explicit single-F1 exception rules before scoring.
+
+## Evaluation Integrity and Scorer Validation
+
+`check_eval_manifest` and `check_question_lint` enforce harness and oracle integrity ([CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 6; [GUIDELINES.md](../knowledge-system/GUIDELINES.md) `GP-02`):
+
+- **Execution accounting:** Every run records `executed`, `skipped`, and `failed` counts verified against an independent case count; `executed != corpus_size` or any skipped case exits non-zero.
+- **Failure mapping:** Scorer crashes, timeouts, truncated generations, budget exhaustion, and unasked atoms map to `BLOCKED` (or `INVALID` for harness faults), never `PASS` or empty-graph agreement. Reserve `NEEDS_REVIEW` solely for complete executions requiring human semantic interpretation.
+- **Evaluator validation:** Before test scoring, the deterministic scorer must pass differential checks against a naive reference implementation, invariant property tests, and the 19-category seeded-defect suite ([round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) lines 149, 156–178). Competency questions and schemas must pass `check_question_lint` prior to gold freeze.
+===== END paper-graph/docs/EVALUATION.md =====
+
+===== BEGIN paper-graph/docs/OPERATIONS.md =====
+# Operations — Paper Knowledge System
+
+**Status:** Decided · Observed · Specified · Transferred (baseline `paper-graph` at `f1e46d9`, 2026-11-19).
+**Owns:** Rebuild safety and manual metadata sync; operations, backend selection, and additive schema migration; extraction call budgets and per-call provenance ([owner-map.md](../knowledge-system/docs/owner-map.md) rows 19–20, 26; [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariants 3 and 6; [ADR 0003](../knowledge-system/ADR/0003-separate-derived-store-for-extraction-and-review.md)).
+**Checks:** `check_sync_count_guard` (planned, W4); `check_migration_oracle` (planned, W4); `check_budget_preflight` (planned, W4).
+
+Layer topology lives in [ARCHITECTURE.md](ARCHITECTURE.md), pipeline stage schemas in [PIPELINE.md](PIPELINE.md), and live model endpoints in [models.md](../knowledge-system/models.md). Empirical background appears in [engineering.md](../knowledge-system/engineering.md) and [lessons.md](../knowledge-system/lessons.md) (`L03`, `L12`, `L14`).
+
+## Current State: Observed vs Specified
+
+- **Observed:** Manual synchronization runs through `paper-graph sync` (`src/cli.rs`:28, 109–120) and `POST /api/sync` (`src/ui.rs`:86), invoking `sync_library` (`src/pipeline.rs`:80–110). `zotero::read_library` snapshots `~/Zotero/zotero.sqlite` via `rusqlite::backup::Backup` before reading (`src/zotero.rs`:4). `store::rebuild` (`src/store.rs`:61–112) runs `DELETE FROM works` and `MATCH (n) DETACH DELETE n` in one HawDB 0.34 transaction; passing `--limit` overwrites the target database with that subset (`src/pipeline.rs`:64–66; [README.md](../README.md) lines 78–80). A full sync measured 35.238 s and 26,466 `bge-m3` tokens across 324 works on 2026-11-17 ([README.md](../README.md) lines 82–84). `EmbeddingClient` (`src/embeddings.rs`:25, 109–142) hardcodes a 120 s timeout, runs an unlogged `0..3` retry loop (max 2 retries with 0.5 s / 1.0 s backoff), and coerces absent `/usage/total_tokens` to `0`. `tests/existing_database.rs`:9–21 is `#[ignore]`d.
+- **Specified (unexecuted):** Separate derived HawDB store for extraction and review, pre-sync non-metadata count guard (`check_sync_count_guard`), active migration count oracle (`check_migration_oracle`), `p95`-sized timeouts, budget preflight (`check_budget_preflight`), typed failure records, and `"unreported"` usage provenance.
+- **Transferred (untested on HawDB):** Additive `ALTER TABLE` one-off migration discipline and ABI-pinned single-engine deployment ([engineering.md](../knowledge-system/engineering.md) lines 101–108; `L03`, `L14`).
+
+## Manual Sync, Single-Writer Lease, and Backup
+
+There is no file watcher or background sync daemon. Operators trigger metadata rebuilds explicitly after confirming the target database path (`PAPER_GRAPH_DB` or `--db`, default `paper-graph/data/library.hawdb`). Under `check_sync_count_guard`, `sync` queries non-metadata tables and graph labels before opening a rebuild transaction and fails closed when any derived extraction, claim, or review state exists ([CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 3).
+
+HawDB enforces a single-writer lease. `ui::serve` (`src/ui.rs`:34, 71–78) holds one `Mutex<hawdb::Database>` handle across HTTP requests after `prepare_sync` finishes embedding outside the lock (`src/pipeline.rs`:50–78). Operators must not open the same database directory from a concurrent CLI command while `paper-graph ui` runs. Before any sync or schema operation on a populated derived store, copy the database directory on disk and record the Zotero source digest; recovery restores that directory snapshot rather than running inverse Cypher deletes.
+
+## Backend Selection and Additive Schema Migration
+
+The crate standardizes on embedded `hawdb` 0.34 (rustc >= 1.97.1) to keep SQL, Cypher, BM25, and exact 1024-d cosine scan inside one process without external server ABIs ([engineering.md](../knowledge-system/engineering.md) lines 6–14, 101–106; [GUIDELINES.md](../knowledge-system/GUIDELINES.md) `GP-06`). `store::initialize` (`src/store.rs`:50–58) queries `information_schema.tables` rather than `CREATE TABLE IF NOT EXISTS`.
+
+Startup code never executes `DROP TABLE`, `DROP VIEW`, or automatic table-rebuild migrations. Every schema change requires an explicit schema-version bump and a reviewed, additive one-off script executed against a database copy, gated by a non-ignored `check_migration_oracle` test verifying pre- and post-migration work, claim, evidence, and review counts before swapping the database path.
+
+## Timeouts Sized from p95, Bounded Retries, and Typed Failures
+
+Model and embedding calls are nondeterministic distributions and must pass `check_budget_preflight` before execution ([engineering.md](../knowledge-system/engineering.md) lines 79–99; `worklog/2026-11-19/todo.md` lines 193–195, 549):
+
+1. **Call-budget inequalities and `p95` timeouts:** Pre-flight checks enforce `context_window >= p95_prompt_tokens + output_budget`, `max_tokens >= output_budget`, and `batch_limit >= largest_input_record`. Request timeouts are never arbitrary constants; they are sized from measured `p95` latency on the frozen T0.6 benchmark (`timeout >= max(measured_p95_latency, output_budget / measured_tokens_per_second) + cold_start_margin`, accounting for on-demand `llama.cpp` model loads in [models.md](../knowledge-system/models.md) lines 46–58).
+2. **Bounded retries (max 2) and no silent retries:** Transient transport or structural parse retries are capped at **at most 2 retries** (3 total attempts; structural repair in extraction rubrics permits at most 1 structural retry per [round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) lines 12–14). Every attempt—including intermediate failures—is logged with `run_id`, `attempt` index, elapsed wall time, HTTP status or `finish_reason`, and content/reasoning token lengths. Silent retry loops and cross-model fallback retries until pass are forbidden.
+3. **Typed failure records and `unreported` usage:** Exhausted retries, `finish_reason == "length"` truncations, zero-length content with reasoning overflow, upstream 429/500 responses, and server restarts emit explicit typed failure records (`error_class`, `attempt_count`, `raw_response_ref`, `restart_marker`) rather than partial objects, empty gold graphs, or model-quality penalties. Missing token usage is persisted literally as `"unreported"`, replacing the `unwrap_or(0)` coercion in `src/embeddings.rs`:109–112.
+===== END paper-graph/docs/OPERATIONS.md =====
+
+===== BEGIN paper-graph/docs/EXPERIMENTS.md =====
+# Experiments — Paper Knowledge System
+
+**Status:** Observed · Decided · Specified · Contested (baseline `paper-graph` at `f1e46d9`, 2026-11-19; status vocabulary in [method.md](../knowledge-system/method.md#status-vocabulary)).
+**Owns:** Experiment round hypotheses, `Arm` / `Variant` / `Gate` definitions, reconciled gate ledger state, and experiment artifact paths ([owner-map.md](../knowledge-system/docs/owner-map.md)).
+**Governed by:** [CONSTITUTION.md Invariant 6](../knowledge-system/CONSTITUTION.md#6-evaluation-is-pre-registered-executed-and-recorded), [Invariant 7](../knowledge-system/CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim), and [ADR 0005](../knowledge-system/ADR/0005-evaluation-first-with-one-preregistered-axis.md).
+**Check pointer:** `check_eval_manifest` (`Specified`, planned in W4). Metric panel formulas, single-resolver rules, and numeric gate thresholds belong to `docs/EVALUATION.md`.
+
+## Experiment Vocabulary Owned Here
+
+- **Arm:** A pre-registered experimental condition compared under one frozen protocol (`U2`, `S2`, `P2`), distinct from a **Variant**, which is a concrete version of a prompt, document set, or configuration (such as docs-eval `A`/`B`/`C`) that need not define an ontology axis ([GLOSSARY.md](../knowledge-system/GLOSSARY.md)).
+- **Gate:** A decision boundary that permits progression, blocks execution, or marks a round `inconclusive` from named `check_*` results and human judgments; a `no` or stale row is never a pass.
+
+## Round 001 (`ontology-extraction`) — Hypotheses and Arms (`Decided · Specified · Contested`)
+
+- **Stratified corpus (`Observed · Decided`):** [`experiments/ontology-extraction/round-001-corpus.json`](../experiments/ontology-extraction/round-001-corpus.json) fixes 15 Zotero works across `type_inference`, `recursion_schemes`, `effects_control`, and `dependent_lean`: `4` development papers (`3154`, `713`, `49`, `6`) and `11` disjoint held-out test papers (`2777`, `3229`, `41`, `18`, `2314`, `1483`, `675`, `1490`, `1348`, `637`, `774`). Four candidates without local PDFs (`60`, `47`, `5`, `8`) were replaced on 2026-11-18 ([decisions.md](../experiments/ontology-extraction/decisions.md)).
+- **Arms (`Specified · Contested`):** [`round-001-plan.md`](../experiments/ontology-extraction/round-001-plan.md) compares `U2` (free-form labels), `S2` (generic scholarly schema), and `P2` (`S2` plus versioned PL dictionary, domain/range rules, and negative examples) in a fixed two-pass envelope, plus human-adjudicated `P2-reviewed` for downstream QA. Two **Contested** design conflicts remain open ([owner-map.md](../knowledge-system/docs/owner-map.md)): (1) `round-001-plan.md` varies alias resolution across `U2`/`S2`/`P2` rather than sharing one resolver (`human (evaluation owner)`, `docs/EVALUATION.md`); (2) [ontology.md](../knowledge-system/ontology.md) drafts 17 relations vs the 5-relation pilot target (`human (ontology owner)`).
+- **Claims under test and falsifiers (`Specified`, [grounding.md](../experiments/ontology-extraction/grounding.md)):**
+  - `C1` (*Domain grounding*): `P2` beats `S2` on held-out canonical concept F1 and per-relation macro-F1 without exceeding high-risk semantic violation gates.
+  - `C2` (*Evidence trust*): Deterministic quote/locator validation ([PIPELINE.md](PIPELINE.md)) curbs fabricated coordinates while human review remains necessary for semantic sufficiency.
+  - `C3` (*Compositional QA*): `P2-reviewed` improves evidence-supported compositional answers over metadata/abstract hybrid search without regressing simple retrieval controls.
+  - `C4` (*Conservative resolution*): Alias-aware clustering beats exact-name merging without false merges across distinct PL notions (e.g., free vs freer monads).
+
+## Reconciled Gate Ledger (`Observed`, 2026-11-19)
+
+Reconciling [`experiments/ontology-extraction/gates.md`](../experiments/ontology-extraction/gates.md) with [STATUS.md](../knowledge-system/STATUS.md): **zero PDFs have been parsed, zero gold annotations exist, and zero extraction runs or spend have occurred.**
+
+- **Completed (`yes`, `Observed`):** Primary survey ([llm-document-graph-research.md](../analysis/llm-document-graph-research.md)); secondary critique ([deepseek-ontology-critique.md](../analysis/deepseek-ontology-critique.md), used as uncited critique only); Zotero attachment lookup, dangling-row exclusion, and manual 15/15 `%PDF-` verification ([round-001-corpus.json](../experiments/ontology-extraction/round-001-corpus.json)); four exploratory `/api/search` hybrid probes returning rank-1 works `3154`, `2314`, `1490`, `774` (non-regression controls only, [gates.md](../experiments/ontology-extraction/gates.md)); two-token reachability smoke test across seven subagent routes ([`_runs/2026-11-19/model-smoke.json`](../_runs/2026-11-19/model-smoke.json), not an extraction freeze).
+- **Incomplete / Blocking (`no`):** Executable corpus-structure/admission check (`gates.md` cited `uv run pytest`, which is stale after the Rust port; `cargo test -p paper-graph --test experiment_corpus` checks split counts and static status string only); independent plan review (`round-001-review.md` absent); PDF parse smoke test (`parse-report.md` absent); reviewed v0 annotation manual; human gold annotations and agreement; reviewed 20-question `questions.json`; executable seeded defects ([round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md)); T0.6 structured-output model freeze and price; `U2`/`S2`/`P2` runs; deterministic scorer; blind human scoring; `round-001-verdict.md` (`inconclusive` allowed).
+
+## Artifact and Result Paths
+
+All paths resolve from `paper-graph/`:
+
+- **Observed specifications and baseline logs:** `experiments/ontology-extraction/{README.md,grounding.md,decisions.md,gates.md,round-001-corpus.json,round-001-plan.md,round-001-rubric.md}` and `_runs/2026-11-19/{docs.sha256,model-smoke.json,spine-audit.md}`.
+- **Specified run outputs (absent):** `_runs/<date>/pilot/{manifest.json,raw/,metrics.json,report.md}`, `_runs/<date>/docs-eval/{config.json,raw/,report.md}`, and `experiments/ontology-extraction/{round-001-review.md,questions.json,round-001-verdict.md}`.
+===== END paper-graph/docs/EXPERIMENTS.md =====
+
+===== BEGIN paper-graph/docs/ROADMAP.md =====
+# Roadmap — Paper Knowledge System
+
+**Status:** Decided · Observed · Planned (baseline `paper-graph` at `f1e46d9`, 2026-11-19).
+**Owns:** Paper claim scope and feature roadmap ([owner-map.md](../knowledge-system/docs/owner-map.md) row 32; [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 7).
+**Checks:** `judgment (human)` by `human (author)` for every paper claim and scope expansion; milestone promotions require passing checks in [EXPERIMENTS.md](EXPERIMENTS.md) and [EVALUATION.md](EVALUATION.md).
+
+Task-level scheduling lives in `worklog/2026-11-19/todo.md`; observed repository status lives in [STATUS.md](../knowledge-system/STATUS.md); open research gaps live in [open-questions.md](../knowledge-system/open-questions.md).
+
+## Current State and Defensible Paper Claim Boundary
+
+- **Observed baseline:** `paper-graph` ships a working local proof of work over 324 Zotero records in HawDB 0.34: read-only SQLite backup import, SQL metadata + 1024-d `bge-m3` vectors, six metadata graph labels (`Work`, `Person`, `Collection`, `Tag`, `Venue`, `Attachment`), BM25/vector/RRF-hybrid search, CLI, and loopback `axum` UI ([README.md](../README.md) lines 14–24, 82–84). Fourteen design lessons (`L01`–`L14`) were distilled across three audit rounds from 18 threads ([method.md](../knowledge-system/method.md) lines 1–67), and a 15-paper PL corpus passed manual `%PDF-` signature checks ([gates.md](../experiments/ontology-extraction/gates.md) lines 11–14).
+- **Specified / not yet observed:** No PDF has been parsed, no `Chunk`/`Concept`/`Claim`/`EvidenceSpan` table exists in `src/`, no structural `check_*` binary exists, no gold annotations exist, and no extraction arm has run ([STATUS.md](../knowledge-system/STATUS.md) lines 20–32, 42–50).
+
+Per [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 7, **pre-verdict paper claims are strictly restricted to:**
+1. The local-first architecture separating canonical Zotero storage, rebuildable HawDB metadata indexes, and isolated derived extraction/review stores ([ARCHITECTURE.md](ARCHITECTURE.md)).
+2. The pre-registered evaluation and review protocol for ontology specificity, atomic quote-plus-locator evidence, and oracle integrity ([EVALUATION.md](EVALUATION.md), [REVIEW.md](REVIEW.md)).
+3. Operational findings already observed in engineering runs: destructive sync wipe hazards, dangling Zotero attachment rows, metadata-only retrieval ceilings (117/324 abstracts; generic `"PDF"` title ranking), embedding batch limits, call-budget/timeout failure compositions, and zero-case/oracle-leakage evaluation traps ([open-questions.md](../knowledge-system/open-questions.md) lines 63–70).
+
+No document or draft may claim ontology superiority, extraction accuracy, downstream QA gains, or durable re-import survival until the corresponding held-out gate or drill passes and `human (author)` authorizes the claim ([open-questions.md](../knowledge-system/open-questions.md) lines 72–79). No extraction UI work is scheduled before evidence quality is proven.
+
+## Horizon 1 — Now: Structural Guards and Evidence Substrate (W2, W4–W6, T0.6)
+
+Every item is gated by an executable artifact rather than prose completion:
+
+- **Model reliability freeze (T0.6):** Run `N=5` structured-output trials per candidate route on three PL excerpts; freeze extraction model, decoding, and `p95` timeout/retry policy (`_runs/2026-11-19/t06-reliability.json`, [OPERATIONS.md](OPERATIONS.md)).
+- **Praxis normalization (W2):** Encode `Episode`, `Lesson`, and `Check` in `PRAXIS.md` and `lessons.jsonl` with verified thread quotes (`check_praxis_schema`).
+- **Structural check suite (W4):** Implement all registered `check_*` guards in CI, each verified against a red-turning seeded defect ([owner-map.md](../knowledge-system/docs/owner-map.md) lines 12–32).
+- **Executable admission and PDF parse substrate (W6):** Emit schema-validated `admission.json` (15/15 byte + `%PDF-` + SHA-256), `pages.jsonl`, and `chunks.jsonl` on the 4 development PDFs; measure exact quote and character-offset locator recovery ([PIPELINE.md](PIPELINE.md), `check_corpus_admission`, `check_evidence_locator`).
+- **Docs-effectiveness benchmark (W5):** Score 15 decision scenarios against a frozen docs manifest (`>=90%` correct decisions, `0` forbidden actions).
+
+## Horizon 2 — Next: Ontology-Specificity Pilot, Held-Out Verdict, and HawDB Drills (W7–W9)
+
+- **Development pilot (W7):** Resolve open human decisions on the 5-relation vocabulary cut ([ontology.md](../knowledge-system/ontology.md)) and single-axis resolver/panel ([EVALUATION.md](EVALUATION.md)); freeze 20 competency questions (`check_question_lint`), pilot two-annotator gold agreement (`alpha >= .80`), implement the deterministic scorer + seeded-defect gate, and run `U2`/`S2`/`P2` on the 4 development papers.
+- **Held-out run and downstream QA (W8):** Execute `U2`/`S2`/`P2` once on the 11 held-out test papers under frozen hashes and approved spend (cap `<= US$25`, [REVIEW.md](REVIEW.md)); run blind human review and 20-question compositional QA against the metadata-hybrid baseline; publish `round-001-verdict.md` (explicitly permitting an **inconclusive** verdict if bootstrap intervals or gates fail).
+- **Identity, rebuild, and HawDB utilization (W9):** Prove `zotero_key`/DOI claim survival across forced `itemID` renumbering (`check_corpus_identity`), fail-closed derived-DB sync (`check_sync_count_guard`), snapshot-pinned COW branches, exact-vs-ANN scaling (1K/10K/100K chunks), Cypher path plans, read payload budgets, and idempotent staging-to-canonical promotion ([DATA_MODEL.md](DATA_MODEL.md)).
+
+## Horizon 3 — Later: Post-Verdict Extensions (W10+)
+
+Contingent on positive W8/W9 gates and new frozen competency questions:
+
+- **Paper framing and pre-mortem (W10):** Finalize paper outline, empirical/negative results, and threat-to-validity ledger from recorded W8/W9 artifacts; synchronize `STATUS.md` and `README.md`.
+- **Earned schema and modality expansion:** Add `CITES`, `EXTENDS_*`, `GENERALIZES`, `Experiment`, or `BenchmarkSuite` only when blocked by a frozen competency question ([GUIDELINES.md](../knowledge-system/GUIDELINES.md) `GP-05`). Evaluate `glm-ocr` fallback on scanned/math-heavy pages, non-destructive metadata upserts, review-queue UI surfaces, and Lean 4 formalization links only after prose evidence gates hold.
+===== END paper-graph/docs/ROADMAP.md =====
+
+===== BEGIN paper-graph/docs/REVIEW.md =====
+# Review — Paper Knowledge System
+
+**Status:** Decided · Observed · Specified · Unexecuted (baseline `paper-graph` at `f1e46d9`, 2026-11-19).
+**Owns:** Gold authority and expected-answer immutability; review verdicts, definition of done, and hosted spend approval ([owner-map.md](../knowledge-system/docs/owner-map.md) rows 28–29; [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 7; [ADR 0006](../knowledge-system/ADR/0006-model-routing-by-task-with-family-based-independence.md)).
+**Checks:** `check_gold_diff` (planned, W4); `judgment (human)` by `human (annotator)` and `human (adjudicator)`.
+
+The cross-family reviewer-independence rule and review-round stop conditions are governed by [method.md](../knowledge-system/method.md#reviewer-independence) and [method.md](../knowledge-system/method.md#review-rounds-and-stop-rules). Callable routes and model families live in [models.md](../knowledge-system/models.md); scoring rubrics live in [EVALUATION.md](EVALUATION.md); paper-claim approval lives in [ROADMAP.md](ROADMAP.md).
+
+## Current State: Observed vs Specified
+
+- **Observed:** One spine review round (`T1.8`) executed and resolved 8/8 high-severity findings in [spine-audit.md](../_runs/2026-11-19/spine-audit.md), verified with Magpie cross-family routes recorded in [model-smoke.json](../_runs/2026-11-19/model-smoke.json). No round-001 experimental plan review (`round-001-review.md`), no gold annotation file, no inter-annotator agreement measurement, no `check_gold_diff` binary, and no blind extraction review exist yet ([STATUS.md](../knowledge-system/STATUS.md) lines 22, 25, 31, 44).
+- **Specified (unexecuted):** Two-annotator gold workflow, `check_gold_diff` enforcement, blind randomized extraction review, review-state transitions, and pre-run spend gates ([round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md) lines 61–65, 82–85; [round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) lines 89–99, 125–152).
+
+## Definition of Done and What Counts as Evidence
+
+An agent draft, self-report, or static status string is never completion. A task or gate is **done** only when all four conditions hold ([method.md](../knowledge-system/method.md) lines 80–90; `worklog/2026-11-19/todo.md` lines 10–11, 544–545):
+
+1. **Named artifact and command output:** The target file, run log under `paper-graph/_runs/<date>/`, or test binary exists at a repo-relative path and exits `0` from a clean checkout. Stale commands (such as the retired `uv run pytest` entry in [gates.md](../experiments/ontology-extraction/gates.md) line 14, corrected to `no` in [STATUS.md](../knowledge-system/STATUS.md) line 20) count as `no`.
+2. **Honest status tagging:** Statements distinguish `Observed` measurements from `Decided`, `Specified`, `Transferred`, `Contested`, and `Untested` claims ([method.md](../knowledge-system/method.md#status-vocabulary)). An `inconclusive` experimental gate is a valid final result, never an invitation to relax thresholds.
+3. **Qualified review record:** Every governing doc, check suite, and experimental plan carries a committed review artifact recording frozen input hashes, reviewer model route and declared family ([models.md](../knowledge-system/models.md) lines 20–29), atomic findings, and explicit dispositions. Per [method.md](../knowledge-system/method.md#reviewer-independence), same-family reviews (for example, Gemini/Gemma, DeepSeek V4/Flash, or `zcode/GLM-5.3` vs `devin/glm-5-3` vs `auto/glm-5.3`) must be labelled *same-family*, never count as independent, and require human adjudication. Reviewers receive the target artifact and [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md), not the author's private rationale.
+4. **Human gate sign-off where required:** Gold creation, contested dispositions, hosted spend, final round verdicts, and durable memory promotions carry explicit human sign-off.
+
+## Gold Authority and Expected-Answer Immutability
+
+Per [CONSTITUTION.md](../knowledge-system/CONSTITUTION.md) Invariant 7, `human (annotator)` authors all gold concept spans, relations, claims, evidence scores, and 20 downstream QA expectations. No model or agent may author, edit, or shift an expected gold answer under any circumstance.
+
+- **Agreement before adjudication:** Two PL-knowledgeable human annotators independently annotate six stratified papers across development and test splits; exact-span F1, B-cubed/pairwise merge agreement, Cohen's `kappa` (roles/citations), and Krippendorff's ordinal `alpha` (evidence/answers; `alpha < .67` halts the round) are persisted before adjudication creates canonical gold ([round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md) lines 61–65; [round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) lines 125–135, 142).
+- **Disagreement handling (`check_gold_diff`):** When a model output disagrees with gold, gold wins ([lessons.md](../knowledge-system/lessons.md) `L10`). Every failing case receives one label: *system/skill finding*, *ambiguous question*, or *out-of-date case*. `check_gold_diff` fails CI on any expected-answer mutation lacking a human commit, a cited deciding rule sentence for the latter two categories, and second-reviewer sign-off.
+
+## Extraction Review States and Hosted Spend Approval
+
+All model-extracted assertions enter the derived staging store as `unreviewed` ([DATA_MODEL.md](DATA_MODEL.md)). During evaluation and promotion ([round-001-plan.md](../experiments/ontology-extraction/round-001-plan.md) lines 31–34, 82–84):
+
+- **Blind human adjudication:** Human reviewers inspect records in randomized order, blind to arm (`U2`/`S2`/`P2`), recording review seconds per record and minutes per paper (target median `<= 20` min/paper). Promotion to canonical query state requires deterministic quote/locator pass plus human whole-evidence-set score `2` ([EVALUATION.md](EVALUATION.md)); unresolved ambiguity stays `unreviewed` or `Contested`. Cross-family LLM judges may supply secondary agreement data or triage queues only, never canonical approval or headline grades.
+- **Hosted spend gate:** Paid extraction or evaluation calls require prior `human (adjudicator)` / `human (operator)` approval bound to a dated price snapshot, `check_budget_preflight` pass ([OPERATIONS.md](OPERATIONS.md)), and an enforced round cap (`<= US$25` in [round-001-rubric.md](../experiments/ontology-extraction/round-001-rubric.md) line 150). Local `llama.cpp` runs report hardware and wall-clock runtime rather than invented dollar prices.
+===== END paper-graph/docs/REVIEW.md =====
+

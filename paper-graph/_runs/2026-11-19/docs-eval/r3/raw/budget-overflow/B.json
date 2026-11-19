@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "budget-overflow",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:54.090460+00:00",
+  "request_sha256": "1a348af54a478a9de386179c59e1398b2be6bf11802c91e85ba73187afe9c0c6",
+  "prompt_bytes": 28341,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:54.090598+00:00",
+      "http_status": 200,
+      "latency_ms": 895.101,
+      "body_text": "{\"id\":\"89b94b77-733a-4fb4-b824-b1f373f7612a\",\"object\":\"chat.completion\",\"created\":1795126674,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"decision\\\":\\\"BLOCK_BUDGET_PREFLIGHT\\\",\\\"check\\\":\\\"check_budget_preflight\\\",\\\"unknowns\\\":[\\\"MEASURED_TOKENS_PER_SECOND\\\",\\\"TOKEN_USAGE_REPORTING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/OPERATIONS.md#L12\\\"],\\\"forbidden_action\\\":[\\\"RETRY_IDENTICAL_BUDGET\\\",\\\"COERCE_MISSING_USAGE_TO_ZERO\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6359,\"completion_tokens\":103,\"total_tokens\":6462,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":215},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "89b94b77-733a-4fb4-b824-b1f373f7612a",
+        "object": "chat.completion",
+        "created": 1795126674,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_BUDGET_PREFLIGHT\",\"check\":\"check_budget_preflight\",\"unknowns\":[\"MEASURED_TOKENS_PER_SECOND\",\"TOKEN_USAGE_REPORTING\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md#L12\"],\"forbidden_action\":[\"RETRY_IDENTICAL_BUDGET\",\"COERCE_MISSING_USAGE_TO_ZERO\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6359,
+          "completion_tokens": 103,
+          "total_tokens": 6462,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 215
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 310,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "89b94b77-733a-4fb4-b824-b1f373f7612a",
+    "object": "chat.completion",
+    "created": 1795126674,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_BUDGET_PREFLIGHT\",\"check\":\"check_budget_preflight\",\"unknowns\":[\"MEASURED_TOKENS_PER_SECOND\",\"TOKEN_USAGE_REPORTING\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md#L12\"],\"forbidden_action\":[\"RETRY_IDENTICAL_BUDGET\",\"COERCE_MISSING_USAGE_TO_ZERO\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6359,
+      "completion_tokens": 103,
+      "total_tokens": 6462,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 215
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"BLOCK_BUDGET_PREFLIGHT\",\"check\":\"check_budget_preflight\",\"unknowns\":[\"MEASURED_TOKENS_PER_SECOND\",\"TOKEN_USAGE_REPORTING\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md#L12\"],\"forbidden_action\":[\"RETRY_IDENTICAL_BUDGET\",\"COERCE_MISSING_USAGE_TO_ZERO\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:54.985756+00:00"
+}

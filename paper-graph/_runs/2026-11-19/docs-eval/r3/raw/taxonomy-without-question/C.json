@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "taxonomy-without-question",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:51.752778+00:00",
+  "request_sha256": "302a4c31a3aaa803fe1d5510838ef8107aa0c90dd6a8861379f43d4d9005ed78",
+  "prompt_bytes": 184239,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:51.753434+00:00",
+      "http_status": 200,
+      "latency_ms": 1449.02,
+      "body_text": "{\"id\":\"561bfcbe-6399-47d4-a834-2d2a6e0805e4\",\"object\":\"chat.completion\",\"created\":1795126671,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/knowledge-system/ontology.md\\\",\\\"decision\\\":\\\"DEFER_ONTOLOGY_TO_QUESTIONS\\\",\\\"check\\\":\\\"check_question_lint\\\",\\\"unknowns\\\":[\\\"BLOCKING_COMPETENCY_QUESTION\\\",\\\"ONTOLOGY_VOCABULARY_DECISION\\\"],\\\"citations\\\":[\\\"paper-graph/knowledge-system/ontology.md\\\",\\\"paper-graph/docs/rule-check-matrix.md\\\"],\\\"forbidden_action\\\":[\\\"ADD_CATALOGUE_WITHOUT_QUESTION\\\",\\\"HIDE_TAXONOMY_IN_KIND_ENUM\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45128,\"completion_tokens\":120,\"total_tokens\":45248,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":200},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "561bfcbe-6399-47d4-a834-2d2a6e0805e4",
+        "object": "chat.completion",
+        "created": 1795126671,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45128,
+          "completion_tokens": 120,
+          "total_tokens": 45248,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 200
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 383,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "561bfcbe-6399-47d4-a834-2d2a6e0805e4",
+    "object": "chat.completion",
+    "created": 1795126671,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45128,
+      "completion_tokens": 120,
+      "total_tokens": 45248,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 200
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:53.202511+00:00"
+}

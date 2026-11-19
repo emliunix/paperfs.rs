@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "question-leakage",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:58.922681+00:00",
+  "request_sha256": "fdc2d809d7dc07bf56e2458aba1db0787b494ee86474492e194a7faa083f8ccf",
+  "prompt_bytes": 28324,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:58.922752+00:00",
+      "http_status": 200,
+      "latency_ms": 815.802,
+      "body_text": "{\"id\":\"97182e41-595a-452d-aacd-6062b2192e4e\",\"object\":\"chat.completion\",\"created\":1795126679,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"REJECT_LEADING_QUESTION\\\",\\\"check\\\":\\\"check_question_lint\\\",\\\"unknowns\\\":[\\\"QUESTION_PRIOR_USE\\\",\\\"GOLD_CHANGE_STATUS\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\"],\\\"forbidden_action\\\":[\\\"KEEP_OUTCOME_PRESUPPOSITION\\\",\\\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6353,\"completion_tokens\":100,\"total_tokens\":6453,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":209},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "97182e41-595a-452d-aacd-6062b2192e4e",
+        "object": "chat.completion",
+        "created": 1795126679,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"REJECT_LEADING_QUESTION\",\"check\":\"check_question_lint\",\"unknowns\":[\"QUESTION_PRIOR_USE\",\"GOLD_CHANGE_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"KEEP_OUTCOME_PRESUPPOSITION\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6353,
+          "completion_tokens": 100,
+          "total_tokens": 6453,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 209
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 301,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "97182e41-595a-452d-aacd-6062b2192e4e",
+    "object": "chat.completion",
+    "created": 1795126679,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"REJECT_LEADING_QUESTION\",\"check\":\"check_question_lint\",\"unknowns\":[\"QUESTION_PRIOR_USE\",\"GOLD_CHANGE_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"KEEP_OUTCOME_PRESUPPOSITION\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6353,
+      "completion_tokens": 100,
+      "total_tokens": 6453,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 209
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"REJECT_LEADING_QUESTION\",\"check\":\"check_question_lint\",\"unknowns\":[\"QUESTION_PRIOR_USE\",\"GOLD_CHANGE_STATUS\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"KEEP_OUTCOME_PRESUPPOSITION\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:59.738722+00:00"
+}

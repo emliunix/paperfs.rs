@@ -1,0 +1,416 @@
+{
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "completed_at": "2026-11-19T22:18:01.438411+00:00",
+  "matrix_cases": 45,
+  "completed": 45,
+  "failed": 0,
+  "http_post_attempts": 45,
+  "persistent_http_502_blocker": false,
+  "results": [
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "question-leakage",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "question-leakage",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "question-leakage",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "error_class": null,
+      "finish_reason": "stop",
+      "budget_exhaustion": false
+    }
+  ]
+}

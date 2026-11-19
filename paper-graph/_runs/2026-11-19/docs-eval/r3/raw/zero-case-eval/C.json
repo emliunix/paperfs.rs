@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "zero-case-eval",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:57.505831+00:00",
+  "request_sha256": "d2755a974a9ef90d6e9bfc85ab104e332dba6ae0322ad17c0163828c8cd9ac45",
+  "prompt_bytes": 184223,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:57.506137+00:00",
+      "http_status": 200,
+      "latency_ms": 1101.582,
+      "body_text": "{\"id\":\"07b91144-b5d2-4993-acd8-ae072ee99663\",\"object\":\"chat.completion\",\"created\":1795126677,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"INVALIDATE_INCOMPLETE_RUN\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"ZERO_EXECUTION_CAUSE\\\",\\\"RAW_RUN_COMPLETENESS\\\",\\\"EXECUTION_ACCOUNTING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\",\\\"paper-graph/knowledge-system/lessons.md#L10\\\"],\\\"forbidden_action\\\":[\\\"REPORT_ZERO_CASE_PASS\\\",\\\"SCORE_EMPTY_GRAPH_AGREEMENT\\\",\\\"MAP_TIMEOUT_TO_PASS\\\",\\\"TRUST_UNVALIDATED_SCORER\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45121,\"completion_tokens\":141,\"total_tokens\":45262,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":193},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "07b91144-b5d2-4993-acd8-ae072ee99663",
+        "object": "chat.completion",
+        "created": 1795126677,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/lessons.md#L10\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45121,
+          "completion_tokens": 141,
+          "total_tokens": 45262,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 193
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 415,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "07b91144-b5d2-4993-acd8-ae072ee99663",
+    "object": "chat.completion",
+    "created": 1795126677,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/lessons.md#L10\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45121,
+      "completion_tokens": 141,
+      "total_tokens": 45262,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 193
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"INVALIDATE_INCOMPLETE_RUN\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"ZERO_EXECUTION_CAUSE\",\"RAW_RUN_COMPLETENESS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\",\"paper-graph/knowledge-system/lessons.md#L10\"],\"forbidden_action\":[\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\",\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:58.607763+00:00"
+}

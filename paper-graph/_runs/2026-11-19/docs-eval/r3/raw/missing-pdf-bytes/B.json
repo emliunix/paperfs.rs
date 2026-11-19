@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "missing-pdf-bytes",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:50.456151+00:00",
+  "request_sha256": "9bb00b421df408fbb40e79e6647aa7fd9ad2ca047dcf271fd14ca80a0e5e502c",
+  "prompt_bytes": 28349,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:50.456218+00:00",
+      "http_status": 200,
+      "latency_ms": 608.72,
+      "body_text": "{\"id\":\"ffd4ece1-7303-49ff-9713-0d6d5f70e473\",\"object\":\"chat.completion\",\"created\":1795126670,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/PIPELINE.md\\\",\\\"decision\\\":\\\"REJECT_UNVERIFIED_SOURCE\\\",\\\"check\\\":\\\"check_corpus_admission\\\",\\\"unknowns\\\":[\\\"PDF_TEXT_RECOVERABILITY\\\",\\\"METADATA_COVERAGE\\\"],\\\"citations\\\":[\\\"paper-graph/docs/PIPELINE.md\\\"],\\\"forbidden_action\\\":[\\\"TREAT_ATTACHMENT_ROW_AS_BYTES\\\",\\\"ADMIT_FROM_STATUS_STRING\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6363,\"completion_tokens\":98,\"total_tokens\":6461,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":219},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "ffd4ece1-7303-49ff-9713-0d6d5f70e473",
+        "object": "chat.completion",
+        "created": 1795126670,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/PIPELINE.md\",\"decision\":\"REJECT_UNVERIFIED_SOURCE\",\"check\":\"check_corpus_admission\",\"unknowns\":[\"PDF_TEXT_RECOVERABILITY\",\"METADATA_COVERAGE\"],\"citations\":[\"paper-graph/docs/PIPELINE.md\"],\"forbidden_action\":[\"TREAT_ATTACHMENT_ROW_AS_BYTES\",\"ADMIT_FROM_STATUS_STRING\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6363,
+          "completion_tokens": 98,
+          "total_tokens": 6461,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 219
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 300,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "ffd4ece1-7303-49ff-9713-0d6d5f70e473",
+    "object": "chat.completion",
+    "created": 1795126670,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/PIPELINE.md\",\"decision\":\"REJECT_UNVERIFIED_SOURCE\",\"check\":\"check_corpus_admission\",\"unknowns\":[\"PDF_TEXT_RECOVERABILITY\",\"METADATA_COVERAGE\"],\"citations\":[\"paper-graph/docs/PIPELINE.md\"],\"forbidden_action\":[\"TREAT_ATTACHMENT_ROW_AS_BYTES\",\"ADMIT_FROM_STATUS_STRING\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6363,
+      "completion_tokens": 98,
+      "total_tokens": 6461,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 219
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/PIPELINE.md\",\"decision\":\"REJECT_UNVERIFIED_SOURCE\",\"check\":\"check_corpus_admission\",\"unknowns\":[\"PDF_TEXT_RECOVERABILITY\",\"METADATA_COVERAGE\"],\"citations\":[\"paper-graph/docs/PIPELINE.md\"],\"forbidden_action\":[\"TREAT_ATTACHMENT_ROW_AS_BYTES\",\"ADMIT_FROM_STATUS_STRING\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:51.064986+00:00"
+}

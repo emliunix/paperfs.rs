@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "sync-destroys-derived",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:56.419576+00:00",
+  "request_sha256": "9894ae5964243dff3b17a078d3f54617498ba829fab20f74ecdc7333fd04c5f9",
+  "prompt_bytes": 184208,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:56.419779+00:00",
+      "http_status": 200,
+      "latency_ms": 1138.116,
+      "body_text": "{\"id\":\"7f49f2f2-c2dc-4bb7-85ab-e0f84a1ce7f2\",\"object\":\"chat.completion\",\"created\":1795126676,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"decision\\\":\\\"ISOLATE_AND_GUARD_SYNC\\\",\\\"check\\\":\\\"check_sync_count_guard\\\",\\\"unknowns\\\":[\\\"SYNC_TARGET_CONTENTS\\\",\\\"SEPARATE_STORE_IMPLEMENTATION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/OPERATIONS.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\\\"],\\\"forbidden_action\\\":[\\\"ALLOW_DERIVED_LOSS\\\",\\\"REEXTRACT_WITHOUT_GUARD\\\",\\\"COLOCATE_REVIEW_WITH_METADATA\\\",\\\"CALL_ALL_STATE_REBUILDABLE\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45125,\"completion_tokens\":152,\"total_tokens\":45277,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":197},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "7f49f2f2-c2dc-4bb7-85ab-e0f84a1ce7f2",
+        "object": "chat.completion",
+        "created": 1795126676,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"ISOLATE_AND_GUARD_SYNC\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SYNC_TARGET_CONTENTS\",\"SEPARATE_STORE_IMPLEMENTATION\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\"],\"forbidden_action\":[\"ALLOW_DERIVED_LOSS\",\"REEXTRACT_WITHOUT_GUARD\",\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45125,
+          "completion_tokens": 152,
+          "total_tokens": 45277,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 197
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 466,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "7f49f2f2-c2dc-4bb7-85ab-e0f84a1ce7f2",
+    "object": "chat.completion",
+    "created": 1795126676,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"ISOLATE_AND_GUARD_SYNC\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SYNC_TARGET_CONTENTS\",\"SEPARATE_STORE_IMPLEMENTATION\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\"],\"forbidden_action\":[\"ALLOW_DERIVED_LOSS\",\"REEXTRACT_WITHOUT_GUARD\",\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45125,
+      "completion_tokens": 152,
+      "total_tokens": 45277,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 197
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/OPERATIONS.md\",\"decision\":\"ISOLATE_AND_GUARD_SYNC\",\"check\":\"check_sync_count_guard\",\"unknowns\":[\"SYNC_TARGET_CONTENTS\",\"SEPARATE_STORE_IMPLEMENTATION\"],\"citations\":[\"paper-graph/docs/OPERATIONS.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#3-rebuild-safety-and-schema-changes-require-a-count-oracle\"],\"forbidden_action\":[\"ALLOW_DERIVED_LOSS\",\"REEXTRACT_WITHOUT_GUARD\",\"COLOCATE_REVIEW_WITH_METADATA\",\"CALL_ALL_STATE_REBUILDABLE\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:57.557945+00:00"
+}

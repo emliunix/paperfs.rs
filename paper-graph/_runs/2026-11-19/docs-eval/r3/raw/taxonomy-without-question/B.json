@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "taxonomy-without-question",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:51.502006+00:00",
+  "request_sha256": "3f4e72be3c9ab478f2b54d681df6540fc1d77ab3347297fcfdaa8edd18b9b793",
+  "prompt_bytes": 28327,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:51.502083+00:00",
+      "http_status": 200,
+      "latency_ms": 769.884,
+      "body_text": "{\"id\":\"ff442c66-2cfe-40e0-becb-a05bf5637227\",\"object\":\"chat.completion\",\"created\":1795126671,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/knowledge-system/ontology.md\\\",\\\"decision\\\":\\\"DEFER_ONTOLOGY_TO_QUESTIONS\\\",\\\"check\\\":\\\"check_question_lint\\\",\\\"unknowns\\\":[\\\"BLOCKING_COMPETENCY_QUESTION\\\",\\\"ONTOLOGY_VOCABULARY_DECISION\\\"],\\\"citations\\\":[\\\"paper-graph/knowledge-system/ontology.md\\\"],\\\"forbidden_action\\\":[\\\"ADD_CATALOGUE_WITHOUT_QUESTION\\\",\\\"HIDE_TAXONOMY_IN_KIND_ENUM\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6354,\"completion_tokens\":109,\"total_tokens\":6463,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":210},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "ff442c66-2cfe-40e0-becb-a05bf5637227",
+        "object": "chat.completion",
+        "created": 1795126671,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6354,
+          "completion_tokens": 109,
+          "total_tokens": 6463,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 210
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 343,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "ff442c66-2cfe-40e0-becb-a05bf5637227",
+    "object": "chat.completion",
+    "created": 1795126671,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6354,
+      "completion_tokens": 109,
+      "total_tokens": 6463,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 210
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"DEFER_ONTOLOGY_TO_QUESTIONS\",\"check\":\"check_question_lint\",\"unknowns\":[\"BLOCKING_COMPETENCY_QUESTION\",\"ONTOLOGY_VOCABULARY_DECISION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\"],\"forbidden_action\":[\"ADD_CATALOGUE_WITHOUT_QUESTION\",\"HIDE_TAXONOMY_IN_KIND_ENUM\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:52.272010+00:00"
+}

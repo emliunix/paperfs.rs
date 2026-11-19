@@ -327,23 +327,47 @@ For each key, prefer a check over prose. principle-encode-lessons-in-structure: 
 - [x] **T4.4 Docs point to checks.** Each lesson/owner doc links to its check; no restatement.
   - Exit: owner map has a check column with no empty cells except judgment.
 
-## W5 — Docs-effectiveness eval
+## W5 — Docs-effectiveness eval (eval-prompt trials)
 
-**Depends on:** W3, W4. **Unblocks:** docs gate only; not on the pilot path. **Parallel note:** T5.1 and T5.2 can run together; T5.3 waits for both; T5.4 and T5.5 are sequential.
+**Depends on:** T3.1-T3.9 (docs), T4.1-T4.4 (checks), T3.9 lint (loadability precondition). **Unblocks:** the docs gate only; not the pilot path. **Method:** the `eval-prompt` skill (blinded trials with a control arm, per-case pass conditions, blinding read fence, delta-against-control bar). The docs are the **artifact under test**; `paper-graph/docs/EVAL-PROMPT.md` is the **instrument**, not the method.
 
-~~~mermaid
-flowchart LR
-  T5_1["T5.1 15 scenarios"] --> T5_3["T5.3 Variants + frozen hash"]
-  T5_2["T5.2 Prompt + rubric"] --> T5_3
-  T5_3 --> T5_4["T5.4 Run matrix"] --> T5_5["T5.5 Gate"]
-~~~
+**Sequencing rule (2026-11-20): source conventions first, do not enforce them.** Document conventions are sourced from `home.conf` — the `doc-verify` model/constitution (facts, constraints, oracles) and the `eval-prompt` skill (control arms, cases, blinding, delta bar) — as **reference material only**. Nothing from those conventions is enforced in `paper-graph` now: no doc-verify dependency, no adopted schema. `docs_lint.sh` remains the project's own minimal gate and is explicitly provisional. Only **after** the eval-prompt trials do we define our own document types and rules, grounded in what the trials actually show.
 
-- [x] **T5.1 15 scenarios.** Five from real lessons, five novel but plausible, five adversarial. Each has: situation, required decision, required check, required unknowns, forbidden action.
-- [x] **T5.2 Prompt and rubric.** JSON output: owning_doc, decision, check, unknowns, citations, forbidden_action. Score: decision 0/2; citation ownership; check resolvability; unknown handling; forbidden-action absence; token cost.
-- [x] **T5.3 Variants.** A = full docs; B = encoded AGENTS.md rule file generated from the lessons; C = both. Start with deepseek-flash; add gemma4-12b as a second family if T0.6 passes. If only one family is callable, label the result single-family, not independent. Freeze the docs hash before any run.
-- [ ] **T5.4 Run.** Use workflow with one agent per scenario, each returning three variant answers; score deterministically in the main process, not by an agent-judge.
-- [ ] **T5.5 Gate.** >=90% correct decisions; 0 forbidden actions; >=80% checks resolvable; unknowns correctly flagged on the three ambiguous cases. If it fails, fix the owner/check, not the prompt.
-  - Output: _runs/2026-11-19/docs-eval/{config.json,raw/,report.md}.
+**Correction (2026-11-19):** the first W5 design had no control arm, so it could not measure a delta; and it tested comprehension only, not whether the docs let someone produce a working check. T5.1-T5.3 remain valid inputs (seeds, instrument, variants). T5.4-T5.9 below replace the old single run.
+
+### Cases, ranked by importance
+
+| Rank | Case | Why it matters | Arms | Passes when |
+|---|---|---|---|---|
+| 1 | **comprehension** | the docs must move a reader to the right owner and check | control (no docs), headings-only, full, encoded-rules | full beats control by the pre-registered delta on >=90% decision correctness, 0 forbidden actions, >=80% checks resolvable |
+| 2 | **production** | a doc that cannot produce a working check is prose | control, full | the produced check compiles and turns red on its seeded defect when run by `verify.sh` (acceptance implies execution) |
+| 3 | **ablation** | every part must earn its place | full vs full-minus-one-part (start with `docs/owner-map.md`) | removing the part degrades the outcome; if it changes nothing, delete the part |
+| 4 | **induction** | cost per correct decision | control, full | at equal outcome the full arm is not more expensive per correct decision |
+| — | trigger | not applicable: docs are not auto-selected | — | — |
+
+### Tasks
+
+- [x] **T5.1 Fifteen scenarios.** Five real-lesson, five novel, five adversarial; check ids from the rule-check matrix. (done 2026-11-19)
+- [x] **T5.2 Instrument + rubric.** Common prompt, runner-only rubric, A/B/C payloads, frozen-hash abort rule. (done; now labeled the instrument)
+- [x] **T5.3 Encoded-rules variant.** `AGENTS.md` generated from the 14 lessons and the matrix. (done)
+- [ ] **T5.0 Source document conventions (no enforcement).** Collect the conventions worth learning from in `~/Documents/home.conf` — doc-verify (facts, constraints, oracles) and eval-prompt (cases, arms, blinding, delta) — into a short source note. Exit: note exists; nothing enforced; no dependency added.
+- [ ] **T5.4 Freeze and control payload.** Freeze docs + instrument at run start into `docs-eval/config.json` with an explicit `supersedes` note; build the **control payload (no docs)**; lint/loadability proven by `docs_lint.sh` and recorded. Exit: config + control payload + lint record; no edits after freeze.
+- [ ] **T5.5 Comprehension trial.** 15 scenarios x 4 arms (control, headings-only, full, encoded-rules) x 1 trial, same model/decoding; deterministic blind scoring (scorer never sees the arm label); pre-register the delta bar **before** the run: full vs control >= +25% decision correctness, 0 forbidden actions, >=80% checks resolvable. Exit: `scores.json` + per-arm deltas with raw counts (n=15), report pass/fail/inconclusive.
+- [ ] **T5.6 Production trial.** One seeded-defect task per arm ("write the check that enforces L03"), 3 trials; acceptance = the produced check compiles and turns red on the seeded defect via `scripts/verify.sh`. Exit: produced checks, run logs, acceptance count; any non-executing answer is a failure, not partial credit.
+- [ ] **T5.7 Ablation trial.** Only if T5.5 passes: full vs full-minus-`docs/owner-map.md` on 5 scenarios. Exit: either the part earns its place (delta recorded) or it is deleted from the artefact.
+- [ ] **T5.8 Induction check.** Only if T5.5 passes: tokens and wall time per correct decision, control vs full. Exit: cost table; no claim of cheapness without numbers.
+- [ ] **T5.9 Gate.** Pass only if T5.4-T5.6 are complete and the pre-registered bar holds; otherwise **fail** with the failing metric, or **inconclusive** when the run did not execute. A failure fixes the docs, never the prompt. Human signs the verdict; no agent self-certifies.
+
+### Process (recommended)
+
+1. **Precondition:** run `docs_lint.sh` and record loadability before any model call; a lint failure stops the trial.
+2. **Freeze first, then run:** hash docs + instrument + control payload; the run-start freeze is authoritative and supersedes earlier manifests (record the supersession).
+3. **Pre-register the bar** in `config.json` before the first call; no threshold may be chosen after seeing scores.
+4. **Run all arms under identical conditions**, randomized order; the scorer is code and is blind to arm labels by construction.
+5. **Score, then report raw counts and deltas**; n=15 means report counts, not significance language.
+6. **Production is judged by execution**, not by reading the written check.
+7. **Ablation and induction are conditional** — do not spend them on a docs set that already failed comprehension.
+8. **Gate:** pass/fail/inconclusive, signed by a human; a failing gate returns to the owning docs, not to prompt tuning.
 
 ## W6 — Phase 0: admission and parse
 

@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "headline-shortcut",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:47.636588+00:00",
+  "request_sha256": "3482e48f4bf44752caa7dfddbcaa01f3c9fe16d89b5236a752e0d30a26443c36",
+  "prompt_bytes": 28317,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:47.636680+00:00",
+      "http_status": 200,
+      "latency_ms": 913.39,
+      "body_text": "{\"id\":\"1b877af2-290d-4b31-993f-f55eed640f8d\",\"object\":\"chat.completion\",\"created\":1795126667,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"OPEN_HUMAN_DECISION\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"HEADLINE_METRIC_DECISION\\\",\\\"METRIC_EXCEPTION_CONDITIONS\\\",\\\"DEFINITION_LEVEL_EQUIVALENCE\\\",\\\"HUMAN_MERGE_ADJUDICATION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md\\\"],\\\"forbidden_action\\\":[\\\"AGENT_CHOOSE_HEADLINE_METRIC\\\",\\\"DECLARE_STRICT_F1_WINNER\\\",\\\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6356,\"completion_tokens\":138,\"total_tokens\":6494,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":212},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "1b877af2-290d-4b31-993f-f55eed640f8d",
+        "object": "chat.completion",
+        "created": 1795126667,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"HEADLINE_METRIC_DECISION\",\"METRIC_EXCEPTION_CONDITIONS\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_HEADLINE_METRIC\",\"DECLARE_STRICT_F1_WINNER\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6356,
+          "completion_tokens": 138,
+          "total_tokens": 6494,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 212
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 396,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "1b877af2-290d-4b31-993f-f55eed640f8d",
+    "object": "chat.completion",
+    "created": 1795126667,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"HEADLINE_METRIC_DECISION\",\"METRIC_EXCEPTION_CONDITIONS\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_HEADLINE_METRIC\",\"DECLARE_STRICT_F1_WINNER\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6356,
+      "completion_tokens": 138,
+      "total_tokens": 6494,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 212
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"HEADLINE_METRIC_DECISION\",\"METRIC_EXCEPTION_CONDITIONS\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md\"],\"forbidden_action\":[\"AGENT_CHOOSE_HEADLINE_METRIC\",\"DECLARE_STRICT_F1_WINNER\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:48.550149+00:00"
+}

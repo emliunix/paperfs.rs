@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "identity-reimport",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:18:00.600308+00:00",
+  "request_sha256": "3122a8f684148c65bae6d57be239a24a3589ba9450fa28fe45415a8645563ed7",
+  "prompt_bytes": 184205,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:18:00.600727+00:00",
+      "http_status": 200,
+      "latency_ms": 831.992,
+      "body_text": "{\"id\":\"04d90f7d-28d4-4328-b31e-84bb35cbf0c2\",\"object\":\"chat.completion\",\"created\":1795126680,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/DATA_MODEL.md\\\",\\\"decision\\\":\\\"REKEY_DURABLE_IDENTITY\\\",\\\"check\\\":\\\"check_corpus_identity\\\",\\\"unknowns\\\":[\\\"DOI_AVAILABILITY\\\",\\\"REIMPORT_KEY_MAPPING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/DATA_MODEL.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds\\\"],\\\"forbidden_action\\\":[\\\"USE_TITLE_AS_IDENTITY\\\",\\\"USE_CONTENT_HASH_AS_IDENTITY\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45124,\"completion_tokens\":124,\"total_tokens\":45248,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":196},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "04d90f7d-28d4-4328-b31e-84bb35cbf0c2",
+        "object": "chat.completion",
+        "created": 1795126680,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"REKEY_DURABLE_IDENTITY\",\"check\":\"check_corpus_identity\",\"unknowns\":[\"DOI_AVAILABILITY\",\"REIMPORT_KEY_MAPPING\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds\"],\"forbidden_action\":[\"USE_TITLE_AS_IDENTITY\",\"USE_CONTENT_HASH_AS_IDENTITY\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45124,
+          "completion_tokens": 124,
+          "total_tokens": 45248,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 196
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 401,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "04d90f7d-28d4-4328-b31e-84bb35cbf0c2",
+    "object": "chat.completion",
+    "created": 1795126680,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"REKEY_DURABLE_IDENTITY\",\"check\":\"check_corpus_identity\",\"unknowns\":[\"DOI_AVAILABILITY\",\"REIMPORT_KEY_MAPPING\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds\"],\"forbidden_action\":[\"USE_TITLE_AS_IDENTITY\",\"USE_CONTENT_HASH_AS_IDENTITY\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45124,
+      "completion_tokens": 124,
+      "total_tokens": 45248,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 196
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"REKEY_DURABLE_IDENTITY\",\"check\":\"check_corpus_identity\",\"unknowns\":[\"DOI_AVAILABILITY\",\"REIMPORT_KEY_MAPPING\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds\"],\"forbidden_action\":[\"USE_TITLE_AS_IDENTITY\",\"USE_CONTENT_HASH_AS_IDENTITY\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:18:01.432797+00:00"
+}

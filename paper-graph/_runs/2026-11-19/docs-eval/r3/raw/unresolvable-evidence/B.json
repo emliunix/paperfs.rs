@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "unresolvable-evidence",
+  "variant": "B",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:53.204462+00:00",
+  "request_sha256": "86db7e1b06b3b5aeb2856860a8d30da6dd5b9d46e586ec83fb03298e9cac5780",
+  "prompt_bytes": 28351,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:53.204546+00:00",
+      "http_status": 200,
+      "latency_ms": 732.218,
+      "body_text": "{\"id\":\"14fbd170-5749-44bc-948f-17f0b06a8872\",\"object\":\"chat.completion\",\"created\":1795126673,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/DATA_MODEL.md\\\",\\\"decision\\\":\\\"MARK_UNKNOWN_AND_BLOCK_CLAIM\\\",\\\"check\\\":\\\"check_evidence_locator\\\",\\\"unknowns\\\":[\\\"SOURCE_QUOTE_AVAILABILITY\\\",\\\"EVIDENCE_LOCATOR_RESOLUTION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/DATA_MODEL.md\\\"],\\\"forbidden_action\\\":[\\\"PROMOTE_UNKNOWN_CLAIM\\\",\\\"FABRICATE_QUOTE_OR_LOCATOR\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":6356,\"completion_tokens\":102,\"total_tokens\":6458,\"prompt_tokens_details\":{\"cached_tokens\":6144},\"prompt_cache_hit_tokens\":6144,\"prompt_cache_miss_tokens\":212},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "14fbd170-5749-44bc-948f-17f0b06a8872",
+        "object": "chat.completion",
+        "created": 1795126673,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"MARK_UNKNOWN_AND_BLOCK_CLAIM\",\"check\":\"check_evidence_locator\",\"unknowns\":[\"SOURCE_QUOTE_AVAILABILITY\",\"EVIDENCE_LOCATOR_RESOLUTION\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\"],\"forbidden_action\":[\"PROMOTE_UNKNOWN_CLAIM\",\"FABRICATE_QUOTE_OR_LOCATOR\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 6356,
+          "completion_tokens": 102,
+          "total_tokens": 6458,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "prompt_cache_hit_tokens": 6144,
+          "prompt_cache_miss_tokens": 212
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 314,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "14fbd170-5749-44bc-948f-17f0b06a8872",
+    "object": "chat.completion",
+    "created": 1795126673,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"MARK_UNKNOWN_AND_BLOCK_CLAIM\",\"check\":\"check_evidence_locator\",\"unknowns\":[\"SOURCE_QUOTE_AVAILABILITY\",\"EVIDENCE_LOCATOR_RESOLUTION\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\"],\"forbidden_action\":[\"PROMOTE_UNKNOWN_CLAIM\",\"FABRICATE_QUOTE_OR_LOCATOR\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6356,
+      "completion_tokens": 102,
+      "total_tokens": 6458,
+      "prompt_tokens_details": {
+        "cached_tokens": 6144
+      },
+      "prompt_cache_hit_tokens": 6144,
+      "prompt_cache_miss_tokens": 212
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/DATA_MODEL.md\",\"decision\":\"MARK_UNKNOWN_AND_BLOCK_CLAIM\",\"check\":\"check_evidence_locator\",\"unknowns\":[\"SOURCE_QUOTE_AVAILABILITY\",\"EVIDENCE_LOCATOR_RESOLUTION\"],\"citations\":[\"paper-graph/docs/DATA_MODEL.md\"],\"forbidden_action\":[\"PROMOTE_UNKNOWN_CLAIM\",\"FABRICATE_QUOTE_OR_LOCATOR\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:53.936850+00:00"
+}

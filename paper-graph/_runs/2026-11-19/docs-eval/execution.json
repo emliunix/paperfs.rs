@@ -1,0 +1,280 @@
+{
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r2",
+  "completed_at": "2026-11-19T22:08:44.627394+00:00",
+  "matrix_cases": 45,
+  "completed": 10,
+  "failed": 35,
+  "http_post_attempts": 118,
+  "results": [
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 2
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1
+    },
+    {
+      "scenario_id": "question-leakage",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "question-leakage",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "question-leakage",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 2
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 2
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3
+    }
+  ]
+}

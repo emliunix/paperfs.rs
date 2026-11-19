@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "timeout-empty-pass",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:48.558378+00:00",
+  "request_sha256": "f92bebcce87c89374476f89e9d815d19df34344d8588b828ca2cb8991874e914",
+  "prompt_bytes": 163804,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:48.558943+00:00",
+      "http_status": 200,
+      "latency_ms": 960.37,
+      "body_text": "{\"id\":\"847295f6-6665-4650-ae7e-589713a28ada\",\"object\":\"chat.completion\",\"created\":1795126668,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"BLOCK_FAILED_EVALUATOR\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"SCORER_VALIDATION_STATUS\\\",\\\"EXECUTION_ACCOUNTING\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\\\",\\\"paper-graph/docs/rule-check-matrix.md\\\"],\\\"forbidden_action\\\":[\\\"MAP_TIMEOUT_TO_PASS\\\",\\\"TRUST_UNVALIDATED_SCORER\\\",\\\"REPORT_ZERO_CASE_PASS\\\",\\\"SCORE_EMPTY_GRAPH_AGREEMENT\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40775,\"completion_tokens\":139,\"total_tokens\":40914,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":199},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "847295f6-6665-4650-ae7e-589713a28ada",
+        "object": "chat.completion",
+        "created": 1795126668,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\",\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40775,
+          "completion_tokens": 139,
+          "total_tokens": 40914,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 199
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 430,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "847295f6-6665-4650-ae7e-589713a28ada",
+    "object": "chat.completion",
+    "created": 1795126668,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\",\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40775,
+      "completion_tokens": 139,
+      "total_tokens": 40914,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 199
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"BLOCK_FAILED_EVALUATOR\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"SCORER_VALIDATION_STATUS\",\"EXECUTION_ACCOUNTING\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#evaluation-integrity-and-scorer-validation\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"MAP_TIMEOUT_TO_PASS\",\"TRUST_UNVALIDATED_SCORER\",\"REPORT_ZERO_CASE_PASS\",\"SCORE_EMPTY_GRAPH_AGREEMENT\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:49.519353+00:00"
+}

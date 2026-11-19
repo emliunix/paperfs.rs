@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "headline-shortcut",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:47.675309+00:00",
+  "request_sha256": "abf50122d5cfd53306dc12c1b08475e5aa025576641fdf74e9a207749c1d74e5",
+  "prompt_bytes": 184229,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:47.675591+00:00",
+      "http_status": 200,
+      "latency_ms": 1757.391,
+      "body_text": "{\"id\":\"ea3364fd-a408-4978-9135-db50ff17f0e2\",\"object\":\"chat.completion\",\"created\":1795126667,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/EVALUATION.md\\\",\\\"decision\\\":\\\"OPEN_HUMAN_DECISION\\\",\\\"check\\\":\\\"check_eval_manifest\\\",\\\"unknowns\\\":[\\\"HEADLINE_METRIC_DECISION\\\",\\\"METRIC_EXCEPTION_CONDITIONS\\\",\\\"EVALUATION_AXIS_DECISION\\\",\\\"RESOLVER_DECISION\\\",\\\"DEFINITION_LEVEL_EQUIVALENCE\\\",\\\"HUMAN_MERGE_ADJUDICATION\\\"],\\\"citations\\\":[\\\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\\\",\\\"paper-graph/docs/rule-check-matrix.md\\\"],\\\"forbidden_action\\\":[\\\"DECLARE_STRICT_F1_WINNER\\\",\\\"AGENT_CHOOSE_HEADLINE_METRIC\\\",\\\"AGENT_CHOOSE_EVALUATION_AXIS\\\",\\\"RUN_WITH_CONFOUNDED_RESOLVERS\\\",\\\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45130,\"completion_tokens\":204,\"total_tokens\":45334,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":202},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "ea3364fd-a408-4978-9135-db50ff17f0e2",
+        "object": "chat.completion",
+        "created": 1795126667,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"HEADLINE_METRIC_DECISION\",\"METRIC_EXCEPTION_CONDITIONS\",\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"DECLARE_STRICT_F1_WINNER\",\"AGENT_CHOOSE_HEADLINE_METRIC\",\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45130,
+          "completion_tokens": 204,
+          "total_tokens": 45334,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 202
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 600,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "ea3364fd-a408-4978-9135-db50ff17f0e2",
+    "object": "chat.completion",
+    "created": 1795126667,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"HEADLINE_METRIC_DECISION\",\"METRIC_EXCEPTION_CONDITIONS\",\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"DECLARE_STRICT_F1_WINNER\",\"AGENT_CHOOSE_HEADLINE_METRIC\",\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45130,
+      "completion_tokens": 204,
+      "total_tokens": 45334,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 202
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/EVALUATION.md\",\"decision\":\"OPEN_HUMAN_DECISION\",\"check\":\"check_eval_manifest\",\"unknowns\":[\"HEADLINE_METRIC_DECISION\",\"METRIC_EXCEPTION_CONDITIONS\",\"EVALUATION_AXIS_DECISION\",\"RESOLVER_DECISION\",\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/docs/EVALUATION.md#open-human-decision-axis-resolver-and-headline-metric\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"DECLARE_STRICT_F1_WINNER\",\"AGENT_CHOOSE_HEADLINE_METRIC\",\"AGENT_CHOOSE_EVALUATION_AXIS\",\"RUN_WITH_CONFOUNDED_RESOLVERS\",\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:49.433014+00:00"
+}

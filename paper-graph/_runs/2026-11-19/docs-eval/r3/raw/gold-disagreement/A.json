@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "gold-disagreement",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:57.560931+00:00",
+  "request_sha256": "87aa0df8d403d69f852aa6310584af90aa4c3f317f260fc29dfda6d3ef8d6d8f",
+  "prompt_bytes": 163776,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:57.561135+00:00",
+      "http_status": 200,
+      "latency_ms": 1359.812,
+      "body_text": "{\"id\":\"4b0fd3df-7570-477f-9f56-29aab42c5ffc\",\"object\":\"chat.completion\",\"created\":1795126677,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/REVIEW.md\\\",\\\"decision\\\":\\\"PRESERVE_GOLD_FOR_HUMAN\\\",\\\"check\\\":\\\"check_gold_diff\\\",\\\"unknowns\\\":[\\\"HUMAN_GOLD_DISPOSITION\\\",\\\"GOLD_REVIEW_STATUS\\\"],\\\"citations\\\":[\\\"paper-graph/docs/REVIEW.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim\\\"],\\\"forbidden_action\\\":[\\\"EDIT_GOLD_TO_MODEL\\\",\\\"LET_MODEL_AUTHOR_GOLD\\\",\\\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40773,\"completion_tokens\":137,\"total_tokens\":40910,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":197},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "4b0fd3df-7570-477f-9f56-29aab42c5ffc",
+        "object": "chat.completion",
+        "created": 1795126677,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/REVIEW.md\",\"decision\":\"PRESERVE_GOLD_FOR_HUMAN\",\"check\":\"check_gold_diff\",\"unknowns\":[\"HUMAN_GOLD_DISPOSITION\",\"GOLD_REVIEW_STATUS\"],\"citations\":[\"paper-graph/docs/REVIEW.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim\"],\"forbidden_action\":[\"EDIT_GOLD_TO_MODEL\",\"LET_MODEL_AUTHOR_GOLD\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40773,
+          "completion_tokens": 137,
+          "total_tokens": 40910,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 197
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 401,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "4b0fd3df-7570-477f-9f56-29aab42c5ffc",
+    "object": "chat.completion",
+    "created": 1795126677,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/REVIEW.md\",\"decision\":\"PRESERVE_GOLD_FOR_HUMAN\",\"check\":\"check_gold_diff\",\"unknowns\":[\"HUMAN_GOLD_DISPOSITION\",\"GOLD_REVIEW_STATUS\"],\"citations\":[\"paper-graph/docs/REVIEW.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim\"],\"forbidden_action\":[\"EDIT_GOLD_TO_MODEL\",\"LET_MODEL_AUTHOR_GOLD\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40773,
+      "completion_tokens": 137,
+      "total_tokens": 40910,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 197
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/REVIEW.md\",\"decision\":\"PRESERVE_GOLD_FOR_HUMAN\",\"check\":\"check_gold_diff\",\"unknowns\":[\"HUMAN_GOLD_DISPOSITION\",\"GOLD_REVIEW_STATUS\"],\"citations\":[\"paper-graph/docs/REVIEW.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim\"],\"forbidden_action\":[\"EDIT_GOLD_TO_MODEL\",\"LET_MODEL_AUTHOR_GOLD\",\"ASSUME_UNCHANGED_GOLD_IS_ENOUGH\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:58.920997+00:00"
+}

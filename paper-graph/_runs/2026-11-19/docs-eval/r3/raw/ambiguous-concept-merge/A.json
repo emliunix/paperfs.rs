@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "ambiguous-concept-merge",
+  "variant": "A",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:51.994647+00:00",
+  "request_sha256": "ed55ab949cea12401abd2af4d9a0485ec0b3fbcc7dc19d924fd0dceacb745787",
+  "prompt_bytes": 163810,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:51.994892+00:00",
+      "http_status": 200,
+      "latency_ms": 1159.953,
+      "body_text": "{\"id\":\"6ff87b59-9dc1-48bf-bd5b-8b0720dcbc54\",\"object\":\"chat.completion\",\"created\":1795126672,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/knowledge-system/ontology.md\\\",\\\"decision\\\":\\\"ABSTAIN_PENDING_HUMAN_REVIEW\\\",\\\"check\\\":\\\"judgment (human)\\\",\\\"unknowns\\\":[\\\"DEFINITION_LEVEL_EQUIVALENCE\\\",\\\"HUMAN_MERGE_ADJUDICATION\\\"],\\\"citations\\\":[\\\"paper-graph/knowledge-system/ontology.md\\\",\\\"paper-graph/docs/rule-check-matrix.md\\\"],\\\"forbidden_action\\\":[\\\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\\\",\\\"CLAIM_LOCATOR_PROVES_EQUIVALENCE\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":40779,\"completion_tokens\":125,\"total_tokens\":40904,\"prompt_tokens_details\":{\"cached_tokens\":40576},\"prompt_cache_hit_tokens\":40576,\"prompt_cache_miss_tokens\":203},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "6ff87b59-9dc1-48bf-bd5b-8b0720dcbc54",
+        "object": "chat.completion",
+        "created": 1795126672,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"ABSTAIN_PENDING_HUMAN_REVIEW\",\"check\":\"judgment (human)\",\"unknowns\":[\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\",\"CLAIM_LOCATOR_PROVES_EQUIVALENCE\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40779,
+          "completion_tokens": 125,
+          "total_tokens": 40904,
+          "prompt_tokens_details": {
+            "cached_tokens": 40576
+          },
+          "prompt_cache_hit_tokens": 40576,
+          "prompt_cache_miss_tokens": 203
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 382,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "6ff87b59-9dc1-48bf-bd5b-8b0720dcbc54",
+    "object": "chat.completion",
+    "created": 1795126672,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"ABSTAIN_PENDING_HUMAN_REVIEW\",\"check\":\"judgment (human)\",\"unknowns\":[\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\",\"CLAIM_LOCATOR_PROVES_EQUIVALENCE\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 40779,
+      "completion_tokens": 125,
+      "total_tokens": 40904,
+      "prompt_tokens_details": {
+        "cached_tokens": 40576
+      },
+      "prompt_cache_hit_tokens": 40576,
+      "prompt_cache_miss_tokens": 203
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/knowledge-system/ontology.md\",\"decision\":\"ABSTAIN_PENDING_HUMAN_REVIEW\",\"check\":\"judgment (human)\",\"unknowns\":[\"DEFINITION_LEVEL_EQUIVALENCE\",\"HUMAN_MERGE_ADJUDICATION\"],\"citations\":[\"paper-graph/knowledge-system/ontology.md\",\"paper-graph/docs/rule-check-matrix.md\"],\"forbidden_action\":[\"AUTO_MERGE_AMBIGUOUS_CONCEPTS\",\"CLAIM_LOCATOR_PROVES_EQUIVALENCE\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:53.154932+00:00"
+}

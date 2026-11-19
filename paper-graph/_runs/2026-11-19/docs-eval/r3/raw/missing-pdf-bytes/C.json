@@ -1,0 +1,85 @@
+{
+  "schema_version": "docs-eval-raw-v1",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r3",
+  "scenario_id": "missing-pdf-bytes",
+  "variant": "C",
+  "model": "deepseek/deepseek-flash",
+  "provider": "magpie",
+  "started_at": "2026-11-19T22:17:50.943692+00:00",
+  "request_sha256": "68b17cf775606dbe698bd05acce6741b0706e85f22af62e8d0cafcdc7392f6b3",
+  "prompt_bytes": 184261,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at": "2026-11-19T22:17:50.944127+00:00",
+      "http_status": 200,
+      "latency_ms": 804.782,
+      "body_text": "{\"id\":\"bc125c79-c049-46dc-9bc7-1f5029b9579d\",\"object\":\"chat.completion\",\"created\":1795126671,\"model\":\"deepseek/deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"owning_doc\\\":\\\"paper-graph/docs/PIPELINE.md\\\",\\\"decision\\\":\\\"REJECT_UNVERIFIED_SOURCE\\\",\\\"check\\\":\\\"check_corpus_admission\\\",\\\"unknowns\\\":[\\\"PDF_TEXT_RECOVERABILITY\\\",\\\"METADATA_COVERAGE\\\"],\\\"citations\\\":[\\\"paper-graph/docs/PIPELINE.md\\\",\\\"paper-graph/knowledge-system/CONSTITUTION.md#4-sources-enter-only-by-verified-bytes-and-signature\\\"],\\\"forbidden_action\\\":[\\\"TREAT_ATTACHMENT_ROW_AS_BYTES\\\",\\\"ADMIT_FROM_STATUS_STRING\\\"]}\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":45137,\"completion_tokens\":127,\"total_tokens\":45264,\"prompt_tokens_details\":{\"cached_tokens\":44928},\"prompt_cache_hit_tokens\":44928,\"prompt_cache_miss_tokens\":209},\"system_fingerprint\":\"bc19ba97cbe016479903222bb1578db6\"}",
+      "response": {
+        "id": "bc125c79-c049-46dc-9bc7-1f5029b9579d",
+        "object": "chat.completion",
+        "created": 1795126671,
+        "model": "deepseek/deepseek-flash",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"owning_doc\":\"paper-graph/docs/PIPELINE.md\",\"decision\":\"REJECT_UNVERIFIED_SOURCE\",\"check\":\"check_corpus_admission\",\"unknowns\":[\"PDF_TEXT_RECOVERABILITY\",\"METADATA_COVERAGE\"],\"citations\":[\"paper-graph/docs/PIPELINE.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#4-sources-enter-only-by-verified-bytes-and-signature\"],\"forbidden_action\":[\"TREAT_ATTACHMENT_ROW_AS_BYTES\",\"ADMIT_FROM_STATUS_STRING\"]}"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45137,
+          "completion_tokens": 127,
+          "total_tokens": 45264,
+          "prompt_tokens_details": {
+            "cached_tokens": 44928
+          },
+          "prompt_cache_hit_tokens": 44928,
+          "prompt_cache_miss_tokens": 209
+        },
+        "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+      },
+      "finish_reason": "stop",
+      "content_chars": 400,
+      "reasoning_chars": null,
+      "reasoning_tokens": "unreported"
+    }
+  ],
+  "status": "completed",
+  "response": {
+    "id": "bc125c79-c049-46dc-9bc7-1f5029b9579d",
+    "object": "chat.completion",
+    "created": 1795126671,
+    "model": "deepseek/deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"owning_doc\":\"paper-graph/docs/PIPELINE.md\",\"decision\":\"REJECT_UNVERIFIED_SOURCE\",\"check\":\"check_corpus_admission\",\"unknowns\":[\"PDF_TEXT_RECOVERABILITY\",\"METADATA_COVERAGE\"],\"citations\":[\"paper-graph/docs/PIPELINE.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#4-sources-enter-only-by-verified-bytes-and-signature\"],\"forbidden_action\":[\"TREAT_ATTACHMENT_ROW_AS_BYTES\",\"ADMIT_FROM_STATUS_STRING\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 45137,
+      "completion_tokens": 127,
+      "total_tokens": 45264,
+      "prompt_tokens_details": {
+        "cached_tokens": 44928
+      },
+      "prompt_cache_hit_tokens": 44928,
+      "prompt_cache_miss_tokens": 209
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "content": "{\"owning_doc\":\"paper-graph/docs/PIPELINE.md\",\"decision\":\"REJECT_UNVERIFIED_SOURCE\",\"check\":\"check_corpus_admission\",\"unknowns\":[\"PDF_TEXT_RECOVERABILITY\",\"METADATA_COVERAGE\"],\"citations\":[\"paper-graph/docs/PIPELINE.md\",\"paper-graph/knowledge-system/CONSTITUTION.md#4-sources-enter-only-by-verified-bytes-and-signature\"],\"forbidden_action\":[\"TREAT_ATTACHMENT_ROW_AS_BYTES\",\"ADMIT_FROM_STATUS_STRING\"]}",
+  "error": null,
+  "finish_reason": "stop",
+  "completed_at": "2026-11-19T22:17:51.748971+00:00"
+}
