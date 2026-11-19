@@ -336,9 +336,9 @@ flowchart LR
   T5_3 --> T5_4["T5.4 Run matrix"] --> T5_5["T5.5 Gate"]
 ~~~
 
-- [ ] **T5.1 15 scenarios.** Five from real lessons, five novel but plausible, five adversarial. Each has: situation, required decision, required check, required unknowns, forbidden action.
-- [ ] **T5.2 Prompt and rubric.** JSON output: owning_doc, decision, check, unknowns, citations, forbidden_action. Score: decision 0/2; citation ownership; check resolvability; unknown handling; forbidden-action absence; token cost.
-- [ ] **T5.3 Variants.** A = full docs; B = encoded AGENTS.md rule file generated from the lessons; C = both. Start with deepseek-flash; add gemma4-12b as a second family if T0.6 passes. If only one family is callable, label the result single-family, not independent. Freeze the docs hash before any run.
+- [x] **T5.1 15 scenarios.** Five from real lessons, five novel but plausible, five adversarial. Each has: situation, required decision, required check, required unknowns, forbidden action.
+- [x] **T5.2 Prompt and rubric.** JSON output: owning_doc, decision, check, unknowns, citations, forbidden_action. Score: decision 0/2; citation ownership; check resolvability; unknown handling; forbidden-action absence; token cost.
+- [x] **T5.3 Variants.** A = full docs; B = encoded AGENTS.md rule file generated from the lessons; C = both. Start with deepseek-flash; add gemma4-12b as a second family if T0.6 passes. If only one family is callable, label the result single-family, not independent. Freeze the docs hash before any run.
 - [ ] **T5.4 Run.** Use workflow with one agent per scenario, each returning three variant answers; score deterministically in the main process, not by an agent-judge.
 - [ ] **T5.5 Gate.** >=90% correct decisions; 0 forbidden actions; >=80% checks resolvable; unknowns correctly flagged on the three ambiguous cases. If it fails, fix the owner/check, not the prompt.
   - Output: _runs/2026-11-19/docs-eval/{config.json,raw/,report.md}.
