@@ -9,12 +9,13 @@ not a pass and has no inferred result.
 | DeepSeek secondary critique | yes | `analysis/deepseek-ontology-critique.md`; configured credential passed without disclosure; generic ontology text only |
 | Initial DeepSeek attempt | yes | Failed with `MISSING_CREDENTIAL`; parent later supplied the configured `DEEPSEEK_API_KEY` securely and succeeded |
 | Corpus attachment rows | yes | Read-only HawDB queries over selected Zotero `itemID` values |
-| Corpus local PDF admission | yes | 15/15 revised candidates have an existing PDF and `%PDF-` signature |
+| Corpus local PDF admission | yes | 15/15 admitted, 0 failed, with existing PDFs and `%PDF-` signatures; evidence: [`admission.json`](../../_runs/2026-11-19/admission.json) |
 | Dangling attachment detection | yes | `60`, `47`, `5`, `8` lacked the referenced local PDF and were excluded |
-| Corpus structure | yes | `uv run pytest`: 5 passed on 2026-11-18; development/test IDs disjoint and all four domains present in both splits |
+| Corpus structure | no | Historical `uv run pytest`: 5 passed on 2026-11-18, but that command is stale on this Rust tree; no current executable corpus-structure result is recorded |
 | Exploratory metadata baseline | yes | Four simple hybrid queries each returned a sensible rank-1 work; these are not formal round results |
 | Independent plan review | no | `round-001-review.md` absent; required before model extraction |
-| PDF parse smoke test | no | No PDF parsed; notation, layout, and quote recovery unknown |
+| PDF parse smoke test | yes | 4/4 development PDFs parsed, 157 page records, 0 failures; evidence: [`parse-report.json`](../../_runs/2026-11-19/parse-report.json) and [`pages.jsonl`](../../_runs/2026-11-19/pages.jsonl) |
+| Quote recovery and locator validity | no | 4/4 chunking and 226 chunks are recorded in [`chunk-report.json`](../../_runs/2026-11-19/chunk-report.json) and [`chunks.jsonl`](../../_runs/2026-11-19/chunks.jsonl), but quote recovery and locator validity were not measured; `_runs/2026-11-19/validation-report.json` is absent |
 | Ontology/annotation manual | no | Research draft exists; reviewed v0 manual absent |
 | Gold annotations and agreement | no | No gold files; no inter-annotator measurements |
 | Downstream gold questions | no | Question design only; no reviewed `questions.json` |
