@@ -28,7 +28,9 @@ A change is verified when both pass on the current tree. The scripts are self-co
 | questions | No outcome-presupposing wording; no schema-field conflation | `check_question_lint` | "what does X prove" style prompt | W4 |
 | budgets | context / max_tokens / timeout / retries satisfy the inequalities | `check_budget_preflight` | timeout below p95; retries > 2 | W4 |
 | migrations | No destructive startup migration; count oracle on a copy | `check_migration_oracle` | `DROP TABLE` in startup | W4 |
-| `embeddings.rs`, `ui.rs`, `cli.rs` | request/response contracts and CLI surface | **gap** — no module check yet | — | W4 next tranche |
+| `embeddings.rs` | 1024-dimensional responses preserve input order across bounded batches; transport and shape failures are explicit | `check_embeddings_contract` | 1023-dimensional row; unreachable router silently returning a zero vector | W4 |
+| `ui.rs` | Offline `/api/stats` and `/api/work` return stable status codes, JSON shapes, and cache headers | `check_ui_api_contract` | missing work returns 200; required stats field omitted | W4 |
+| `cli.rs` | clap parsing and exit codes; `--limit` is restricted to destructive sync | `check_cli_contract` | invalid arguments exit 0; `--limit` accepted by non-destructive commands | W4 |
 
 ## Rules
 
