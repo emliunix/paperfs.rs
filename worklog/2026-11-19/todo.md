@@ -331,6 +331,8 @@ For each key, prefer a check over prose. principle-encode-lessons-in-structure: 
 
 **Depends on:** T3.1-T3.9 (docs), T4.1-T4.4 (checks), T3.9 lint (loadability precondition). **Unblocks:** the docs gate only; not the pilot path. **Method:** the `eval-prompt` skill (blinded trials with a control arm, per-case pass conditions, blinding read fence, delta-against-control bar). The docs are the **artifact under test**; `paper-graph/docs/EVAL-PROMPT.md` is the **instrument**, not the method.
 
+**Sequencing rule (2026-11-20): source conventions first, do not enforce them.** Document conventions are sourced from `home.conf` — the `doc-verify` model/constitution (facts, constraints, oracles) and the `eval-prompt` skill (control arms, cases, blinding, delta bar) — as **reference material only**. Nothing from those conventions is enforced in `paper-graph` now: no doc-verify dependency, no adopted schema. `docs_lint.sh` remains the project's own minimal gate and is explicitly provisional. Only **after** the eval-prompt trials do we define our own document types and rules, grounded in what the trials actually show.
+
 **Correction (2026-11-19):** the first W5 design had no control arm, so it could not measure a delta; and it tested comprehension only, not whether the docs let someone produce a working check. T5.1-T5.3 remain valid inputs (seeds, instrument, variants). T5.4-T5.9 below replace the old single run.
 
 ### Cases, ranked by importance
@@ -348,6 +350,7 @@ For each key, prefer a check over prose. principle-encode-lessons-in-structure: 
 - [x] **T5.1 Fifteen scenarios.** Five real-lesson, five novel, five adversarial; check ids from the rule-check matrix. (done 2026-11-19)
 - [x] **T5.2 Instrument + rubric.** Common prompt, runner-only rubric, A/B/C payloads, frozen-hash abort rule. (done; now labeled the instrument)
 - [x] **T5.3 Encoded-rules variant.** `AGENTS.md` generated from the 14 lessons and the matrix. (done)
+- [ ] **T5.0 Source document conventions (no enforcement).** Collect the conventions worth learning from in `~/Documents/home.conf` — doc-verify (facts, constraints, oracles) and eval-prompt (cases, arms, blinding, delta) — into a short source note. Exit: note exists; nothing enforced; no dependency added.
 - [ ] **T5.4 Freeze and control payload.** Freeze docs + instrument at run start into `docs-eval/config.json` with an explicit `supersedes` note; build the **control payload (no docs)**; lint/loadability proven by `docs_lint.sh` and recorded. Exit: config + control payload + lint record; no edits after freeze.
 - [ ] **T5.5 Comprehension trial.** 15 scenarios x 4 arms (control, headings-only, full, encoded-rules) x 1 trial, same model/decoding; deterministic blind scoring (scorer never sees the arm label); pre-register the delta bar **before** the run: full vs control >= +25% decision correctness, 0 forbidden actions, >=80% checks resolvable. Exit: `scores.json` + per-arm deltas with raw counts (n=15), report pass/fail/inconclusive.
 - [ ] **T5.6 Production trial.** One seeded-defect task per arm ("write the check that enforces L03"), 3 trials; acceptance = the produced check compiles and turns red on the seeded defect via `scripts/verify.sh`. Exit: produced checks, run logs, acceptance count; any non-executing answer is a failure, not partial credit.
