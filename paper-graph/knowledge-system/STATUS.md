@@ -37,7 +37,7 @@ The changes from the W0 skeleton are stated rather than implied: "Corpus structu
 
 | W | State | What exists |
 |---|---|---|
-| W0 | done for its deliverables; two tasks open | Freeze commit `3cd97fc` (docs corpus + 2026-11-19 plan), docs manifest `_runs/2026-11-19/docs.sha256` (27 files, one manifest line per file), four templates in `_templates/`, `models.md` route-status inventory, `model-smoke.json` (seven routes answered a two-token prompt). T0.6 reliability run remains open; T0.7 (nmem budget) was removed as out of scope - Nowledge Mem is a separate product |
+| W0 | done for its deliverables; one task open (T0.6) | Freeze commit `3cd97fc` (docs corpus + 2026-11-19 plan), docs manifest `_runs/2026-11-19/docs.sha256` (27 files, one manifest line per file), four templates in `_templates/`, `models.md` route-status inventory, `model-smoke.json` (seven routes answered a two-token prompt). T0.6 reliability run remains open; T0.7 (nmem budget) was removed as out of scope - Nowledge Mem is a separate product |
 | W1 | done | Drafted: `CONSTITUTION.md` (seven invariants, `cc3279d`), `method.md` governance sections, `GLOSSARY.md`, `GUIDELINES.md`, `docs/owner-map.md`, ADR `0001`-`0006` (`ac3de4d`). This file is T1.2. T1.8 spine audit passed after remediation (8/8 high resolved) and merged at 9e03006. Open: human decisions for the unresolved content conflicts listed in the owner map |
 | W2 | not started | No `PRAXIS.md`; no `lessons.jsonl`; the 14 lessons remain prose records in `lessons.md` / `round-2-rescan.json` |
 | W3 | not started | `docs/` contains only `owner-map.md`; no ARCHITECTURE, DATA_MODEL, PIPELINE, EVALUATION, OPERATIONS, EXPERIMENTS, ROADMAP, or REVIEW |
