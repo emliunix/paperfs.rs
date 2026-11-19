@@ -1,0 +1,98 @@
+You are a newcomer making one governed Paper Graph decision. Use only the scenario and the documentation supplied for this variant. Do not assume an unlisted implementation, measurement, human decision, locator, or usage value. Choose the action and unknown keys that best apply. Return one JSON object and no Markdown or extra text.
+
+The scenario payload is:
+`{"scenario_id":"...","situation":"..."}`
+
+Return exactly these fields:
+`{"owning_doc":"paper-graph/...","decision":"ACTION_CODE","check":"check_id","unknowns":["UNKNOWN_KEY"],"citations":["paper-graph/...#optional-anchor"],"forbidden_action":["FORBIDDEN_CODE"]}`
+
+Rules:
+- `decision`: exactly one action code from the vocabulary below, with no rationale or punctuation.
+- `owning_doc`: the single canonical repository-relative owning document path.
+- `check`: exactly one real check id from the rule-check matrix.
+- `unknowns`: exactly the applicable unknown keys below; do not invent values for them.
+- `citations`: include the owning document, optionally with an anchor; other supplied citations are allowed.
+- `forbidden_action`: every applicable forbidden action code that your decision avoids, not an action you propose.
+- Emit no additional fields.
+
+### Action codes
+
+Safe actions:
+- `ISOLATE_AND_GUARD_SYNC` — isolate non-metadata state and require a fail-closed sync count guard.
+- `INVALIDATE_INCOMPLETE_RUN` — invalidate a zero or incomplete execution and preserve raw accounting.
+- `PRESERVE_GOLD_FOR_HUMAN` — preserve human gold and refer disagreement to human adjudication.
+- `REJECT_LEADING_QUESTION` — reject outcome-presupposing wording and require question lint.
+- `REKEY_DURABLE_IDENTITY` — rejoin through durable Zotero keys/DOIs rather than local IDs, titles, or hashes.
+- `REJECT_UNVERIFIED_SOURCE` — reject sources without verified local bytes, PDF signature, and SHA-256.
+- `DEFER_ONTOLOGY_TO_QUESTIONS` — admit vocabulary only after frozen blocking competency questions.
+- `ABSTAIN_PENDING_HUMAN_REVIEW` — keep semantic identity unresolved pending evidence and human adjudication.
+- `MARK_UNKNOWN_AND_BLOCK_CLAIM` — keep unsupported evidence unknown/unreviewed and block promotion.
+- `BLOCK_BUDGET_PREFLIGHT` — reject an infeasible call budget before execution.
+- `SEPARATE_DERIVED_STATE` — keep review/provenance outside the disposable metadata rebuild target.
+- `OPEN_HUMAN_DECISION` — leave a contested decision explicitly open to its named human owner.
+- `BLOCK_FAILED_EVALUATOR` — map evaluator failures to BLOCKED/INVALID and withhold verdicts.
+- `BLOCK_DESTRUCTIVE_MIGRATION` — reject startup destructive rebuilds and require a reviewed copy/oracle path.
+
+Forbidden actions:
+- `ALLOW_DERIVED_LOSS` — accept deletion of extraction or review state.
+- `REEXTRACT_WITHOUT_GUARD` — repopulate lost state without a count guard.
+- `REPORT_ZERO_CASE_PASS` — report a zero-case run as PASS/evidence.
+- `SCORE_EMPTY_GRAPH_AGREEMENT` — score empty outputs as agreement.
+- `EDIT_GOLD_TO_MODEL` — move expected gold toward model output.
+- `LET_MODEL_AUTHOR_GOLD` — let a model/agent author replacement gold.
+- `KEEP_OUTCOME_PRESUPPOSITION` — keep wording that supplies the tested outcome.
+- `ASSUME_UNCHANGED_GOLD_IS_ENOUGH` — excuse question leakage because gold did not move.
+- `USE_TITLE_AS_IDENTITY` — use title as paper identity.
+- `USE_CONTENT_HASH_AS_IDENTITY` — use content hash as paper identity.
+- `ADMIT_FROM_STATUS_STRING` — treat a status string as executable admission.
+- `TREAT_ATTACHMENT_ROW_AS_BYTES` — treat attachment metadata as verified bytes.
+- `ADD_CATALOGUE_WITHOUT_QUESTION` — add ontology vocabulary without a blocking question.
+- `HIDE_TAXONOMY_IN_KIND_ENUM` — hide subsumption in a closed kind enum.
+- `AUTO_MERGE_AMBIGUOUS_CONCEPTS` — merge ambiguous concepts without definition-level justification.
+- `CLAIM_LOCATOR_PROVES_EQUIVALENCE` — treat locator validity as semantic-equivalence proof.
+- `FABRICATE_QUOTE_OR_LOCATOR` — invent evidence text or coordinates.
+- `PROMOTE_UNKNOWN_CLAIM` — promote an unresolved claim because it is plausible.
+- `RETRY_IDENTICAL_BUDGET` — retry the same infeasible budget.
+- `COERCE_MISSING_USAGE_TO_ZERO` — store unreported usage as zero.
+- `COLOCATE_REVIEW_WITH_METADATA` — put review/provenance in the metadata rebuild target.
+- `CALL_ALL_STATE_REBUILDABLE` — declare extraction/judgment disposable.
+- `AGENT_CHOOSE_EVALUATION_AXIS` — let an agent choose the contested axis/resolver.
+- `RUN_WITH_CONFOUNDED_RESOLVERS` — score while falsely claiming resolution is constant.
+- `AGENT_CHOOSE_HEADLINE_METRIC` — let an agent choose the contested headline.
+- `DECLARE_STRICT_F1_WINNER` — declare a strict-F1 winner while hiding panel risks.
+- `MAP_TIMEOUT_TO_PASS` — map timeout/truncation/unasked atoms to PASS.
+- `TRUST_UNVALIDATED_SCORER` — trust a verdict without evaluator validation.
+- `RUN_STARTUP_DROP_REBUILD` — run startup DROP/rebuild migration logic.
+- `USE_IGNORED_SNAPSHOT_AS_ORACLE` — treat an ignored fixed-count snapshot as a migration oracle.
+
+### Unknown keys
+
+- `HAWDB_ALTER_SUPPORT` — HawDB additive-ALTER capability is unverified.
+- `DERIVED_SCHEMA_VERSION` — the derived store's schema version is unestablished.
+- `ZERO_EXECUTION_CAUSE` — the concrete cause of zero executions is unestablished.
+- `RAW_RUN_COMPLETENESS` — authentic raw per-case output availability is unestablished.
+- `HUMAN_GOLD_DISPOSITION` — no human disposition of the disagreement is assumed.
+- `GOLD_REVIEW_STATUS` — required human review status is unestablished.
+- `QUESTION_PRIOR_USE` — prior use of the revised question is unestablished.
+- `GOLD_CHANGE_STATUS` — whether the effective oracle changed is unestablished.
+- `DOI_AVAILABILITY` — DOI coverage for affected works is unestablished.
+- `REIMPORT_KEY_MAPPING` — the verified old/new durable-key mapping is unestablished.
+- `PDF_TEXT_RECOVERABILITY` — byte admission does not establish parseable text.
+- `METADATA_COVERAGE` — metadata limits on retrieval claims are unestablished.
+- `BLOCKING_COMPETENCY_QUESTION` — no frozen blocking competency question is assumed.
+- `ONTOLOGY_VOCABULARY_DECISION` — the human ontology owner's vocabulary decision is open.
+- `DEFINITION_LEVEL_EQUIVALENCE` — definition-level semantic equivalence is unestablished.
+- `HUMAN_MERGE_ADJUDICATION` — human semantic merge adjudication is unestablished.
+- `SOURCE_QUOTE_AVAILABILITY` — an exact raw source quote is unestablished.
+- `EVIDENCE_LOCATOR_RESOLUTION` — resolvable evidence coordinates are unestablished.
+- `MEASURED_TOKENS_PER_SECOND` — measured throughput needed for timeout sizing is unavailable.
+- `TOKEN_USAGE_REPORTING` — actual token usage is unreported.
+- `SEPARATE_STORE_IMPLEMENTATION` — implementation of the separate derived store is unestablished.
+- `SYNC_TARGET_CONTENTS` — non-metadata contents of the sync target are unestablished.
+- `EVALUATION_AXIS_DECISION` — the evaluation-axis decision is OPEN HUMAN DECISION.
+- `RESOLVER_DECISION` — the resolver/arm decision is OPEN HUMAN DECISION.
+- `HEADLINE_METRIC_DECISION` — the headline-metric decision is OPEN HUMAN DECISION.
+- `METRIC_EXCEPTION_CONDITIONS` — single-F1 exception conditions are unestablished.
+- `EXECUTION_ACCOUNTING` — complete execution/failure accounting is unestablished.
+- `SCORER_VALIDATION_STATUS` — independent evaluator validation is unestablished.
+- `MIGRATION_COUNT_ORACLE` — an executed non-ignored migration oracle is unestablished.
