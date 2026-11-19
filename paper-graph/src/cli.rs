@@ -6,7 +6,7 @@ use serde::Serialize;
 use std::path::PathBuf;
 
 use crate::embeddings::{EmbeddingClient, DEFAULT_BASE_URL, DEFAULT_MODEL};
-use crate::pipeline::{probe, sync_library};
+use crate::pipeline::{probe, run_stages_1_to_3, sync_library};
 use crate::store::{author_works, bm25_search, hybrid_search, open_database, stats, vector_search};
 use crate::ui;
 use crate::zotero::default_zotero_db;
@@ -36,6 +36,8 @@ enum Command {
     Author(AuthorArgs),
     /// Start the local experiment UI
     Ui(UiArgs),
+    /// Run typed corpus stages 1-3 (admission, PDF parse, chunking)
+    Stages(StagesArgs),
 }
 
 #[derive(Debug, Clone, Args)]
@@ -100,6 +102,20 @@ struct UiArgs {
     host: String,
     #[arg(long, default_value_t = 8765)]
     port: u16,
+}
+
+#[derive(Debug, Args)]
+struct StagesArgs {
+    #[arg(long, default_value_os_t = default_corpus_path())]
+    corpus: PathBuf,
+    #[arg(long, default_value_os_t = default_zotero_db())]
+    zotero: PathBuf,
+    #[arg(long)]
+    out_dir: PathBuf,
+    #[arg(long, default_value = "development")]
+    split: String,
+    #[arg(long)]
+    max_chunk_chars: Option<usize>,
 }
 
 pub async fn run() -> Result<()> {
@@ -182,6 +198,21 @@ pub async fn run() -> Result<()> {
             )
             .await?;
         }
+        Command::Stages(args) => {
+            let split_filter = if args.split == "all" {
+                None
+            } else {
+                Some(args.split.as_str())
+            };
+            let summary = run_stages_1_to_3(
+                &args.corpus,
+                &args.zotero,
+                &args.out_dir,
+                split_filter,
+                args.max_chunk_chars,
+            )?;
+            print_json(&summary)?;
+        }
     }
     Ok(())
 }
@@ -205,6 +236,13 @@ fn default_db_path() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("data")
         .join("library.hawdb")
+}
+
+fn default_corpus_path() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("experiments")
+        .join("ontology-extraction")
+        .join("round-001-corpus.json")
 }
 
 fn default_embedding_url() -> String {
