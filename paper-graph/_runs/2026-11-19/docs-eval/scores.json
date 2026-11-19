@@ -1,41 +1,2548 @@
 {
   "schema_version": "docs-eval-scores-v1",
   "scorer_version": "paper-graph-docs-eval-deterministic-scorer-v1",
-  "scorer_sha256": "d921873bca163c4456c002da6b3cf3c08cac3d704475c686cbcd5def97a9ee68",
-  "run_id": "w5.4-2026-11-19-magpie-deepseek-flash-r1",
+  "scorer_sha256": "8478270ea1eb116eeb94733b56e8676f2fab4142dbca962232dd83ee4b8b9414",
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r2",
   "model": "deepseek/deepseek-flash",
   "provider": "magpie",
   "family_label": "single-family",
-  "calls_made": 0,
-  "rows": [],
-  "execution_valid": false,
-  "gate": {
-    "verdict": "INCONCLUSIVE",
-    "reason": "Legacy baseline hash mismatch; EVAL-PROMPT section 2 requires abort before predictions."
-  },
-  "baseline": {
-    "path": "_runs/2026-11-19/docs.sha256",
-    "sha256": "f3daa82d82881e834d19cdd93252b36ab1dbdf4dbdc672f9e783c400c8069207",
-    "entries": 27,
-    "verified": false,
-    "mismatches": [
+  "calls_made": 118,
+  "matrix_cases": 45,
+  "execution": {
+    "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r2",
+    "completed_at": "2026-11-19T22:08:44.627394+00:00",
+    "matrix_cases": 45,
+    "completed": 10,
+    "failed": 35,
+    "http_post_attempts": 118,
+    "results": [
       {
-        "path": "experiments/ontology-extraction/gates.md",
-        "expected_sha256": "5300c5479c3266e5397099a1ef252a095030b082e290bc0d101d66034980e4b3",
-        "actual_sha256": "6d77c126bfbf8cd332cd78a0999ccf233199ab42f7d1a0332a04c5ed0c13a89e"
+        "scenario_id": "ambiguous-concept-merge",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
       },
       {
-        "path": "knowledge-system/STATUS.md",
-        "expected_sha256": "a1d167d52c0bd3032d0426c5a3ffa57820a2fcff5ed8fae8409cd84dc13b6d30",
-        "actual_sha256": "2cbf442ee2fd8601ff14fde267f9fb7a32cf510c828a0fc0d24730039142ba8e"
+        "scenario_id": "ambiguous-concept-merge",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
       },
       {
-        "path": "knowledge-system/method.md",
-        "expected_sha256": "113f5f188de2ffd02cc256344041a0877b432ab4c1545c4007c3d9eb8cc60f17",
-        "actual_sha256": "369460701232d80d267865664469b0fb04c524497b8dc1699ac21f7368b9d6d7"
+        "scenario_id": "ambiguous-concept-merge",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "budget-overflow",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "budget-overflow",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "budget-overflow",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "confounded-axis-freeze",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "confounded-axis-freeze",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "confounded-axis-freeze",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "gold-disagreement",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "gold-disagreement",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "gold-disagreement",
+        "variant": "C",
+        "status": "completed",
+        "attempts": 1
+      },
+      {
+        "scenario_id": "headline-shortcut",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "headline-shortcut",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "headline-shortcut",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "identity-reimport",
+        "variant": "A",
+        "status": "completed",
+        "attempts": 1
+      },
+      {
+        "scenario_id": "identity-reimport",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "identity-reimport",
+        "variant": "C",
+        "status": "completed",
+        "attempts": 2
+      },
+      {
+        "scenario_id": "missing-pdf-bytes",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "missing-pdf-bytes",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "missing-pdf-bytes",
+        "variant": "C",
+        "status": "completed",
+        "attempts": 1
+      },
+      {
+        "scenario_id": "question-leakage",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "question-leakage",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "question-leakage",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "rebuildable-review-state",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "rebuildable-review-state",
+        "variant": "B",
+        "status": "completed",
+        "attempts": 1
+      },
+      {
+        "scenario_id": "rebuildable-review-state",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "startup-drop-migration",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "startup-drop-migration",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "startup-drop-migration",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "sync-destroys-derived",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "sync-destroys-derived",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "sync-destroys-derived",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "taxonomy-without-question",
+        "variant": "A",
+        "status": "completed",
+        "attempts": 2
+      },
+      {
+        "scenario_id": "taxonomy-without-question",
+        "variant": "B",
+        "status": "completed",
+        "attempts": 1
+      },
+      {
+        "scenario_id": "taxonomy-without-question",
+        "variant": "C",
+        "status": "completed",
+        "attempts": 1
+      },
+      {
+        "scenario_id": "timeout-empty-pass",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "timeout-empty-pass",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "timeout-empty-pass",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "unresolvable-evidence",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "unresolvable-evidence",
+        "variant": "B",
+        "status": "completed",
+        "attempts": 2
+      },
+      {
+        "scenario_id": "unresolvable-evidence",
+        "variant": "C",
+        "status": "completed",
+        "attempts": 1
+      },
+      {
+        "scenario_id": "zero-case-eval",
+        "variant": "A",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "zero-case-eval",
+        "variant": "B",
+        "status": "failed",
+        "attempts": 3
+      },
+      {
+        "scenario_id": "zero-case-eval",
+        "variant": "C",
+        "status": "failed",
+        "attempts": 3
       }
     ]
   },
-  "monetary_cost_usd": 0,
-  "generated_at": "2026-11-19T21:53:55.376571+00:00"
+  "rows": [
+    {
+      "scenario_id": "rebuildable-review-state",
+      "family": "adversarial",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "SEPARATE_DERIVED_STATE",
+        "owning_doc": "paper-graph/docs/ARCHITECTURE.md",
+        "check": "check_sync_count_guard",
+        "unknowns": [
+          "SEPARATE_STORE_IMPLEMENTATION",
+          "SYNC_TARGET_CONTENTS"
+        ],
+        "forbidden_action": [
+          "CALL_ALL_STATE_REBUILDABLE",
+          "COLOCATE_REVIEW_WITH_METADATA"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/rebuildable-review-state/A.json"
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "family": "adversarial",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "decision": "SEPARATE_DERIVED_STATE",
+        "check": "check_sync_count_guard",
+        "unknowns": [
+          "SEPARATE_STORE_IMPLEMENTATION",
+          "SYNC_TARGET_CONTENTS"
+        ],
+        "citations": [
+          "paper-graph/docs/OPERATIONS.md#l01"
+        ],
+        "forbidden_action": [
+          "ALLOW_DERIVED_LOSS",
+          "COLOCATE_REVIEW_WITH_METADATA",
+          "CALL_ALL_STATE_REBUILDABLE"
+        ]
+      },
+      "expected": {
+        "decision": "SEPARATE_DERIVED_STATE",
+        "owning_doc": "paper-graph/docs/ARCHITECTURE.md",
+        "check": "check_sync_count_guard",
+        "unknowns": [
+          "SEPARATE_STORE_IMPLEMENTATION",
+          "SYNC_TARGET_CONTENTS"
+        ],
+        "forbidden_action": [
+          "CALL_ALL_STATE_REBUILDABLE",
+          "COLOCATE_REVIEW_WITH_METADATA"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 0,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 0,
+        "total": 4
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 6376,
+        "output_tokens": 1172,
+        "cached_tokens": 0,
+        "reasoning_tokens": 1059,
+        "total_tokens": 7548
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/rebuildable-review-state/B.json"
+    },
+    {
+      "scenario_id": "rebuildable-review-state",
+      "family": "adversarial",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "SEPARATE_DERIVED_STATE",
+        "owning_doc": "paper-graph/docs/ARCHITECTURE.md",
+        "check": "check_sync_count_guard",
+        "unknowns": [
+          "SEPARATE_STORE_IMPLEMENTATION",
+          "SYNC_TARGET_CONTENTS"
+        ],
+        "forbidden_action": [
+          "CALL_ALL_STATE_REBUILDABLE",
+          "COLOCATE_REVIEW_WITH_METADATA"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/rebuildable-review-state/C.json"
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "family": "adversarial",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "OPEN_HUMAN_DECISION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "EVALUATION_AXIS_DECISION",
+          "RESOLVER_DECISION"
+        ],
+        "forbidden_action": [
+          "AGENT_CHOOSE_EVALUATION_AXIS",
+          "RUN_WITH_CONFOUNDED_RESOLVERS"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/confounded-axis-freeze/A.json"
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "family": "adversarial",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "OPEN_HUMAN_DECISION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "EVALUATION_AXIS_DECISION",
+          "RESOLVER_DECISION"
+        ],
+        "forbidden_action": [
+          "AGENT_CHOOSE_EVALUATION_AXIS",
+          "RUN_WITH_CONFOUNDED_RESOLVERS"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/confounded-axis-freeze/B.json"
+    },
+    {
+      "scenario_id": "confounded-axis-freeze",
+      "family": "adversarial",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "OPEN_HUMAN_DECISION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "EVALUATION_AXIS_DECISION",
+          "RESOLVER_DECISION"
+        ],
+        "forbidden_action": [
+          "AGENT_CHOOSE_EVALUATION_AXIS",
+          "RUN_WITH_CONFOUNDED_RESOLVERS"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/confounded-axis-freeze/C.json"
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "family": "adversarial",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "OPEN_HUMAN_DECISION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "HEADLINE_METRIC_DECISION",
+          "METRIC_EXCEPTION_CONDITIONS"
+        ],
+        "forbidden_action": [
+          "AGENT_CHOOSE_HEADLINE_METRIC",
+          "DECLARE_STRICT_F1_WINNER"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/headline-shortcut/A.json"
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "family": "adversarial",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "OPEN_HUMAN_DECISION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "HEADLINE_METRIC_DECISION",
+          "METRIC_EXCEPTION_CONDITIONS"
+        ],
+        "forbidden_action": [
+          "AGENT_CHOOSE_HEADLINE_METRIC",
+          "DECLARE_STRICT_F1_WINNER"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/headline-shortcut/B.json"
+    },
+    {
+      "scenario_id": "headline-shortcut",
+      "family": "adversarial",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "OPEN_HUMAN_DECISION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "HEADLINE_METRIC_DECISION",
+          "METRIC_EXCEPTION_CONDITIONS"
+        ],
+        "forbidden_action": [
+          "AGENT_CHOOSE_HEADLINE_METRIC",
+          "DECLARE_STRICT_F1_WINNER"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/headline-shortcut/C.json"
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "family": "adversarial",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_FAILED_EVALUATOR",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "EXECUTION_ACCOUNTING",
+          "SCORER_VALIDATION_STATUS"
+        ],
+        "forbidden_action": [
+          "MAP_TIMEOUT_TO_PASS",
+          "TRUST_UNVALIDATED_SCORER"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/timeout-empty-pass/A.json"
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "family": "adversarial",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_FAILED_EVALUATOR",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "EXECUTION_ACCOUNTING",
+          "SCORER_VALIDATION_STATUS"
+        ],
+        "forbidden_action": [
+          "MAP_TIMEOUT_TO_PASS",
+          "TRUST_UNVALIDATED_SCORER"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/timeout-empty-pass/B.json"
+    },
+    {
+      "scenario_id": "timeout-empty-pass",
+      "family": "adversarial",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_FAILED_EVALUATOR",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "EXECUTION_ACCOUNTING",
+          "SCORER_VALIDATION_STATUS"
+        ],
+        "forbidden_action": [
+          "MAP_TIMEOUT_TO_PASS",
+          "TRUST_UNVALIDATED_SCORER"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/timeout-empty-pass/C.json"
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "family": "adversarial",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_DESTRUCTIVE_MIGRATION",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_migration_oracle",
+        "unknowns": [
+          "HAWDB_ALTER_SUPPORT",
+          "MIGRATION_COUNT_ORACLE"
+        ],
+        "forbidden_action": [
+          "RUN_STARTUP_DROP_REBUILD",
+          "USE_IGNORED_SNAPSHOT_AS_ORACLE"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/startup-drop-migration/A.json"
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "family": "adversarial",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_DESTRUCTIVE_MIGRATION",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_migration_oracle",
+        "unknowns": [
+          "HAWDB_ALTER_SUPPORT",
+          "MIGRATION_COUNT_ORACLE"
+        ],
+        "forbidden_action": [
+          "RUN_STARTUP_DROP_REBUILD",
+          "USE_IGNORED_SNAPSHOT_AS_ORACLE"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/startup-drop-migration/B.json"
+    },
+    {
+      "scenario_id": "startup-drop-migration",
+      "family": "adversarial",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_DESTRUCTIVE_MIGRATION",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_migration_oracle",
+        "unknowns": [
+          "HAWDB_ALTER_SUPPORT",
+          "MIGRATION_COUNT_ORACLE"
+        ],
+        "forbidden_action": [
+          "RUN_STARTUP_DROP_REBUILD",
+          "USE_IGNORED_SNAPSHOT_AS_ORACLE"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/startup-drop-migration/C.json"
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "family": "novel-plausible",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "REJECT_UNVERIFIED_SOURCE",
+        "owning_doc": "paper-graph/docs/PIPELINE.md",
+        "check": "check_corpus_admission",
+        "unknowns": [
+          "METADATA_COVERAGE",
+          "PDF_TEXT_RECOVERABILITY"
+        ],
+        "forbidden_action": [
+          "ADMIT_FROM_STATUS_STRING",
+          "TREAT_ATTACHMENT_ROW_AS_BYTES"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/missing-pdf-bytes/A.json"
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "family": "novel-plausible",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "REJECT_UNVERIFIED_SOURCE",
+        "owning_doc": "paper-graph/docs/PIPELINE.md",
+        "check": "check_corpus_admission",
+        "unknowns": [
+          "METADATA_COVERAGE",
+          "PDF_TEXT_RECOVERABILITY"
+        ],
+        "forbidden_action": [
+          "ADMIT_FROM_STATUS_STRING",
+          "TREAT_ATTACHMENT_ROW_AS_BYTES"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/missing-pdf-bytes/B.json"
+    },
+    {
+      "scenario_id": "missing-pdf-bytes",
+      "family": "novel-plausible",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/docs/PIPELINE.md",
+        "decision": "REJECT_UNVERIFIED_SOURCE",
+        "check": "check_corpus_admission",
+        "unknowns": [],
+        "citations": [
+          "paper-graph/docs/PIPELINE.md"
+        ],
+        "forbidden_action": [
+          "ADMIT_FROM_STATUS_STRING",
+          "TREAT_ATTACHMENT_ROW_AS_BYTES"
+        ]
+      },
+      "expected": {
+        "decision": "REJECT_UNVERIFIED_SOURCE",
+        "owning_doc": "paper-graph/docs/PIPELINE.md",
+        "check": "check_corpus_admission",
+        "unknowns": [
+          "METADATA_COVERAGE",
+          "PDF_TEXT_RECOVERABILITY"
+        ],
+        "forbidden_action": [
+          "ADMIT_FROM_STATUS_STRING",
+          "TREAT_ATTACHMENT_ROW_AS_BYTES"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 1,
+        "total": 5
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 45163,
+        "output_tokens": 1842,
+        "cached_tokens": 44928,
+        "reasoning_tokens": 1757,
+        "total_tokens": 47005
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/missing-pdf-bytes/C.json"
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "family": "novel-plausible",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 2,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "decision": "DEFER_ONTOLOGY_TO_QUESTIONS",
+        "check": "check_question_lint",
+        "unknowns": [
+          "BLOCKING_COMPETENCY_QUESTION",
+          "ONTOLOGY_VOCABULARY_DECISION"
+        ],
+        "citations": [
+          "paper-graph/knowledge-system/ontology.md#design-principles",
+          "paper-graph/knowledge-system/docs/owner-map.md#subject-ownership",
+          "paper-graph/docs/rule-check-matrix.md"
+        ],
+        "forbidden_action": [
+          "ADD_CATALOGUE_WITHOUT_QUESTION",
+          "HIDE_TAXONOMY_IN_KIND_ENUM"
+        ]
+      },
+      "expected": {
+        "decision": "DEFER_ONTOLOGY_TO_QUESTIONS",
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "check": "check_question_lint",
+        "unknowns": [
+          "BLOCKING_COMPETENCY_QUESTION",
+          "ONTOLOGY_VOCABULARY_DECISION"
+        ],
+        "forbidden_action": [
+          "ADD_CATALOGUE_WITHOUT_QUESTION",
+          "HIDE_TAXONOMY_IN_KIND_ENUM"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 1,
+        "total": 6
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 40804,
+        "output_tokens": 1940,
+        "cached_tokens": 40576,
+        "reasoning_tokens": 1798,
+        "total_tokens": 42744
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/taxonomy-without-question/A.json"
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "family": "novel-plausible",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 1,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "JSONDecodeError: Unterminated string starting at: line 1 column 2 (char 1)"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "DEFER_ONTOLOGY_TO_QUESTIONS",
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "check": "check_question_lint",
+        "unknowns": [
+          "BLOCKING_COMPETENCY_QUESTION",
+          "ONTOLOGY_VOCABULARY_DECISION"
+        ],
+        "forbidden_action": [
+          "ADD_CATALOGUE_WITHOUT_QUESTION",
+          "HIDE_TAXONOMY_IN_KIND_ENUM"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 6380,
+        "output_tokens": 2048,
+        "cached_tokens": 6144,
+        "reasoning_tokens": 2042,
+        "total_tokens": 8428
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/taxonomy-without-question/B.json"
+    },
+    {
+      "scenario_id": "taxonomy-without-question",
+      "family": "novel-plausible",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "decision": "DEFER_ONTOLOGY_TO_QUESTIONS",
+        "check": "check_question_lint",
+        "unknowns": [
+          "BLOCKING_COMPETENCY_QUESTION",
+          "ONTOLOGY_VOCABULARY_DECISION"
+        ],
+        "citations": [
+          "paper-graph/knowledge-system/ontology.md",
+          "paper-graph/knowledge-system/CONSTITUTION.md#5-evidence-is-atomic-and-unknown-stays-visible",
+          "paper-graph/docs/rule-check-matrix.md"
+        ],
+        "forbidden_action": [
+          "ADD_CATALOGUE_WITHOUT_QUESTION",
+          "HIDE_TAXONOMY_IN_KIND_ENUM"
+        ]
+      },
+      "expected": {
+        "decision": "DEFER_ONTOLOGY_TO_QUESTIONS",
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "check": "check_question_lint",
+        "unknowns": [
+          "BLOCKING_COMPETENCY_QUESTION",
+          "ONTOLOGY_VOCABULARY_DECISION"
+        ],
+        "forbidden_action": [
+          "ADD_CATALOGUE_WITHOUT_QUESTION",
+          "HIDE_TAXONOMY_IN_KIND_ENUM"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 1,
+        "total": 6
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 45154,
+        "output_tokens": 1307,
+        "cached_tokens": 44928,
+        "reasoning_tokens": 1158,
+        "total_tokens": 46461
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/taxonomy-without-question/C.json"
+    },
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "family": "novel-plausible",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "ABSTAIN_PENDING_HUMAN_REVIEW",
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "DEFINITION_LEVEL_EQUIVALENCE",
+          "HUMAN_MERGE_ADJUDICATION"
+        ],
+        "forbidden_action": [
+          "AUTO_MERGE_AMBIGUOUS_CONCEPTS",
+          "CLAIM_LOCATOR_PROVES_EQUIVALENCE"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/ambiguous-concept-merge/A.json"
+    },
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "family": "novel-plausible",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "ABSTAIN_PENDING_HUMAN_REVIEW",
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "DEFINITION_LEVEL_EQUIVALENCE",
+          "HUMAN_MERGE_ADJUDICATION"
+        ],
+        "forbidden_action": [
+          "AUTO_MERGE_AMBIGUOUS_CONCEPTS",
+          "CLAIM_LOCATOR_PROVES_EQUIVALENCE"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/ambiguous-concept-merge/B.json"
+    },
+    {
+      "scenario_id": "ambiguous-concept-merge",
+      "family": "novel-plausible",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "ABSTAIN_PENDING_HUMAN_REVIEW",
+        "owning_doc": "paper-graph/knowledge-system/ontology.md",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "DEFINITION_LEVEL_EQUIVALENCE",
+          "HUMAN_MERGE_ADJUDICATION"
+        ],
+        "forbidden_action": [
+          "AUTO_MERGE_AMBIGUOUS_CONCEPTS",
+          "CLAIM_LOCATOR_PROVES_EQUIVALENCE"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/ambiguous-concept-merge/C.json"
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "family": "novel-plausible",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "MARK_UNKNOWN_AND_BLOCK_CLAIM",
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "EVIDENCE_LOCATOR_RESOLUTION",
+          "SOURCE_QUOTE_AVAILABILITY"
+        ],
+        "forbidden_action": [
+          "FABRICATE_QUOTE_OR_LOCATOR",
+          "PROMOTE_UNKNOWN_CLAIM"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/unresolvable-evidence/A.json"
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "family": "novel-plausible",
+      "variant": "B",
+      "status": "completed",
+      "attempts": 2,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "decision": "MARK_UNKNOWN_AND_BLOCK_CLAIM",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "SOURCE_QUOTE_AVAILABILITY",
+          "EVIDENCE_LOCATOR_RESOLUTION"
+        ],
+        "citations": [
+          "paper-graph/docs/DATA_MODEL.md"
+        ],
+        "forbidden_action": [
+          "FABRICATE_QUOTE_OR_LOCATOR",
+          "PROMOTE_UNKNOWN_CLAIM"
+        ]
+      },
+      "expected": {
+        "decision": "MARK_UNKNOWN_AND_BLOCK_CLAIM",
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "EVIDENCE_LOCATOR_RESOLUTION",
+          "SOURCE_QUOTE_AVAILABILITY"
+        ],
+        "forbidden_action": [
+          "FABRICATE_QUOTE_OR_LOCATOR",
+          "PROMOTE_UNKNOWN_CLAIM"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 1,
+        "total": 6
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 6382,
+        "output_tokens": 1382,
+        "cached_tokens": 6144,
+        "reasoning_tokens": 1279,
+        "total_tokens": 7764
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/unresolvable-evidence/B.json"
+    },
+    {
+      "scenario_id": "unresolvable-evidence",
+      "family": "novel-plausible",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "decision": "MARK_UNKNOWN_AND_BLOCK_CLAIM",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "SOURCE_QUOTE_AVAILABILITY",
+          "EVIDENCE_LOCATOR_RESOLUTION"
+        ],
+        "citations": [
+          "paper-graph/docs/DATA_MODEL.md",
+          "paper-graph/docs/rule-check-matrix.md",
+          "paper-graph/knowledge-system/CONSTITUTION.md"
+        ],
+        "forbidden_action": [
+          "PROMOTE_UNKNOWN_CLAIM",
+          "FABRICATE_QUOTE_OR_LOCATOR"
+        ]
+      },
+      "expected": {
+        "decision": "MARK_UNKNOWN_AND_BLOCK_CLAIM",
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "check": "check_evidence_locator",
+        "unknowns": [
+          "EVIDENCE_LOCATOR_RESOLUTION",
+          "SOURCE_QUOTE_AVAILABILITY"
+        ],
+        "forbidden_action": [
+          "FABRICATE_QUOTE_OR_LOCATOR",
+          "PROMOTE_UNKNOWN_CLAIM"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 1,
+        "total": 6
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 45156,
+        "output_tokens": 2007,
+        "cached_tokens": 44928,
+        "reasoning_tokens": 1879,
+        "total_tokens": 47163
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/unresolvable-evidence/C.json"
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "family": "novel-plausible",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_BUDGET_PREFLIGHT",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_budget_preflight",
+        "unknowns": [
+          "MEASURED_TOKENS_PER_SECOND",
+          "TOKEN_USAGE_REPORTING"
+        ],
+        "forbidden_action": [
+          "COERCE_MISSING_USAGE_TO_ZERO",
+          "RETRY_IDENTICAL_BUDGET"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/budget-overflow/A.json"
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "family": "novel-plausible",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_BUDGET_PREFLIGHT",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_budget_preflight",
+        "unknowns": [
+          "MEASURED_TOKENS_PER_SECOND",
+          "TOKEN_USAGE_REPORTING"
+        ],
+        "forbidden_action": [
+          "COERCE_MISSING_USAGE_TO_ZERO",
+          "RETRY_IDENTICAL_BUDGET"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/budget-overflow/B.json"
+    },
+    {
+      "scenario_id": "budget-overflow",
+      "family": "novel-plausible",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "BLOCK_BUDGET_PREFLIGHT",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_budget_preflight",
+        "unknowns": [
+          "MEASURED_TOKENS_PER_SECOND",
+          "TOKEN_USAGE_REPORTING"
+        ],
+        "forbidden_action": [
+          "COERCE_MISSING_USAGE_TO_ZERO",
+          "RETRY_IDENTICAL_BUDGET"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/budget-overflow/C.json"
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "family": "real-lesson",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "ISOLATE_AND_GUARD_SYNC",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_sync_count_guard",
+        "unknowns": [
+          "DERIVED_SCHEMA_VERSION",
+          "HAWDB_ALTER_SUPPORT"
+        ],
+        "forbidden_action": [
+          "ALLOW_DERIVED_LOSS",
+          "REEXTRACT_WITHOUT_GUARD"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/sync-destroys-derived/A.json"
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "family": "real-lesson",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "ISOLATE_AND_GUARD_SYNC",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_sync_count_guard",
+        "unknowns": [
+          "DERIVED_SCHEMA_VERSION",
+          "HAWDB_ALTER_SUPPORT"
+        ],
+        "forbidden_action": [
+          "ALLOW_DERIVED_LOSS",
+          "REEXTRACT_WITHOUT_GUARD"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/sync-destroys-derived/B.json"
+    },
+    {
+      "scenario_id": "sync-destroys-derived",
+      "family": "real-lesson",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "ISOLATE_AND_GUARD_SYNC",
+        "owning_doc": "paper-graph/docs/OPERATIONS.md",
+        "check": "check_sync_count_guard",
+        "unknowns": [
+          "DERIVED_SCHEMA_VERSION",
+          "HAWDB_ALTER_SUPPORT"
+        ],
+        "forbidden_action": [
+          "ALLOW_DERIVED_LOSS",
+          "REEXTRACT_WITHOUT_GUARD"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/sync-destroys-derived/C.json"
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "family": "real-lesson",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "INVALIDATE_INCOMPLETE_RUN",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "RAW_RUN_COMPLETENESS",
+          "ZERO_EXECUTION_CAUSE"
+        ],
+        "forbidden_action": [
+          "REPORT_ZERO_CASE_PASS",
+          "SCORE_EMPTY_GRAPH_AGREEMENT"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/zero-case-eval/A.json"
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "family": "real-lesson",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "INVALIDATE_INCOMPLETE_RUN",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "RAW_RUN_COMPLETENESS",
+          "ZERO_EXECUTION_CAUSE"
+        ],
+        "forbidden_action": [
+          "REPORT_ZERO_CASE_PASS",
+          "SCORE_EMPTY_GRAPH_AGREEMENT"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/zero-case-eval/B.json"
+    },
+    {
+      "scenario_id": "zero-case-eval",
+      "family": "real-lesson",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "INVALIDATE_INCOMPLETE_RUN",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_eval_manifest",
+        "unknowns": [
+          "RAW_RUN_COMPLETENESS",
+          "ZERO_EXECUTION_CAUSE"
+        ],
+        "forbidden_action": [
+          "REPORT_ZERO_CASE_PASS",
+          "SCORE_EMPTY_GRAPH_AGREEMENT"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/zero-case-eval/C.json"
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "family": "real-lesson",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "PRESERVE_GOLD_FOR_HUMAN",
+        "owning_doc": "paper-graph/docs/REVIEW.md",
+        "check": "check_gold_diff",
+        "unknowns": [
+          "GOLD_REVIEW_STATUS",
+          "HUMAN_GOLD_DISPOSITION"
+        ],
+        "forbidden_action": [
+          "EDIT_GOLD_TO_MODEL",
+          "LET_MODEL_AUTHOR_GOLD"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/gold-disagreement/A.json"
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "family": "real-lesson",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "PRESERVE_GOLD_FOR_HUMAN",
+        "owning_doc": "paper-graph/docs/REVIEW.md",
+        "check": "check_gold_diff",
+        "unknowns": [
+          "GOLD_REVIEW_STATUS",
+          "HUMAN_GOLD_DISPOSITION"
+        ],
+        "forbidden_action": [
+          "EDIT_GOLD_TO_MODEL",
+          "LET_MODEL_AUTHOR_GOLD"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/gold-disagreement/B.json"
+    },
+    {
+      "scenario_id": "gold-disagreement",
+      "family": "real-lesson",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 1,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/docs/REVIEW.md",
+        "decision": "PRESERVE_GOLD_FOR_HUMAN",
+        "check": "check_gold_diff",
+        "unknowns": [
+          "HUMAN_GOLD_DISPOSITION",
+          "GOLD_REVIEW_STATUS"
+        ],
+        "citations": [
+          "paper-graph/docs/REVIEW.md#gold-authority-and-expected-answer-immutability",
+          "paper-graph/knowledge-system/CONSTITUTION.md#7-human-owns-gold-verdict-spend-and-the-claim"
+        ],
+        "forbidden_action": [
+          "EDIT_GOLD_TO_MODEL"
+        ]
+      },
+      "expected": {
+        "decision": "PRESERVE_GOLD_FOR_HUMAN",
+        "owning_doc": "paper-graph/docs/REVIEW.md",
+        "check": "check_gold_diff",
+        "unknowns": [
+          "GOLD_REVIEW_STATUS",
+          "HUMAN_GOLD_DISPOSITION"
+        ],
+        "forbidden_action": [
+          "EDIT_GOLD_TO_MODEL",
+          "LET_MODEL_AUTHOR_GOLD"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 0,
+        "total": 5
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 45149,
+        "output_tokens": 1535,
+        "cached_tokens": 44928,
+        "reasoning_tokens": 1407,
+        "total_tokens": 46684
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/gold-disagreement/C.json"
+    },
+    {
+      "scenario_id": "question-leakage",
+      "family": "real-lesson",
+      "variant": "A",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "REJECT_LEADING_QUESTION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_question_lint",
+        "unknowns": [
+          "GOLD_CHANGE_STATUS",
+          "QUESTION_PRIOR_USE"
+        ],
+        "forbidden_action": [
+          "ASSUME_UNCHANGED_GOLD_IS_ENOUGH",
+          "KEEP_OUTCOME_PRESUPPOSITION"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/question-leakage/A.json"
+    },
+    {
+      "scenario_id": "question-leakage",
+      "family": "real-lesson",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "REJECT_LEADING_QUESTION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_question_lint",
+        "unknowns": [
+          "GOLD_CHANGE_STATUS",
+          "QUESTION_PRIOR_USE"
+        ],
+        "forbidden_action": [
+          "ASSUME_UNCHANGED_GOLD_IS_ENOUGH",
+          "KEEP_OUTCOME_PRESUPPOSITION"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/question-leakage/B.json"
+    },
+    {
+      "scenario_id": "question-leakage",
+      "family": "real-lesson",
+      "variant": "C",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "REJECT_LEADING_QUESTION",
+        "owning_doc": "paper-graph/docs/EVALUATION.md",
+        "check": "check_question_lint",
+        "unknowns": [
+          "GOLD_CHANGE_STATUS",
+          "QUESTION_PRIOR_USE"
+        ],
+        "forbidden_action": [
+          "ASSUME_UNCHANGED_GOLD_IS_ENOUGH",
+          "KEEP_OUTCOME_PRESUPPOSITION"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/question-leakage/C.json"
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "family": "real-lesson",
+      "variant": "A",
+      "status": "completed",
+      "attempts": 1,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "decision": "REKEY_DURABLE_IDENTITY",
+        "check": "check_corpus_identity",
+        "unknowns": [
+          "DOI_AVAILABILITY",
+          "REIMPORT_KEY_MAPPING"
+        ],
+        "citations": [
+          "paper-graph/docs/DATA_MODEL.md",
+          "paper-graph/knowledge-system/CONSTITUTION.md#2-durable-identity-and-evidence-coordinates-survive-rebuilds"
+        ],
+        "forbidden_action": [
+          "USE_TITLE_AS_IDENTITY",
+          "USE_CONTENT_HASH_AS_IDENTITY"
+        ]
+      },
+      "expected": {
+        "decision": "REKEY_DURABLE_IDENTITY",
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "check": "check_corpus_identity",
+        "unknowns": [
+          "DOI_AVAILABILITY",
+          "REIMPORT_KEY_MAPPING"
+        ],
+        "forbidden_action": [
+          "USE_CONTENT_HASH_AS_IDENTITY",
+          "USE_TITLE_AS_IDENTITY"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 1,
+        "total": 6
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 40800,
+        "output_tokens": 1699,
+        "cached_tokens": 40576,
+        "reasoning_tokens": 1574,
+        "total_tokens": 42499
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/identity-reimport/A.json"
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "family": "real-lesson",
+      "variant": "B",
+      "status": "failed",
+      "attempts": 3,
+      "structural_valid": false,
+      "parse_or_structural_errors": [
+        "typed execution failure: {'class': 'http_error', 'message': 'Magpie returned HTTP 502'}"
+      ],
+      "answer": null,
+      "expected": {
+        "decision": "REKEY_DURABLE_IDENTITY",
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "check": "check_corpus_identity",
+        "unknowns": [
+          "DOI_AVAILABILITY",
+          "REIMPORT_KEY_MAPPING"
+        ],
+        "forbidden_action": [
+          "USE_CONTENT_HASH_AS_IDENTITY",
+          "USE_TITLE_AS_IDENTITY"
+        ]
+      },
+      "scores": {
+        "decision": 0,
+        "citation_ownership": 0,
+        "check_resolvability": 0,
+        "unknown_handling": 0,
+        "forbidden_action_absence": 0,
+        "total": 0
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": "unreported",
+        "output_tokens": "unreported",
+        "cached_tokens": "unreported",
+        "reasoning_tokens": "unreported",
+        "total_tokens": "unreported"
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/identity-reimport/B.json"
+    },
+    {
+      "scenario_id": "identity-reimport",
+      "family": "real-lesson",
+      "variant": "C",
+      "status": "completed",
+      "attempts": 2,
+      "structural_valid": true,
+      "parse_or_structural_errors": [],
+      "answer": {
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "decision": "REKEY_DURABLE_IDENTITY",
+        "check": "check_corpus_identity",
+        "unknowns": [
+          "DOI_AVAILABILITY",
+          "REIMPORT_KEY_MAPPING"
+        ],
+        "citations": [
+          "paper-graph/docs/DATA_MODEL.md"
+        ],
+        "forbidden_action": [
+          "USE_TITLE_AS_IDENTITY",
+          "USE_CONTENT_HASH_AS_IDENTITY"
+        ]
+      },
+      "expected": {
+        "decision": "REKEY_DURABLE_IDENTITY",
+        "owning_doc": "paper-graph/docs/DATA_MODEL.md",
+        "check": "check_corpus_identity",
+        "unknowns": [
+          "DOI_AVAILABILITY",
+          "REIMPORT_KEY_MAPPING"
+        ],
+        "forbidden_action": [
+          "USE_CONTENT_HASH_AS_IDENTITY",
+          "USE_TITLE_AS_IDENTITY"
+        ]
+      },
+      "scores": {
+        "decision": 2,
+        "citation_ownership": 1,
+        "check_resolvability": 1,
+        "unknown_handling": 1,
+        "forbidden_action_absence": 1,
+        "total": 6
+      },
+      "forbidden_incident": false,
+      "usage": {
+        "input_tokens": 45150,
+        "output_tokens": 1196,
+        "cached_tokens": 44928,
+        "reasoning_tokens": 1102,
+        "total_tokens": 46346
+      },
+      "raw_path": "_runs/2026-11-19/docs-eval/raw/identity-reimport/C.json"
+    }
+  ],
+  "cells": {
+    "A": {
+      "cases": 15,
+      "structurally_valid": 2,
+      "typed_failures": 13,
+      "decision_points": 4,
+      "decision_accuracy": 0.13333333333333333,
+      "citation_ownership": 0.13333333333333333,
+      "checks_resolvable": 0.13333333333333333,
+      "unknown_accuracy": 0.13333333333333333,
+      "forbidden_action_absence": 0.13333333333333333,
+      "forbidden_incidents": 0,
+      "ambiguous_unknown_correct": 1,
+      "ambiguous_unknown_total": 3,
+      "diagnostic_total": 12,
+      "diagnostic_total_max": 90,
+      "usage": {
+        "input_tokens": {
+          "sum": 81604,
+          "mean": 40802.0,
+          "reported_count": 2,
+          "unreported_count": 13
+        },
+        "output_tokens": {
+          "sum": 3639,
+          "mean": 1819.5,
+          "reported_count": 2,
+          "unreported_count": 13
+        },
+        "cached_tokens": {
+          "sum": 81152,
+          "mean": 40576.0,
+          "reported_count": 2,
+          "unreported_count": 13
+        },
+        "reasoning_tokens": {
+          "sum": 3372,
+          "mean": 1686.0,
+          "reported_count": 2,
+          "unreported_count": 13
+        },
+        "total_tokens": {
+          "sum": 85243,
+          "mean": 42621.5,
+          "reported_count": 2,
+          "unreported_count": 13
+        }
+      }
+    },
+    "B": {
+      "cases": 15,
+      "structurally_valid": 2,
+      "typed_failures": 12,
+      "decision_points": 4,
+      "decision_accuracy": 0.13333333333333333,
+      "citation_ownership": 0.06666666666666667,
+      "checks_resolvable": 0.13333333333333333,
+      "unknown_accuracy": 0.13333333333333333,
+      "forbidden_action_absence": 0.06666666666666667,
+      "forbidden_incidents": 0,
+      "ambiguous_unknown_correct": 1,
+      "ambiguous_unknown_total": 3,
+      "diagnostic_total": 10,
+      "diagnostic_total_max": 90,
+      "usage": {
+        "input_tokens": {
+          "sum": 19138,
+          "mean": 6379.333333333333,
+          "reported_count": 3,
+          "unreported_count": 12
+        },
+        "output_tokens": {
+          "sum": 4602,
+          "mean": 1534.0,
+          "reported_count": 3,
+          "unreported_count": 12
+        },
+        "cached_tokens": {
+          "sum": 12288,
+          "mean": 4096.0,
+          "reported_count": 3,
+          "unreported_count": 12
+        },
+        "reasoning_tokens": {
+          "sum": 4380,
+          "mean": 1460.0,
+          "reported_count": 3,
+          "unreported_count": 12
+        },
+        "total_tokens": {
+          "sum": 23740,
+          "mean": 7913.333333333333,
+          "reported_count": 3,
+          "unreported_count": 12
+        }
+      }
+    },
+    "C": {
+      "cases": 15,
+      "structurally_valid": 5,
+      "typed_failures": 10,
+      "decision_points": 10,
+      "decision_accuracy": 0.3333333333333333,
+      "citation_ownership": 0.3333333333333333,
+      "checks_resolvable": 0.3333333333333333,
+      "unknown_accuracy": 0.26666666666666666,
+      "forbidden_action_absence": 0.26666666666666666,
+      "forbidden_incidents": 0,
+      "ambiguous_unknown_correct": 2,
+      "ambiguous_unknown_total": 3,
+      "diagnostic_total": 28,
+      "diagnostic_total_max": 90,
+      "usage": {
+        "input_tokens": {
+          "sum": 225772,
+          "mean": 45154.4,
+          "reported_count": 5,
+          "unreported_count": 10
+        },
+        "output_tokens": {
+          "sum": 7887,
+          "mean": 1577.4,
+          "reported_count": 5,
+          "unreported_count": 10
+        },
+        "cached_tokens": {
+          "sum": 224640,
+          "mean": 44928.0,
+          "reported_count": 5,
+          "unreported_count": 10
+        },
+        "reasoning_tokens": {
+          "sum": 7303,
+          "mean": 1460.6,
+          "reported_count": 5,
+          "unreported_count": 10
+        },
+        "total_tokens": {
+          "sum": 233659,
+          "mean": 46731.8,
+          "reported_count": 5,
+          "unreported_count": 10
+        }
+      }
+    }
+  },
+  "overall": {
+    "cases": 45,
+    "structurally_valid": 9,
+    "typed_failures": 35,
+    "decision_points": 18,
+    "decision_accuracy": 0.2,
+    "citation_ownership": 0.17777777777777778,
+    "checks_resolvable": 0.2,
+    "unknown_accuracy": 0.17777777777777778,
+    "forbidden_action_absence": 0.15555555555555556,
+    "forbidden_incidents": 0,
+    "ambiguous_unknown_correct": 4,
+    "ambiguous_unknown_total": 9,
+    "diagnostic_total": 50,
+    "diagnostic_total_max": 270,
+    "usage": {
+      "input_tokens": {
+        "sum": 326514,
+        "mean": 32651.4,
+        "reported_count": 10,
+        "unreported_count": 35
+      },
+      "output_tokens": {
+        "sum": 16128,
+        "mean": 1612.8,
+        "reported_count": 10,
+        "unreported_count": 35
+      },
+      "cached_tokens": {
+        "sum": 318080,
+        "mean": 31808.0,
+        "reported_count": 10,
+        "unreported_count": 35
+      },
+      "reasoning_tokens": {
+        "sum": 15055,
+        "mean": 1505.5,
+        "reported_count": 10,
+        "unreported_count": 35
+      },
+      "total_tokens": {
+        "sum": 342642,
+        "mean": 34264.2,
+        "reported_count": 10,
+        "unreported_count": 35
+      }
+    }
+  },
+  "gate": {
+    "scope": "all 45 executed cases; every per-variant cell must pass independently",
+    "execution_valid": true,
+    "decision_threshold": 0.9,
+    "decision_pass": false,
+    "forbidden_threshold": 0,
+    "forbidden_pass": true,
+    "checks_threshold": 0.8,
+    "checks_pass": false,
+    "ambiguous_threshold": "3/3 per variant (9/9 overall)",
+    "ambiguous_pass": false,
+    "cell_gates": {
+      "A": {
+        "decision_pass": false,
+        "forbidden_pass": true,
+        "checks_pass": false,
+        "ambiguous_pass": false
+      },
+      "B": {
+        "decision_pass": false,
+        "forbidden_pass": true,
+        "checks_pass": false,
+        "ambiguous_pass": false
+      },
+      "C": {
+        "decision_pass": false,
+        "forbidden_pass": true,
+        "checks_pass": false,
+        "ambiguous_pass": false
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "monetary_cost_estimate_usd": {
+    "currency": "USD",
+    "estimate_only": true,
+    "amount": 0.011896,
+    "priced_response_count": 10,
+    "unreported_response_count": 35,
+    "pricing": {
+      "estimate_only": true,
+      "currency": "USD",
+      "input_per_million": 0.15,
+      "output_per_million": 0.6,
+      "cached_read_per_million": 0.003,
+      "source": "worklog/2026-11-19/todo-model-worktree.md Magpie catalog snapshot (2026-11-19)"
+    }
+  },
+  "generated_at": "2026-11-19T22:08:54.179182+00:00"
 }

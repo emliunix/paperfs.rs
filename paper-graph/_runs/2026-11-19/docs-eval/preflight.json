@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-11-19T22:00:35.575793+00:00",
+  "url": "http://127.0.0.1:3425/v1/models",
+  "http_status": 200,
+  "latency_ms": 174.143,
+  "requested_model_present": true,
+  "model_count": 81
+}

@@ -1,12 +1,11 @@
 2dcfa46d87d3e02a3ed2abf1e442fc84711a5642e789d375ac913c4bbe8e7bdf  _runs/2026-11-19/docs-eval/AGENTS.md
 dca729466fc119cff4ddbbc37f1d5d38b0f0a672a31e36924eb9ea22b70d12fc  _runs/2026-11-19/docs-eval/common-prompt.txt
 21673682c5fa69f5b09cf53dffd7d13c0414b3e59356d54bd3526f4092dd2fec  _runs/2026-11-19/docs-eval/docs.sha256
-18b1c0dade2ca161c3a0966c6d9be10d4d24377faa1c0da94d8006f4cf36d1eb  _runs/2026-11-19/docs-eval/scripts/freeze.py
+76198a754d51e540b4e716619b715bb7389d15edea12175cfdb8a07173b91e3e  _runs/2026-11-19/docs-eval/scripts/freeze.py
 e2ec66950d984d6970489b0ffe49f69f6f0a30a396e01ece44dd006f5778ff64  _runs/2026-11-19/docs-eval/scripts/generate_rules.py
 19d9e7478ef35d8bd308e2719a4c0b16e0cc5af8b248f2218e8d9a148cd7de4a  _runs/2026-11-19/docs-eval/scripts/run_eval.py
-d921873bca163c4456c002da6b3cf3c08cac3d704475c686cbcd5def97a9ee68  _runs/2026-11-19/docs-eval/scripts/score.py
+8478270ea1eb116eeb94733b56e8676f2fab4142dbca962232dd83ee4b8b9414  _runs/2026-11-19/docs-eval/scripts/score.py
 cd760702ff530cbadae6763d1d6580861623e06c5ee30e992442ea055ccb8aa9  _runs/2026-11-19/docs-eval/variant-a.txt
-f3daa82d82881e834d19cdd93252b36ab1dbdf4dbdc672f9e783c400c8069207  _runs/2026-11-19/docs.sha256
 570156ef2ca039abc5d830782541ece9f872cb9fcc2c52ddbf19e8cb98325bd9  docs/ARCHITECTURE.md
 727d952fffcf8d6057a9f1ffe836bb4c485b2683c0d09c54f2581ead83fb2ea9  docs/DATA_MODEL.md
 9fc65484bd7e44925228928a4e33af716989353e5a5bc7cb7dcda515d2d0a50f  docs/EVAL-PROMPT.md

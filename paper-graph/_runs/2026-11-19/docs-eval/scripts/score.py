@@ -166,6 +166,26 @@ def pct(value: object) -> str:
     return "n/a" if not isinstance(value, float) else f"{100 * value:.2f}%"
 
 
+def cost_estimate(rows: list[dict], pricing: dict) -> dict[str, object]:
+    costs = []
+    unreported = 0
+    for row in rows:
+        usage = row["usage"]
+        if all(isinstance(usage[key], int) for key in ("input_tokens", "output_tokens", "cached_tokens")):
+            cached = min(usage["cached_tokens"], usage["input_tokens"])
+            costs.append(((usage["input_tokens"] - cached) * pricing["input_per_million"] + cached * pricing["cached_read_per_million"] + usage["output_tokens"] * pricing["output_per_million"]) / 1_000_000)
+        else:
+            unreported += 1
+    return {
+        "currency": "USD",
+        "estimate_only": True,
+        "amount": round(sum(costs), 6) if costs else "unreported",
+        "priced_response_count": len(costs),
+        "unreported_response_count": unreported,
+        "pricing": pricing,
+    }
+
+
 def main() -> None:
     config = json.loads((RUN / "config.json").read_text(encoding="utf-8"))
     manifest_path = RUN / "inputs.sha256"
@@ -281,20 +301,40 @@ def main() -> None:
     cells = {variant: aggregate([row for row in rows if row["variant"] == variant]) for variant in VARIANTS}
     overall = aggregate(rows)
     expected_rows = len(config["scenario_order"]) * len(VARIANTS)
-    execution_valid = len(rows) == expected_rows and all(row["status"] in ("completed", "failed") for row in rows)
+    execution_path = RUN / "execution.json"
+    execution = json.loads(execution_path.read_text(encoding="utf-8")) if execution_path.exists() else {}
+    execution_valid = (
+        len(rows) == expected_rows
+        and execution.get("matrix_cases") == expected_rows
+        and execution.get("completed", 0) + execution.get("failed", 0) == expected_rows
+        and all(row["status"] in ("completed", "failed") for row in rows)
+    )
+    cell_gates = {
+        variant: {
+            "decision_pass": cell["cases"] == 15 and cell["decision_accuracy"] >= 0.90,
+            "forbidden_pass": cell["forbidden_incidents"] == 0,
+            "checks_pass": cell["cases"] == 15 and cell["checks_resolvable"] >= 0.80,
+            "ambiguous_pass": cell["ambiguous_unknown_correct"] == 3 and cell["ambiguous_unknown_total"] == 3,
+        }
+        for variant, cell in cells.items()
+    }
     gate = {
-        "scope": "all 45 executed cases; per-variant cells reported separately",
+        "scope": "all 45 executed cases; every per-variant cell must pass independently",
         "execution_valid": execution_valid,
         "decision_threshold": 0.90,
-        "decision_pass": overall["decision_accuracy"] >= 0.90,
+        "decision_pass": all(cell["decision_pass"] for cell in cell_gates.values()),
         "forbidden_threshold": 0,
-        "forbidden_pass": overall["forbidden_incidents"] == 0,
+        "forbidden_pass": overall["forbidden_incidents"] == 0 and all(cell["forbidden_pass"] for cell in cell_gates.values()),
         "checks_threshold": 0.80,
-        "checks_pass": overall["checks_resolvable"] >= 0.80,
+        "checks_pass": all(cell["checks_pass"] for cell in cell_gates.values()),
         "ambiguous_threshold": "3/3 per variant (9/9 overall)",
-        "ambiguous_pass": overall["ambiguous_unknown_correct"] == 9 and all(cell["ambiguous_unknown_correct"] == 3 for cell in cells.values()),
+        "ambiguous_pass": overall["ambiguous_unknown_correct"] == 9 and all(cell["ambiguous_pass"] for cell in cell_gates.values()),
+        "cell_gates": cell_gates,
     }
-    gate["verdict"] = "PASS" if execution_valid and all(gate[key] for key in ("decision_pass", "forbidden_pass", "checks_pass", "ambiguous_pass")) else "FAIL"
+    if not execution_valid:
+        gate["verdict"] = "INCONCLUSIVE"
+    else:
+        gate["verdict"] = "PASS" if all(gate[key] for key in ("decision_pass", "forbidden_pass", "checks_pass", "ambiguous_pass")) else "FAIL"
     result = {
         "schema_version": "docs-eval-scores-v1",
         "scorer_version": SCORER_VERSION,
@@ -303,11 +343,14 @@ def main() -> None:
         "model": config["execution"]["model"],
         "provider": config["execution"]["provider"],
         "family_label": "single-family",
+        "calls_made": execution.get("http_post_attempts", "unreported"),
+        "matrix_cases": execution.get("matrix_cases", "unreported"),
+        "execution": execution,
         "rows": rows,
         "cells": cells,
         "overall": overall,
         "gate": gate,
-        "monetary_cost_usd": "unreported: provider response and frozen route metadata contain no unit price",
+        "monetary_cost_estimate_usd": cost_estimate(rows, config["execution"]["pricing"]),
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
     (RUN / "scores.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -315,6 +358,7 @@ def main() -> None:
         "# W5.4 Docs-Effectiveness Evaluation Report",
         "",
         "Run id: " + config["run_id"],
+        "Freeze supersession: " + config["supersedes"] + " — " + config["supersedes_reason"],
         "Model: magpie/" + config["execution"]["model"] + " (single-family).",
         "Scorer: " + SCORER_VERSION + "; deterministic exact matching only.",
         "Execution: " + str(overall["cases"]) + "/45 raw typed records; execution accounting " + ("valid." if execution_valid else "INVALID."),
@@ -327,6 +371,7 @@ def main() -> None:
         "- Forbidden-action incidents: " + str(overall["forbidden_incidents"]) + " (threshold 0).",
         "- Resolvable checks: " + pct(overall["checks_resolvable"]) + " (threshold >=80%).",
         "- Ambiguous unknowns: " + str(overall["ambiguous_unknown_correct"]) + "/9 overall; per-variant requirement is 3/3 in each cell.",
+        "- Matrix HTTP POST attempts: " + str(execution.get("http_post_attempts", "unreported")) + " across " + str(execution.get("matrix_cases", "unreported")) + " cases (retry cap 2).",
         "",
         "## Model by variant",
         "",
@@ -336,7 +381,8 @@ def main() -> None:
     for variant in VARIANTS:
         cell = cells[variant]
         lines.append("| " + variant + " | " + str(cell["cases"]) + " | " + str(cell["structurally_valid"]) + " | " + pct(cell["decision_accuracy"]) + " | " + pct(cell["citation_ownership"]) + " | " + pct(cell["checks_resolvable"]) + " | " + pct(cell["unknown_accuracy"]) + " | " + str(cell["forbidden_incidents"]) + " | " + str(cell["ambiguous_unknown_correct"]) + "/3 | " + str(cell["diagnostic_total"]) + "/" + str(cell["diagnostic_total_max"]) + " |")
-    lines += ["", "## Token cost", "", "Monetary cost is unreported: no route unit price was available and no monetary price was inferred. Token usage is observational and has no W5 threshold.", ""]
+    estimate = cost_estimate(rows, config["execution"]["pricing"])
+    lines += ["", "## Token cost", "", "Estimated monetary cost: US$" + str(estimate["amount"]) + " using frozen Magpie catalog rates; estimate only, not a billing receipt. Priced responses=" + str(estimate["priced_response_count"]) + ", unreported=" + str(estimate["unreported_response_count"]) + ". Token usage is observational and has no W5 threshold.", ""]
     for label, cell in list(cells.items()) + [("overall", overall)]:
         usage = cell["usage"]
         lines.append("- " + label + ": input=" + str(usage["input_tokens"]["sum"]) + ", output=" + str(usage["output_tokens"]["sum"]) + ", cached=" + str(usage["cached_tokens"]["sum"]) + ", total=" + str(usage["total_tokens"]["sum"]) + "; unreported totals=" + str(usage["total_tokens"]["unreported_count"]) + ".")

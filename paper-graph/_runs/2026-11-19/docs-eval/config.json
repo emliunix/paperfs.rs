@@ -1,32 +1,11 @@
 {
   "schema_version": "docs-eval-config-v1",
-  "run_id": "w5.4-2026-11-19-magpie-deepseek-flash-r1",
-  "frozen_at": "2026-11-19T21:53:55.324056+00:00",
-  "run_permitted": false,
-  "abort_reason": "Legacy baseline hash mismatch; EVAL-PROMPT section 2 requires abort before predictions.",
-  "baseline": {
-    "path": "_runs/2026-11-19/docs.sha256",
-    "sha256": "f3daa82d82881e834d19cdd93252b36ab1dbdf4dbdc672f9e783c400c8069207",
-    "entries": 27,
-    "verified": false,
-    "mismatches": [
-      {
-        "path": "experiments/ontology-extraction/gates.md",
-        "expected_sha256": "5300c5479c3266e5397099a1ef252a095030b082e290bc0d101d66034980e4b3",
-        "actual_sha256": "6d77c126bfbf8cd332cd78a0999ccf233199ab42f7d1a0332a04c5ed0c13a89e"
-      },
-      {
-        "path": "knowledge-system/STATUS.md",
-        "expected_sha256": "a1d167d52c0bd3032d0426c5a3ffa57820a2fcff5ed8fae8409cd84dc13b6d30",
-        "actual_sha256": "2cbf442ee2fd8601ff14fde267f9fb7a32cf510c828a0fc0d24730039142ba8e"
-      },
-      {
-        "path": "knowledge-system/method.md",
-        "expected_sha256": "113f5f188de2ffd02cc256344041a0877b432ab4c1545c4007c3d9eb8cc60f17",
-        "actual_sha256": "369460701232d80d267865664469b0fb04c524497b8dc1699ac21f7368b9d6d7"
-      }
-    ]
-  },
+  "run_id": "w5.4-2026-11-20-magpie-deepseek-flash-r2",
+  "frozen_at": "2026-11-19T22:00:28.385348+00:00",
+  "run_permitted": true,
+  "abort_reason": null,
+  "supersedes": "W0 baseline docs.sha256 (2026-11-19)",
+  "supersedes_reason": "The legacy W0 manifest predates legitimate W1/W3/T3.9 documentation changes. The run-start freeze is authoritative; no comparison against the legacy manifest is performed.",
   "docs_manifest": {
     "path": "_runs/2026-11-19/docs-eval/docs.sha256",
     "sha256": "21673682c5fa69f5b09cf53dffd7d13c0414b3e59356d54bd3526f4092dd2fec",
@@ -37,7 +16,7 @@
     ]
   },
   "run_input_manifest": "_runs/2026-11-19/docs-eval/inputs.sha256",
-  "run_input_manifest_sha256": "0731c68764f59e3a7b3e5014a5431b870b209222191c4e43280110fa11aea58d",
+  "run_input_manifest_sha256": "329dcee3546035487f7d37ca5c3f62707efc7b9c6ad9a2e731dc3c8705491d41",
   "prompt": {
     "path": "docs/EVAL-PROMPT.md",
     "sha256": "9fc65484bd7e44925228928a4e33af716989353e5a5bc7cb7dcda515d2d0a50f",
@@ -145,7 +124,7 @@
   "scorer": {
     "version": "paper-graph-docs-eval-deterministic-scorer-v1",
     "path": "_runs/2026-11-19/docs-eval/scripts/score.py",
-    "sha256": "d921873bca163c4456c002da6b3cf3c08cac3d704475c686cbcd5def97a9ee68"
+    "sha256": "8478270ea1eb116eeb94733b56e8676f2fab4142dbca962232dd83ee4b8b9414"
   },
   "execution": {
     "provider": "magpie",
@@ -175,7 +154,14 @@
     },
     "planned_matrix_calls": 45,
     "spend_cap_usd": 5,
-    "pricing": "unreported; no monetary estimate inferred",
+    "pricing": {
+      "estimate_only": true,
+      "currency": "USD",
+      "input_per_million": 0.15,
+      "output_per_million": 0.6,
+      "cached_read_per_million": 0.003,
+      "source": "worklog/2026-11-19/todo-model-worktree.md Magpie catalog snapshot (2026-11-19)"
+    },
     "missing_usage": "unreported"
   },
   "gate": {

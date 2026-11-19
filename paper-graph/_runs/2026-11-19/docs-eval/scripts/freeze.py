@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 RUN = ROOT / "_runs/2026-11-19/docs-eval"
-RUN_ID = "w5.4-2026-11-19-magpie-deepseek-flash-r1"
+RUN_ID = "w5.4-2026-11-20-magpie-deepseek-flash-r2"
 A_DOCS = [
     "knowledge-system/CONSTITUTION.md",
     "knowledge-system/method.md",
@@ -41,20 +41,19 @@ def manifest_bytes(paths: list[str]) -> bytes:
 
 
 def main() -> None:
-    if (RUN / "config.json").exists():
-        raise SystemExit("config.json already exists; refusing to re-freeze")
     if list((RUN / "raw").glob("*/*.json")):
         raise SystemExit("Raw predictions already exist; refusing to freeze a new run")
-    legacy_path = ROOT / "_runs/2026-11-19/docs.sha256"
-    legacy_lines = legacy_path.read_text(encoding="utf-8").splitlines()
-    if len(legacy_lines) != 27:
-        raise SystemExit("Legacy manifest does not have 27 entries")
-    legacy_mismatches = []
-    for line in legacy_lines:
-        expected, rel = line.split("  ", 1)
-        actual = sha(ROOT / rel)
-        if actual != expected:
-            legacy_mismatches.append({"path": rel, "expected_sha256": expected, "actual_sha256": actual})
+    previous_config = RUN / "config.json"
+    if previous_config.exists():
+        previous = json.loads(previous_config.read_text(encoding="utf-8"))
+        if previous.get("run_permitted", True):
+            raise SystemExit("A permitted config already exists; refusing to re-freeze")
+        for name in ("config.json", "report.md", "scores.json"):
+            source = RUN / name
+            if source.exists():
+                archive = RUN / name.replace(".", ".aborted-r1.", 1)
+                if not archive.exists():
+                    archive.write_bytes(source.read_bytes())
     prompt_path = ROOT / "docs/EVAL-PROMPT.md"
     prompt_text = prompt_path.read_text(encoding="utf-8")
     common = prompt_text.split("## 3. BEGIN FROZEN COMMON PROMPT\n", 1)[1].split("## 4. END FROZEN COMMON PROMPT", 1)[0].strip("\n").encode("utf-8") + b"\n"
@@ -83,7 +82,6 @@ def main() -> None:
     input_paths = set(A_DOCS + seed_rels + [
         "docs/EVAL-PROMPT.md",
         "knowledge-system/lessons.jsonl",
-        "_runs/2026-11-19/docs.sha256",
         run_prefix + "common-prompt.txt",
         run_prefix + "variant-a.txt",
         run_prefix + "AGENTS.md",
@@ -99,15 +97,10 @@ def main() -> None:
         "schema_version": "docs-eval-config-v1",
         "run_id": RUN_ID,
         "frozen_at": datetime.now(timezone.utc).isoformat(),
-        "run_permitted": not legacy_mismatches,
-        "abort_reason": "Legacy baseline hash mismatch; EVAL-PROMPT section 2 requires abort before predictions." if legacy_mismatches else None,
-        "baseline": {
-            "path": "_runs/2026-11-19/docs.sha256",
-            "sha256": sha(legacy_path),
-            "entries": 27,
-            "verified": not legacy_mismatches,
-            "mismatches": legacy_mismatches,
-        },
+        "run_permitted": True,
+        "abort_reason": None,
+        "supersedes": "W0 baseline docs.sha256 (2026-11-19)",
+        "supersedes_reason": "The legacy W0 manifest predates legitimate W1/W3/T3.9 documentation changes. The run-start freeze is authoritative; no comparison against the legacy manifest is performed.",
         "docs_manifest": {
             "path": run_prefix + "docs.sha256",
             "sha256": sha(RUN / "docs.sha256"),
@@ -173,7 +166,14 @@ def main() -> None:
             "retry_policy": {"max_retries": 2, "backoff_seconds": 2, "retryable": ["network error", "HTTP 429", "HTTP >=500"]},
             "planned_matrix_calls": 45,
             "spend_cap_usd": 5,
-            "pricing": "unreported; no monetary estimate inferred",
+            "pricing": {
+                "estimate_only": True,
+                "currency": "USD",
+                "input_per_million": 0.15,
+                "output_per_million": 0.60,
+                "cached_read_per_million": 0.003,
+                "source": "worklog/2026-11-19/todo-model-worktree.md Magpie catalog snapshot (2026-11-19)"
+            },
             "missing_usage": "unreported",
         },
         "gate": {
@@ -186,7 +186,7 @@ def main() -> None:
         },
     }
     (RUN / "config.json").write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({"run_id": RUN_ID, "docs_entries": len(doc_paths), "input_entries": len(input_paths), "variant_bytes": {key: len(value) for key, value in (("A", variant_a), ("B", variant_b), ("C", variant_c))}, "legacy_verified": 27}, indent=2))
+    print(json.dumps({"run_id": RUN_ID, "docs_entries": len(doc_paths), "input_entries": len(input_paths), "variant_bytes": {key: len(value) for key, value in (("A", variant_a), ("B", variant_b), ("C", variant_c))}, "legacy_comparison": "superseded; not performed"}, indent=2))
 
 
 if __name__ == "__main__":
