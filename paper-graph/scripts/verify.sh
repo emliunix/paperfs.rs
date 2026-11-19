@@ -12,6 +12,9 @@ TESTS=(
   check_question_lint
   check_budget_preflight
   check_migration_oracle
+  check_embeddings_contract
+  check_ui_api_contract
+  check_cli_contract
 )
 
 for test_name in "${TESTS[@]}"; do
