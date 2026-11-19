@@ -256,13 +256,13 @@ flowchart LR
   T2_3 --> T2_5["T2.5 Eval seeds"]
 ~~~
 
-- [ ] **T2.1 PRAXIS.md schema.** Add Episode, Lesson, Check as a separate namespace from the paper graph. Record relations: DERIVED_FROM, EVIDENCED_BY, APPLIES_TO, ENFORCED_BY, QUALIFIES, CONTRADICTS, SUPERSEDES.
+- [x] **T2.1 PRAXIS.md schema.** Add Episode, Lesson, Check as a separate namespace from the paper graph. Record relations: DERIVED_FROM, EVIDENCED_BY, APPLIES_TO, ENFORCED_BY, QUALIFIES, CONTRADICTS, SUPERSEDES.
   - Exit: schema doc with field definitions and one worked example.
-- [ ] **T2.2 Normalize the 14 lessons.** Convert round-2-rescan.json into lessons.jsonl with fields: id, title, rule, mechanism, scope, boundary, status, derived_from[], evidence[], applies_to, enforcement, rejected_alternative, supersedes.
+- [x] **T2.2 Normalize the 14 lessons.** Convert round-2-rescan.json into lessons.jsonl with fields: id, title, rule, mechanism, scope, boundary, status, derived_from[], evidence[], applies_to, enforcement, rejected_alternative, supersedes.
   - Exit: 14 records; JSONL parses; every record has at least one quote and one status tag.
-- [ ] **T2.3 Validate provenance.** Check every quote against the raw thread; dedupe; mark unresolved as unverifiable rather than deleting.
+- [x] **T2.3 Validate provenance.** Check every quote against the raw thread; dedupe; mark unresolved as unverifiable rather than deleting.
   - Exit: 0 unresolved quotes for the 14; any exception listed in _runs/2026-11-19/praxis-validation.md.
-- [ ] **T2.5 Eval seeds.** Select five real lessons as docs-eval scenarios: destructive sync, zero-case eval, gold disagreement, question leakage, identity re-import.
+- [x] **T2.5 Eval seeds.** Select five real lessons as docs-eval scenarios: destructive sync, zero-case eval, gold disagreement, question leakage, identity re-import.
   - Exit: five _templates/eval-case.json instances with expected decisions and forbidden actions.
 
 ## W3 — Project docs
@@ -283,14 +283,14 @@ flowchart LR
 
 Each doc owns one subject and links to the constitution/method instead of restating rules.
 
-- [ ] **T3.1 ARCHITECTURE.md.** Layers, trust boundaries, current vs target, the two pipelines (papers and praxis).
-- [ ] **T3.2 DATA_MODEL.md.** SQL/graph/evidence schema, IDs, review states; generate the schema section from code.
-- [ ] **T3.3 PIPELINE.md.** Admit -> parse -> chunk -> extract -> validate -> review -> project; failure states; provenance fields.
-- [ ] **T3.4 EVALUATION.md.** Arms, frozen inputs, metric panel, gates, integrity checks. One owner; link from methodology.md if needed.
-- [ ] **T3.5 OPERATIONS.md.** Sync, backup, migration, single-writer, recovery, failure modes.
-- [ ] **T3.6 EXPERIMENTS.md.** Current round, hypotheses, gate ledger, raw result paths.
-- [ ] **T3.7 ROADMAP.md.** Now/next/later, each tied to a competency question or gate.
-- [ ] **T3.8 REVIEW.md.** Definition of done, reviewer independence, what counts as evidence.
+- [x] **T3.1 ARCHITECTURE.md.** Layers, trust boundaries, current vs target, the two pipelines (papers and praxis).
+- [x] **T3.2 DATA_MODEL.md.** SQL/graph/evidence schema, IDs, review states; generate the schema section from code.
+- [x] **T3.3 PIPELINE.md.** Admit -> parse -> chunk -> extract -> validate -> review -> project; failure states; provenance fields.
+- [x] **T3.4 EVALUATION.md.** Arms, frozen inputs, metric panel, gates, integrity checks. One owner; link from methodology.md if needed.
+- [x] **T3.5 OPERATIONS.md.** Sync, backup, migration, single-writer, recovery, failure modes.
+- [x] **T3.6 EXPERIMENTS.md.** Current round, hypotheses, gate ledger, raw result paths.
+- [x] **T3.7 ROADMAP.md.** Now/next/later, each tied to a competency question or gate.
+- [x] **T3.8 REVIEW.md.** Definition of done, reviewer independence, what counts as evidence.
 - [ ] **T3.9 Docs lint.** Link check; owner-map check; grep for duplicated rules; stale command check (the pytest row in gates.md is the known example).
   - Exit: 0 broken links, 0 duplicated rules, 0 stale commands.
 
@@ -356,10 +356,10 @@ flowchart LR
   T6_3 --> T6_4["T6.4 Quote recovery"] --> T6_5["T6.5 Gate ledger"]
 ~~~
 
-- [ ] **T6.1 Typed stage 1 - admission.** Run on all 15 corpus papers: attachment, file, signature, SHA-256. Emit admission.json: one typed record per paper (item_id, path, bytes, signature_ok, sha256, status), schema-validated before stage 2. A missing file emits a typed failure record; it is never skipped silently.
-- [ ] **T6.2 Typed stage 2 - parse.** Native parser first; page mapping, two-column order, math, references. Emit pages.jsonl: one typed record per page (paper_id, page, text, order metadata, parser version), validated before chunking. Record failures; do not clean them away.
-- [ ] **T6.3 Typed stage 3 - normalize and chunk.** Emit chunks.jsonl: attachment id, parser version, page range, section path, ordinal, content hash, raw text, start/end offsets. This file is the contract every downstream stage consumes and must validate against the chunk schema.
-- [ ] **T6.4 Typed stage 4 - validate and index.** Per-boundary schema validation plus separate semantic checks: sample quotes per domain, exact substring recovery, locator validity; pre-register thresholds before measuring. Structural validity and semantic correctness are reported separately.
+- [x] **T6.1 Typed stage 1 - admission.** Run on all 15 corpus papers: attachment, file, signature, SHA-256. Emit admission.json: one typed record per paper (item_id, path, bytes, signature_ok, sha256, status), schema-validated before stage 2. A missing file emits a typed failure record; it is never skipped silently.
+- [x] **T6.2 Typed stage 2 - parse.** Native parser first; page mapping, two-column order, math, references. Emit pages.jsonl: one typed record per page (paper_id, page, text, order metadata, parser version), validated before chunking. Record failures; do not clean them away.
+- [x] **T6.3 Typed stage 3 - normalize and chunk.** Emit chunks.jsonl: attachment id, parser version, page range, section path, ordinal, content hash, raw text, start/end offsets. This file is the contract every downstream stage consumes and must validate against the chunk schema.
+- [x] **T6.4 Typed stage 4 - validate and index.** Per-boundary schema validation plus separate semantic checks: sample quotes per domain, exact substring recovery, locator validity; pre-register thresholds before measuring. Structural validity and semantic correctness are reported separately.
 - [ ] **T6.5 Gate ledger.** Update gates.md: PDF parse, admission, locator validity. A no row is not a pass.
   - Exit: 15/15 admission, 4/4 parse, chunk schema validates, locator validity at or above the pre-registered bar; failures recorded.
 
