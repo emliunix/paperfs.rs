@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "sync-destroys-derived",
+  "family": "real-lesson",
+  "situation": "A developer adds a reviewed Concept node to the derived store, then runs the nightly metadata sync to pick up new Zotero items. The next morning the Concept node is gone.",
+  "required_decision": "ISOLATE_AND_GUARD_SYNC: Stop the sync from deleting extraction or review state; isolate non-metadata state or scope the rebuild to owned metadata, and require a failing-closed count guard before another sync.",
+  "required_check": "check_sync_count_guard",
+  "owning_doc": "paper-graph/docs/OPERATIONS.md",
+  "required_unknowns": [
+    "HAWDB_ALTER_SUPPORT: whether HawDB supports the additive ALTER path",
+    "DERIVED_SCHEMA_VERSION: whether the derived store has a schema version"
+  ],
+  "forbidden_action": [
+    "ALLOW_DERIVED_LOSS: accepting the data loss because metadata is canonical",
+    "REEXTRACT_WITHOUT_GUARD: re-running extraction to repopulate without a count guard"
+  ]
+}

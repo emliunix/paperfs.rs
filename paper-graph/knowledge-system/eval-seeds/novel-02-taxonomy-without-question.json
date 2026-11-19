@@ -1,0 +1,17 @@
+{
+  "schema_version": "eval-case-v1",
+  "scenario_id": "taxonomy-without-question",
+  "family": "novel-plausible",
+  "situation": "A contributor proposes twelve new relation labels and a closed Concept.kind enum before any competency questions are frozen. They argue that omitting an IS_A edge keeps the design non-hierarchical.",
+  "required_decision": "DEFER_ONTOLOGY_TO_QUESTIONS: Do not admit the labels or closed taxonomy; freeze and lint blocking competency questions first, then add only vocabulary those questions require.",
+  "required_check": "check_question_lint",
+  "owning_doc": "paper-graph/knowledge-system/ontology.md",
+  "required_unknowns": [
+    "BLOCKING_COMPETENCY_QUESTION: which frozen competency question cannot be answered without each proposed type",
+    "ONTOLOGY_VOCABULARY_DECISION: the human ontology owner's disposition of the contested vocabulary cut"
+  ],
+  "forbidden_action": [
+    "ADD_CATALOGUE_WITHOUT_QUESTION: adding relation or node types from a catalogue alone",
+    "HIDE_TAXONOMY_IN_KIND_ENUM: relocating subsumption into a closed kind enum while claiming taxonomy is banned"
+  ]
+}
