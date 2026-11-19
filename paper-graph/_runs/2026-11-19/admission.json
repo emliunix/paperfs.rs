@@ -1,0 +1,457 @@
+{
+  "schema_version": "stage-1-admission-v1",
+  "corpus_schema_version": "round-001-corpus-v1",
+  "storage_root": "/Users/emliunix/Zotero/storage",
+  "total_papers": 15,
+  "admitted_count": 15,
+  "failed_count": 0,
+  "records": [
+    {
+      "item_id": 3154,
+      "zotero_key": "STWZAU6P",
+      "split": "development",
+      "domain": "type_inference",
+      "title": "Complete and Easy Bidirectional Typechecking for Higher-Rank Polymorphism",
+      "attachment_id": 3157,
+      "attachment_key": "W6NIV238",
+      "path": "/Users/emliunix/Zotero/storage/W6NIV238/Dunfield and Krishnaswami - 2020 - Complete and Easy Bidirectional Typechecking for Higher-Rank Polymorphism.pdf",
+      "bytes": 1023501,
+      "signature_ok": true,
+      "sha256": "0e75ac60ee631775d663189bf5fc4811275e84c62178f826879feed4555ad941",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 3157,
+          "attachment_key": "W6NIV238",
+          "raw_path": "storage:Dunfield and Krishnaswami - 2020 - Complete and Easy Bidirectional Typechecking for Higher-Rank Polymorphism.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/W6NIV238/Dunfield and Krishnaswami - 2020 - Complete and Easy Bidirectional Typechecking for Higher-Rank Polymorphism.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 1023501,
+          "signature_ok": true,
+          "sha256": "0e75ac60ee631775d663189bf5fc4811275e84c62178f826879feed4555ad941",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 713,
+      "zotero_key": "REG7CJLB",
+      "split": "development",
+      "domain": "recursion_schemes",
+      "title": "Fantastic Morphisms and Where to Find Them: A Guide to Recursion Schemes",
+      "attachment_id": 714,
+      "attachment_key": "Z9GNQCKF",
+      "path": "/Users/emliunix/Zotero/storage/Z9GNQCKF/Yang和Wu - 2022 - Fantastic Morphisms and Where to Find Them A Guide to Recursion Schemes.pdf",
+      "bytes": 461461,
+      "signature_ok": true,
+      "sha256": "eb1bd26806e7753bbdeca80c2561a7432495abc81fd7bea2f298f64188324bc6",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 714,
+          "attachment_key": "Z9GNQCKF",
+          "raw_path": "storage:Yang和Wu - 2022 - Fantastic Morphisms and Where to Find Them A Guide to Recursion Schemes.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/Z9GNQCKF/Yang和Wu - 2022 - Fantastic Morphisms and Where to Find Them A Guide to Recursion Schemes.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 461461,
+          "signature_ok": true,
+          "sha256": "eb1bd26806e7753bbdeca80c2561a7432495abc81fd7bea2f298f64188324bc6",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 49,
+      "zotero_key": "TSRUB3MQ",
+      "split": "development",
+      "domain": "effects_control",
+      "title": "Freer Monads, More Extensible Effects",
+      "attachment_id": 118,
+      "attachment_key": "5HYGV8EK",
+      "path": "/Users/emliunix/Zotero/storage/5HYGV8EK/Kiselyov and Ishii - Freer Monads, More Extensible Effects.pdf",
+      "bytes": 297408,
+      "signature_ok": true,
+      "sha256": "e327cc2999680dee37ee0626d89cbb19fcbc346b70cc768a7cd8608dbdce451e",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 118,
+          "attachment_key": "5HYGV8EK",
+          "raw_path": "storage:Kiselyov and Ishii - Freer Monads, More Extensible Effects.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/5HYGV8EK/Kiselyov and Ishii - Freer Monads, More Extensible Effects.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 297408,
+          "signature_ok": true,
+          "sha256": "e327cc2999680dee37ee0626d89cbb19fcbc346b70cc768a7cd8608dbdce451e",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 6,
+      "zotero_key": "Q4XC5K3U",
+      "split": "development",
+      "domain": "dependent_lean",
+      "title": "The Lean Theorem Prover (System Description)",
+      "attachment_id": 74,
+      "attachment_key": "TD77H6HR",
+      "path": "/Users/emliunix/Zotero/storage/TD77H6HR/De Moura et al. - 2015 - The Lean Theorem Prover (System Description).pdf",
+      "bytes": 109566,
+      "signature_ok": true,
+      "sha256": "ecfa2796eda1cadb81f86c3b315e4fd8eea77efac9cfed3e2a1aa3561fcf4ad5",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 74,
+          "attachment_key": "TD77H6HR",
+          "raw_path": "storage:De Moura et al. - 2015 - The Lean Theorem Prover (System Description).pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/TD77H6HR/De Moura et al. - 2015 - The Lean Theorem Prover (System Description).pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 109566,
+          "signature_ok": true,
+          "sha256": "ecfa2796eda1cadb81f86c3b315e4fd8eea77efac9cfed3e2a1aa3561fcf4ad5",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 2777,
+      "zotero_key": "5A222DPY",
+      "split": "test",
+      "domain": "type_inference",
+      "title": "Practical type inference for arbitrary-rank types",
+      "attachment_id": 2776,
+      "attachment_key": "RDE6LE3V",
+      "path": "/Users/emliunix/Zotero/storage/RDE6LE3V/Jones et al. - 2007 - Practical type inference for arbitrary-rank types.pdf",
+      "bytes": 648545,
+      "signature_ok": true,
+      "sha256": "03c5413c53593a57158e05a2a16c8302d840212a28f23a86d175cb1da3ec91b0",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 2776,
+          "attachment_key": "RDE6LE3V",
+          "raw_path": "storage:Jones et al. - 2007 - Practical type inference for arbitrary-rank types.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/RDE6LE3V/Jones et al. - 2007 - Practical type inference for arbitrary-rank types.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 648545,
+          "signature_ok": true,
+          "sha256": "03c5413c53593a57158e05a2a16c8302d840212a28f23a86d175cb1da3ec91b0",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 3229,
+      "zotero_key": "G8FCRKNC",
+      "split": "test",
+      "domain": "type_inference",
+      "title": "Visible Type Application (Extended version)",
+      "attachment_id": 3228,
+      "attachment_key": "RTUKJR7F",
+      "path": "/Users/emliunix/Zotero/storage/RTUKJR7F/Eisenberg et al. - Visible Type Application (Extended version).pdf",
+      "bytes": 884339,
+      "signature_ok": true,
+      "sha256": "7816d0a3705d8b594112f70b85eda631602ce009ffa9accaeda3bd85729261f4",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 3228,
+          "attachment_key": "RTUKJR7F",
+          "raw_path": "storage:Eisenberg et al. - Visible Type Application (Extended version).pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/RTUKJR7F/Eisenberg et al. - Visible Type Application (Extended version).pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 884339,
+          "signature_ok": true,
+          "sha256": "7816d0a3705d8b594112f70b85eda631602ce009ffa9accaeda3bd85729261f4",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 41,
+      "zotero_key": "YNK5TTZ6",
+      "split": "test",
+      "domain": "type_inference",
+      "title": "A quick look at impredicativity",
+      "attachment_id": 106,
+      "attachment_key": "HQZGB3UF",
+      "path": "/Users/emliunix/Zotero/storage/HQZGB3UF/Serrano et al. - 2020 - A quick look at impredicativity.pdf",
+      "bytes": 892079,
+      "signature_ok": true,
+      "sha256": "d6b425b8e43016e35ecd74bf2d06a9d8afea81d07f8853ee92d49cc953eb0f9e",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 106,
+          "attachment_key": "HQZGB3UF",
+          "raw_path": "storage:Serrano et al. - 2020 - A quick look at impredicativity.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/HQZGB3UF/Serrano et al. - 2020 - A quick look at impredicativity.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 892079,
+          "signature_ok": true,
+          "sha256": "d6b425b8e43016e35ecd74bf2d06a9d8afea81d07f8853ee92d49cc953eb0f9e",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 18,
+      "zotero_key": "N3PKM4R5",
+      "split": "test",
+      "domain": "recursion_schemes",
+      "title": "A Note on Recursive Types and Fixed Points",
+      "attachment_id": 88,
+      "attachment_key": "X62WDWP5",
+      "path": "/Users/emliunix/Zotero/storage/X62WDWP5/Stump - A Note on Recursive Types and Fixed Points.pdf",
+      "bytes": 156407,
+      "signature_ok": true,
+      "sha256": "06e3954163f0335ef7d5d25dce18222ad2b08e1df158b6d8ad66efa3c6c290db",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 88,
+          "attachment_key": "X62WDWP5",
+          "raw_path": "storage:Stump - A Note on Recursive Types and Fixed Points.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/X62WDWP5/Stump - A Note on Recursive Types and Fixed Points.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 156407,
+          "signature_ok": true,
+          "sha256": "06e3954163f0335ef7d5d25dce18222ad2b08e1df158b6d8ad66efa3c6c290db",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 2314,
+      "zotero_key": "MV3KNJY7",
+      "split": "test",
+      "domain": "recursion_schemes",
+      "title": "Unifying structured recursion schemes",
+      "attachment_id": 2598,
+      "attachment_key": "VDYI32BM",
+      "path": "/Users/emliunix/Zotero/storage/VDYI32BM/Hinze et al. - 2013 - Unifying structured recursion schemes.pdf",
+      "bytes": 294400,
+      "signature_ok": true,
+      "sha256": "9cc5b33c197e736182a55446667ace7ee0247abf7b3da4bb4c718887c464f671",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 2598,
+          "attachment_key": "VDYI32BM",
+          "raw_path": "storage:Hinze et al. - 2013 - Unifying structured recursion schemes.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/VDYI32BM/Hinze et al. - 2013 - Unifying structured recursion schemes.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 294400,
+          "signature_ok": true,
+          "sha256": "9cc5b33c197e736182a55446667ace7ee0247abf7b3da4bb4c718887c464f671",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 1483,
+      "zotero_key": "PX7SBCWH",
+      "split": "test",
+      "domain": "effects_control",
+      "title": "Hefty Algebras: Modular Elaboration of Higher-Order Algebraic Effects",
+      "attachment_id": 1482,
+      "attachment_key": "QDFUURTN",
+      "path": "/Users/emliunix/Zotero/storage/QDFUURTN/Bach Poulsen and Van Der Rest - 2023 - Hefty Algebras Modular Elaboration of Higher-Order Algebraic Effects.pdf",
+      "bytes": 472430,
+      "signature_ok": true,
+      "sha256": "325832b416faf8f9224dfd0a68d55d81f5faddbd7837a14d9faad7f586c503ff",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 1482,
+          "attachment_key": "QDFUURTN",
+          "raw_path": "storage:Bach Poulsen and Van Der Rest - 2023 - Hefty Algebras Modular Elaboration of Higher-Order Algebraic Effects.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/QDFUURTN/Bach Poulsen and Van Der Rest - 2023 - Hefty Algebras Modular Elaboration of Higher-Order Algebraic Effects.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 472430,
+          "signature_ok": true,
+          "sha256": "325832b416faf8f9224dfd0a68d55d81f5faddbd7837a14d9faad7f586c503ff",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 675,
+      "zotero_key": "AJZC9HW9",
+      "split": "test",
+      "domain": "effects_control",
+      "title": "Answer-Type Modification without Tears: Prompt-Passing Style Translation for Typed Delimited-Control Operators",
+      "attachment_id": 676,
+      "attachment_key": "PFQBZIXR",
+      "path": "/Users/emliunix/Zotero/storage/PFQBZIXR/Kobori et al. - 2016 - Answer-Type Modification without Tears Prompt-Passing Style Translation for Typed Delimited-Control.pdf",
+      "bytes": 162810,
+      "signature_ok": true,
+      "sha256": "d3720165c09363fa89fe0ffdf2b7d1583226fc4687c875d63b368f1058934395",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 676,
+          "attachment_key": "PFQBZIXR",
+          "raw_path": "storage:Kobori et al. - 2016 - Answer-Type Modification without Tears Prompt-Passing Style Translation for Typed Delimited-Control.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/PFQBZIXR/Kobori et al. - 2016 - Answer-Type Modification without Tears Prompt-Passing Style Translation for Typed Delimited-Control.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 162810,
+          "signature_ok": true,
+          "sha256": "d3720165c09363fa89fe0ffdf2b7d1583226fc4687c875d63b368f1058934395",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 1490,
+      "zotero_key": "KWY4H3JI",
+      "split": "test",
+      "domain": "effects_control",
+      "title": "A Framework for Higher-Order Effects & Handlers",
+      "attachment_id": 1491,
+      "attachment_key": "I4ZTPB37",
+      "path": "/Users/emliunix/Zotero/storage/I4ZTPB37/Berg and Schrijvers - 2023 - A Framework for Higher-Order Effects & Handlers.pdf",
+      "bytes": 398696,
+      "signature_ok": true,
+      "sha256": "6134a987110f1dc52b2ece537eaee60ddc1cf85b4cbc456d9dba7bceb2e9f075",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 1491,
+          "attachment_key": "I4ZTPB37",
+          "raw_path": "storage:Berg and Schrijvers - 2023 - A Framework for Higher-Order Effects & Handlers.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/I4ZTPB37/Berg and Schrijvers - 2023 - A Framework for Higher-Order Effects & Handlers.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 398696,
+          "signature_ok": true,
+          "sha256": "6134a987110f1dc52b2ece537eaee60ddc1cf85b4cbc456d9dba7bceb2e9f075",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 1348,
+      "zotero_key": "M24XNRDC",
+      "split": "test",
+      "domain": "dependent_lean",
+      "title": "Canonical for Automated Theorem Proving in Lean",
+      "attachment_id": 1350,
+      "attachment_key": "495RRYPB",
+      "path": "/Users/emliunix/Zotero/storage/495RRYPB/Norman and Avigad - 2025 - Canonical for Automated Theorem Proving in Lean.pdf",
+      "bytes": 4104,
+      "signature_ok": true,
+      "sha256": "41c7de691171aa7879c1e6e8104e9321d6ed276f0bffdd88a91870f81f8838a9",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 1350,
+          "attachment_key": "495RRYPB",
+          "raw_path": "storage:Norman and Avigad - 2025 - Canonical for Automated Theorem Proving in Lean.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/495RRYPB/Norman and Avigad - 2025 - Canonical for Automated Theorem Proving in Lean.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 4104,
+          "signature_ok": true,
+          "sha256": "41c7de691171aa7879c1e6e8104e9321d6ed276f0bffdd88a91870f81f8838a9",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 637,
+      "zotero_key": "INQQ64DA",
+      "split": "test",
+      "domain": "dependent_lean",
+      "title": "Type Inference, Haskell and Dependent Types",
+      "attachment_id": 636,
+      "attachment_key": "EPVZ8445",
+      "path": "/Users/emliunix/Zotero/storage/EPVZ8445/Gundry - Type Inference, Haskell and Dependent Types.pdf",
+      "bytes": 1377414,
+      "signature_ok": true,
+      "sha256": "ba1ae24a561461324983402bfb96e78d4db1fd9a7a2fad300a4ebdb90be91c4a",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 636,
+          "attachment_key": "EPVZ8445",
+          "raw_path": "storage:Gundry - Type Inference, Haskell and Dependent Types.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/EPVZ8445/Gundry - Type Inference, Haskell and Dependent Types.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 1377414,
+          "signature_ok": true,
+          "sha256": "ba1ae24a561461324983402bfb96e78d4db1fd9a7a2fad300a4ebdb90be91c4a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "item_id": 774,
+      "zotero_key": "L7TJ3PWN",
+      "split": "test",
+      "domain": "dependent_lean",
+      "title": "Use and abuse of instance parameters in the Lean mathematical library",
+      "attachment_id": 3667,
+      "attachment_key": "UPR47BLA",
+      "path": "/Users/emliunix/Zotero/storage/UPR47BLA/Baanen - 2022 - Use and abuse of instance parameters in the Lean mathematical library.pdf",
+      "bytes": 671722,
+      "signature_ok": true,
+      "sha256": "09e13269b9638d71f8649bbd2c9d4c5f0e85b26117ca29530759af2a4b630280",
+      "status": "admitted",
+      "error": null,
+      "candidates_checked": [
+        {
+          "attachment_id": 775,
+          "attachment_key": "ICVMVJVF",
+          "raw_path": "storage:Baanen - 2022 - Use and abuse of instance parameters in the Lean mathematical library.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/ICVMVJVF/Baanen - 2022 - Use and abuse of instance parameters in the Lean mathematical library.pdf",
+          "content_type": "application/pdf",
+          "status": "missing_file",
+          "bytes": null,
+          "signature_ok": false,
+          "sha256": null,
+          "error": "file not found: /Users/emliunix/Zotero/storage/ICVMVJVF/Baanen - 2022 - Use and abuse of instance parameters in the Lean mathematical library.pdf"
+        },
+        {
+          "attachment_id": 3667,
+          "attachment_key": "UPR47BLA",
+          "raw_path": "storage:Baanen - 2022 - Use and abuse of instance parameters in the Lean mathematical library.pdf",
+          "resolved_path": "/Users/emliunix/Zotero/storage/UPR47BLA/Baanen - 2022 - Use and abuse of instance parameters in the Lean mathematical library.pdf",
+          "content_type": "application/pdf",
+          "status": "admitted",
+          "bytes": 671722,
+          "signature_ok": true,
+          "sha256": "09e13269b9638d71f8649bbd2c9d4c5f0e85b26117ca29530759af2a4b630280",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": "stage-2-pages-v1",
+  "parser_tool": {
+    "kind": "macos_pdfkit_swift",
+    "executable": "/usr/bin/swift",
+    "parser_version": "macos-pdfkit-1.0-swift-v1",
+    "reading_order_mode": "pdfkit_column_flow"
+  },
+  "split_filter": "development",
+  "target_papers": 4,
+  "succeeded_papers": 4,
+  "failed_papers": 0,
+  "total_page_records": 157,
+  "papers": [
+    {
+      "paper_id": 3154,
+      "attachment_id": 3157,
+      "split": "development",
+      "parsed_ok": true,
+      "total_pages": 91,
+      "empty_pages": 0,
+      "total_chars": 214696,
+      "error": null
+    },
+    {
+      "paper_id": 713,
+      "attachment_id": 714,
+      "split": "development",
+      "parsed_ok": true,
+      "total_pages": 44,
+      "empty_pages": 0,
+      "total_chars": 97095,
+      "error": null
+    },
+    {
+      "paper_id": 49,
+      "attachment_id": 118,
+      "split": "development",
+      "parsed_ok": true,
+      "total_pages": 12,
+      "empty_pages": 0,
+      "total_chars": 71468,
+      "error": null
+    },
+    {
+      "paper_id": 6,
+      "attachment_id": 74,
+      "split": "development",
+      "parsed_ok": true,
+      "total_pages": 10,
+      "empty_pages": 0,
+      "total_chars": 28986,
+      "error": null
+    }
+  ]
+}

@@ -133,3 +133,98 @@ pub async fn probe(zotero_path: &Path, embedding_url: &str, model: &str) -> Resu
 fn round_seconds(duration: Duration) -> f64 {
     (duration.as_secs_f64() * 1000.0).round() / 1000.0
 }
+
+use crate::chunk::{
+    chunk_pages, write_chunks_jsonl, ChunkRunReport, DEFAULT_MAX_CHUNK_CHARS,
+};
+use crate::parse::{
+    admit_corpus, detect_system_pdf_tool, load_corpus_manifest, parse_admitted_corpus,
+    read_admission_report, read_pages_jsonl, write_admission_report, write_pages_jsonl,
+    zotero_storage_root, AdmissionReport, ParseRunReport,
+};
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Stage1To3RunSummary {
+    pub out_dir: String,
+    pub admission_file: String,
+    pub pages_file: String,
+    pub chunks_file: String,
+    pub parse_report_file: String,
+    pub chunk_report_file: String,
+    pub admitted_papers: usize,
+    pub admission_failures: usize,
+    pub parsed_papers: usize,
+    pub parse_failures: usize,
+    pub total_pages: usize,
+    pub chunked_papers: usize,
+    pub chunk_failures: usize,
+    pub total_chunks: usize,
+    pub parser_version: String,
+}
+
+/// Run typed Stages 1–3 end-to-end and write validated artifacts to `out_dir`.
+pub fn run_stages_1_to_3(
+    corpus_path: &Path,
+    zotero_path: &Path,
+    out_dir: &Path,
+    parse_split: Option<&str>,
+    max_chunk_chars: Option<usize>,
+) -> Result<Stage1To3RunSummary> {
+    std::fs::create_dir_all(out_dir)
+        .with_context(|| format!("create output directory {}", out_dir.display()))?;
+
+    let corpus = load_corpus_manifest(corpus_path)?;
+    let library = read_library(zotero_path)?;
+    let storage_root = zotero_storage_root(zotero_path);
+
+    // Stage 1: Admission
+    let admission: AdmissionReport = admit_corpus(&corpus, &library, &storage_root)?;
+    let admission_path = out_dir.join("admission.json");
+    write_admission_report(&admission_path, &admission)?;
+    let verified_admission = read_admission_report(&admission_path)?;
+
+    // Stage 2: Parse
+    let tool = detect_system_pdf_tool()?;
+    let (pages, parse_report): (_, ParseRunReport) =
+        parse_admitted_corpus(&verified_admission, parse_split, &tool)?;
+    let pages_path = out_dir.join("pages.jsonl");
+    write_pages_jsonl(&pages_path, &pages)?;
+    let parse_report_path = out_dir.join("parse-report.json");
+    std::fs::write(
+        &parse_report_path,
+        format!("{}\n", serde_json::to_string_pretty(&parse_report)?),
+    )?;
+    let verified_pages = read_pages_jsonl(&pages_path)?;
+
+    // Stage 3: Chunk
+    let (chunks, chunk_report): (_, ChunkRunReport) = chunk_pages(
+        &verified_pages,
+        max_chunk_chars.unwrap_or(DEFAULT_MAX_CHUNK_CHARS),
+    )?;
+    let chunks_path = out_dir.join("chunks.jsonl");
+    write_chunks_jsonl(&chunks_path, &chunks)?;
+    let chunk_report_path = out_dir.join("chunk-report.json");
+    std::fs::write(
+        &chunk_report_path,
+        format!("{}\n", serde_json::to_string_pretty(&chunk_report)?),
+    )?;
+
+    Ok(Stage1To3RunSummary {
+        out_dir: out_dir.display().to_string(),
+        admission_file: admission_path.display().to_string(),
+        pages_file: pages_path.display().to_string(),
+        chunks_file: chunks_path.display().to_string(),
+        parse_report_file: parse_report_path.display().to_string(),
+        chunk_report_file: chunk_report_path.display().to_string(),
+        admitted_papers: verified_admission.admitted_count,
+        admission_failures: verified_admission.failed_count,
+        parsed_papers: parse_report.succeeded_papers,
+        parse_failures: parse_report.failed_papers,
+        total_pages: verified_pages.len(),
+        chunked_papers: chunk_report.succeeded_papers,
+        chunk_failures: chunk_report.failed_papers,
+        total_chunks: chunks.len(),
+        parser_version: tool.parser_version,
+    })
+}
+
